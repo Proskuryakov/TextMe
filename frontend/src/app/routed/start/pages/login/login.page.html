@@ -1,0 +1,48 @@
+<div class="uk-hidden@m">
+
+  <div class="uk-padding-small">
+    <div class="uk-card uk-card-body uk-card-default uk-flex" uk-height-viewport="expand: true">
+
+      <div class="uk-margin-auto-vertical uk-margin-auto">
+        <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-column uk-margin-medium">
+          <svg-icon src="logo/logo_stroke.svg" [svgStyle]="{ 'height.px':200, 'width.px':200 }"></svg-icon>
+          <svg-icon src="logo/logo_text.svg" [svgStyle]="{ 'width.px':200 }"></svg-icon>
+        </div>
+
+        <form
+          #form="ngForm"
+          (ngSubmit)="handleFormSubmit(form.value)"
+          class="uk-width-expand"
+        >
+
+          <div class="uk-margin uk-width-expand">
+            <div class="uk-inline">
+              <span class="uk-form-icon" uk-icon="icon: user"></span>
+              <input class="uk-input" type="text" ngModel name="login" required>
+            </div>
+          </div>
+
+          <div class="uk-margin uk-width-expand">
+            <div class="uk-inline">
+              <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock"></span>
+              <input class="uk-input" type="password" ngModel name="password" required>
+            </div>
+          </div>
+
+          <button
+            class="uk-button uk-button-secondary uk-width-expand uk-margin-small-bottom"
+            [disabled]="!form.valid"
+          >
+            Войти
+          </button>
+
+        </form>
+
+      </div>
+
+
+    </div>
+  </div>
+
+
+</div>
