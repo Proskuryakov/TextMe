@@ -7,6 +7,7 @@ import {StartRoutingModule} from './start-routing.module';
 import {LoginPage} from './pages/login/login.page';
 import {FormsModule} from '@angular/forms';
 import { SignupPage } from './pages/signup/signup.page';
+import { StartPage } from './pages/start/start.page';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { SignupPage } from './pages/signup/signup.page';
   ],
   declarations: [
     LoginPage,
-    SignupPage
+    SignupPage,
+    StartPage
   ]
 })
 export class StartModule {
