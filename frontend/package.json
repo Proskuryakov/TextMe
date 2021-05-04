@@ -19,8 +19,10 @@
     "@angular/platform-browser": "~11.2.11",
     "@angular/platform-browser-dynamic": "~11.2.11",
     "@angular/router": "~11.2.11",
+    "angular-svg-icon": "^11.2.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
+    "uikit": "^3.6.20",
     "zone.js": "~0.11.3"
   },
   "devDependencies": {
