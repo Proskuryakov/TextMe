@@ -1,0 +1,96 @@
+<div class="uk-hidden@m">
+
+  <div class="uk-padding-small">
+    <div class="uk-card uk-card-body uk-card-default uk-flex" uk-height-viewport="expand: true">
+
+      <div class="uk-margin-auto-vertical uk-margin-auto uk-width-expand">
+        <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-column uk-margin">
+          <img width="200" height="200" src="logo/logo_stroke.svg" uk-svg>
+          <img width="200" src="logo/logo_text.svg" uk-svg>
+        </div>
+
+        <form
+          #form="ngForm"
+          class="uk-form-stacked"
+        >
+
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="email">Электронная почта</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="email" type="email" name="email" ngModel required email>
+            </div>
+          </div>
+
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="name">Ваш nickname</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="name" type="text" name="login" ngModel required>
+            </div>
+          </div>
+
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="password">Пароль</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="password" type="password" ngModel required name="password">
+            </div>
+          </div>
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="password_again">Повторите пароль</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" id="password_again" type="password" ngModel required name="repeat_password">
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="uk-button uk-button-secondary uk-width-expand uk-margin-medium-top"
+            uk-toggle="target: #verify-mail-panel"
+            [disabled]="!form.valid"
+            (click)="signupClick(form.value)"
+          >
+            Зарегистрироваться
+          </button>
+
+        </form>
+
+      </div>
+
+
+    </div>
+  </div>
+
+
+</div>
+
+<div id="verify-mail-panel" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+    <div class="uk-margin-small uk-text-center">
+      На вашу почту <b>{{formData?.email}}</b> был выслан код подтверждения. Введите его в поле снизу.
+    </div>
+
+    <div class="uk-width-expand">
+      <form>
+        <input class="uk-input" type="text">
+
+        <button
+          type="button"
+          class="uk-button uk-button-secondary uk-width-expand uk-margin-small-top uk-margin-bottom"
+          (click)="confirmEmail()"
+        >
+          Подтвердить
+        </button>
+
+        <button
+          type="button"
+          class="uk-button uk-button-text uk-width-expand"
+          (click)="repeatVerificationCode()"
+        >
+          выслать код повторно
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</div>
