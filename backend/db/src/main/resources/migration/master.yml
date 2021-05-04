@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - preConditions:
+      - dbms:
+          type: postgresql
+  - changeSet:
+      id: textme_tables_04052021-1816
+      author: wiselder
+      comment: create tables
+      changes:
+        - sqlFile:
+            path: v1.0/textme_tables_04052021-1816.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: textme_functions_04052021-2140
+      author: wiselder
+      comment: create functions
+      changes:
+        - sqlFile:
+            path: v1.0/textme_functions_04052021-2140.sql
+            relativeToChangelogFile: true
+            splitStatements: false
