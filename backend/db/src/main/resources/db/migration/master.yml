@@ -19,3 +19,12 @@ databaseChangeLog:
             path: v1.0/textme_functions_04052021-2140.sql
             relativeToChangelogFile: true
             splitStatements: false
+  - changeSet:
+      id: textme_save_avatar_func_07052021-2222
+      author: wiselder
+      comment: create functions
+      changes:
+        - sqlFile:
+            path: v1.0/textme_save_avatar_func_07052021-2222.sql
+            relativeToChangelogFile: true
+            splitStatements: false

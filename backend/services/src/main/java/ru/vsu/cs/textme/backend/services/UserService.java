@@ -1,11 +1,18 @@
 package ru.vsu.cs.textme.backend.services;
 
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.RegistrationRequest;
 import ru.vsu.cs.textme.backend.db.model.User;
+import ru.vsu.cs.textme.backend.db.model.UserProfileInfo;
 import ru.vsu.cs.textme.backend.services.exception.UserAuthException;
 import ru.vsu.cs.textme.backend.services.exception.UserExistsException;
+
+import java.io.IOException;
+
+import static ru.vsu.cs.textme.backend.utils.FileUtils.saveFile;
 
 @Service
 public class UserService {
@@ -39,11 +46,30 @@ public class UserService {
         throw new UserAuthException("Invalid password");
     }
 
+    public UserProfileInfo findUserInfoById(int id) {
+        return mapper.findUserInfoById(id);
+    }
+
     private boolean validateEmail(String email) {
         return validateString(email);
     }
 
     private boolean validateString(String nickname) {
         return !(nickname == null || nickname.isEmpty());
+    }
+
+    public static final String AVATAR = "avatar.jpeg";
+    public static final String PHOTOS = "users/%s/photos/";
+
+    public void saveAvatar(MultipartFile image, String nickname) {
+        mapper.saveAvatarByNickname(nickname, AVATAR, 0);
+        try {
+            saveFile(String.format(PHOTOS, nickname), AVATAR, image);
+        }
+        catch (IOException ignored) {}
+    }
+
+    public String getAvatarUrl(int userId) {
+        return mapper.findAvatarByUserId(userId);
     }
 }
