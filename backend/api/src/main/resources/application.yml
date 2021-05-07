@@ -1,6 +1,6 @@
 spring:
   liquibase:
-    change-log: classpath*:/migration/master.yml
+    change-log: classpath*:/db/migration/master.yml
     user: postgres
     url: jdbc:postgresql://localhost:5432/textme
   datasource:
@@ -10,3 +10,5 @@ spring:
     password: postgres
   jpa:
     show-sql: true
+jwt:
+  secret: 'l~2Ф8аyg77G*(&TRа@к&%8M<f65&j_K=Еаг6'
