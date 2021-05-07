@@ -25,8 +25,17 @@ public interface UserMapper {
     @ResultMap("userResult")
     User createUser(RegistrationRequest user);
 
+    @Select("SELECT * FROM users WHERE id = #{id}")
+    @Results(id = "userInfoResult", value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "nickname", column = "nickname"),
+            @Result(property = "imageUrl", column = "image_id", one = @One(select = "findAvatarByUserId")),
+            @Result(property = "card", column= "card_id", one = @One(select = "findCardByUserId")),
+    })
+    UserProfileInfo findUserInfoById(int id);
+
     @Select("SELECT f.url FROM files as f WHERE f.id = #{id}")
-    String findAvatarByUserId(String id);
+    String findAvatarByUserId(int id);
 
     @Select("SELECT ar.* FROM user_app_role as uar, app_roles as ar WHERE uar.user_id = #{id} AND ar.id = uar.role_id")
     List<AppRole> findRolesByUserId(int id);
@@ -37,8 +46,11 @@ public interface UserMapper {
             @Result(property = "content", column = "content"),
             @Result(property = "tags", column = "id", javaType = Tag.class, many = @Many(select = "findTagsByCardId")),
     })
-    Card findCardByUserId(String id);
+    Card findCardByUserId(int id);
 
-    @Select("SELECT tags.* FROM card_tags as ct, tags as t WHERE ct.card_id = #{id} AND t.id = ct.tag_id")
-    List<AppRole> findTagsByCardId(String id);
+    @Select("SELECT t.* FROM card_tag as ct, tags as t WHERE ct.card_id = #{id} AND t.id = ct.tag_id")
+    List<AppRole> findTagsByCardId(int id);
+
+    @Insert("CALL save_avatar(#{nickname}, #{fileName}, #{fileType})")
+    void saveAvatarByNickname(String nickname, String fileName, int fileType);
 }
