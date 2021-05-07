@@ -1,5 +1,6 @@
 package ru.vsu.cs.textme.backend.services;
 
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
