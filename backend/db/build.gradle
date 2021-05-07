@@ -1,0 +1,5 @@
+dependencies {
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.liquibase:liquibase-core'
+}
