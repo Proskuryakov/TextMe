@@ -11,15 +11,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
-    private String nickname;
-    private String password;
     private Collection<? extends GrantedAuthority> grantedAuthorities;
+    private User user;
 
     public static CustomUserDetails toCustomUserDetails(User user) {
         CustomUserDetails c = new CustomUserDetails();
-        c.nickname = user.getNickname();
-        c.password = user.getPassword();
-
+        c.user = user;
         c.grantedAuthorities = user
                 .getRoles()
                 .stream()
@@ -35,12 +32,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return nickname;
+        return user.getNickname();
     }
 
     @Override
@@ -61,5 +58,9 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

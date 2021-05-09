@@ -1,68 +1,86 @@
 package ru.vsu.cs.textme.backend.services;
 
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vsu.cs.textme.backend.db.mapper.EmailMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
-import ru.vsu.cs.textme.backend.db.model.RegistrationRequest;
-import ru.vsu.cs.textme.backend.db.model.User;
-import ru.vsu.cs.textme.backend.db.model.UserProfileInfo;
+import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.services.exception.UserAuthException;
 import ru.vsu.cs.textme.backend.services.exception.UserExistsException;
+import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
+import static ru.vsu.cs.textme.backend.db.model.AppRole.ADMIN;
+import static ru.vsu.cs.textme.backend.db.model.AppRole.USER;
 import static ru.vsu.cs.textme.backend.utils.FileUtils.saveFile;
 
 @Service
 public class UserService {
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
     private final AuthService authService;
+    private final EmailService emailService;
 
-    public UserService(UserMapper mapper, AuthService authService) {
-        this.mapper = mapper;
+    public UserService(UserMapper mapper, AuthService authService, EmailService emailService) {
+        this.userMapper = mapper;
         this.authService = authService;
+        this.emailService = emailService;
     }
 
-    public void register(RegistrationRequest registrationUser) throws UserExistsException {
-        authService.encode(registrationUser);
-        User user = mapper.createUser(registrationUser);
-        if (user == null) throw new UserExistsException("Email or nickname is busy");
+    public void register(RegistrationRequest regUser) throws UserExistsException {
+        regUser.setPassword(authService.encode(regUser.getPassword()));
+
+        User user = userMapper.createUser(regUser);
+        if (user == null)
+            throw new UserExistsException("Email or nickname is busy");
+
+
+        emailService.saveInactiveEmail(user, regUser.getEmail());
+
     }
 
     public User findByNickname(String nickname) {
-        return mapper.findUserByNickname(nickname);
+        return userMapper.findUserByNickname(nickname);
     }
 
-    public User authenticate(String email, String nickname, String password) throws UserAuthException {
-        User user = null;
-        if (validateString(nickname))
-            user = mapper.findUserByNickname(nickname);
-        else if (validateEmail(email))
-            user = mapper.findUserByEmail(email);
+    public User authenticate(AuthRequest request) throws UserAuthException {
+        User user =
+                StringUtils.hasLength(request.getNickname()) ?
+                        userMapper.findUserByNickname(request.getNickname()) :
+                StringUtils.hasLength(request.getEmail()) ?
+                        userMapper.findUserByEmail(request.getEmail()) : null;
 
-        if (user == null) throw new UserAuthException("User not found");
-        if (authService.auth(user ,password)) return user;
-        throw new UserAuthException("Invalid password");
+        if (user == null)
+            throw new UserAuthException("User not found");
+        if (!authService.auth(user, request.getPassword()))
+            throw new UserAuthException("Invalid password");
+
+        return user;
+    }
+
+    public User activateEmail(User user, UUID uuid) {
+        String newMail = emailService.activateEmail(uuid, user);
+        if (!StringUtils.hasText(newMail))
+            throw new UserAuthException("Activation link not exists");
+        if (!user.hasRole(USER)) user = userMapper.saveRoleByUserId(user.getId(), USER.getId());
+        return user;
     }
 
     public UserProfileInfo findUserInfoById(int id) {
-        return mapper.findUserInfoById(id);
-    }
-
-    private boolean validateEmail(String email) {
-        return validateString(email);
-    }
-
-    private boolean validateString(String nickname) {
-        return !(nickname == null || nickname.isEmpty());
+        return userMapper.findUserInfoById(id);
     }
 
     public static final String AVATAR = "avatar.jpeg";
     public static final String PHOTOS = "users/%s/photos/";
 
     public void saveAvatar(MultipartFile image, String nickname) {
-        mapper.saveAvatarByNickname(nickname, AVATAR, 0);
+        userMapper.saveAvatarByNickname(nickname, AVATAR, 0);
         try {
             saveFile(String.format(PHOTOS, nickname), AVATAR, image);
         }
@@ -70,6 +88,11 @@ public class UserService {
     }
 
     public String getAvatarUrl(int userId) {
-        return mapper.findAvatarByUserId(userId);
+        return userMapper.findAvatarByUserId(userId);
+    }
+
+    public List<AppRole> findRoles(User user, int userId) {
+        if (user.getId() == userId || user.hasRole(ADMIN)) return userMapper.findRolesByUserId(userId);
+        throw new UserForbiddenException("Not permissions");
     }
 }

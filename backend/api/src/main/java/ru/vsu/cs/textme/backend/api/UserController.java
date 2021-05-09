@@ -2,16 +2,17 @@ package ru.vsu.cs.textme.backend.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vsu.cs.textme.backend.db.model.AppRole;
 import ru.vsu.cs.textme.backend.db.model.UserProfileInfo;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.UserService;
 
-import javax.validation.constraints.NotNull;
-
-import static org.springframework.util.StringUtils.cleanPath;
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -24,11 +25,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserProfileInfo getUser(@PathVariable int id) {
+    public UserProfileInfo getUser(@PathVariable @Valid @Size(min = 0) int id) {
         return userService.findUserInfoById(id);
     }
 
-    @PostMapping("/profile/image")
+    @PostMapping("/image")
     @ResponseStatus(HttpStatus.OK)
     public void setProfileImage(@AuthenticationPrincipal CustomUserDetails details,
                                 @RequestParam("image") MultipartFile image) {
@@ -36,9 +37,16 @@ public class UserController {
         userService.saveAvatar(image, details.getUsername());
     }
 
-    @GetMapping("/profile/image/{id}")
+    @GetMapping("/image/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String getProfileImage(@PathVariable int id) {
+    public String getProfileImage(@PathVariable @Valid @Size(min = 0) int id) {
         return userService.getAvatarUrl(id);
+    }
+
+    @GetMapping("/roles/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<AppRole> getRoles(@AuthenticationPrincipal CustomUserDetails details,
+                                  @PathVariable @Valid @Size(min = 0) int id) {
+        return userService.findRoles(details.getUser(), id);
     }
 }
