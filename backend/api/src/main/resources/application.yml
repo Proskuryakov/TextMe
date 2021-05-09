@@ -1,4 +1,10 @@
 spring:
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: auth.textme
+    password: textme.app
+    protocol: smtps
   liquibase:
     change-log: classpath*:/db/migration/master.yml
     user: postgres
