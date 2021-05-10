@@ -1,14 +1,18 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {StartGuard} from './core/guards/start.guard';
+import {MainGuard} from './core/guards/main.guard';
 
 const routes: Routes = [
   {
     path: '',
+    canActivate: [MainGuard],
     loadChildren: () =>
       import('./routed/main/main.module').then(m => m.MainModule)
   },
   {
     path: 'start',
+    canActivate: [StartGuard],
     loadChildren: () =>
       import('./routed/start/start.module').then(m => m.StartModule)
   }

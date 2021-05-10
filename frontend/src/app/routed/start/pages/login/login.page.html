@@ -5,8 +5,18 @@
 
       <div class="uk-margin-auto-vertical uk-margin-auto">
         <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-column uk-margin-medium">
-          <svg-icon src="logo/logo_stroke.svg" [svgStyle]="{ 'height.px':200, 'width.px':200 }"></svg-icon>
-          <svg-icon src="logo/logo_text.svg" [svgStyle]="{ 'width.px':200 }"></svg-icon>
+<!--          <svg-icon src="logo/logo_stroke.svg" [svgStyle]="{ 'height.px':200, 'width.px':200 }"></svg-icon>-->
+<!--          <svg-icon src="logo/logo_text.svg" [svgStyle]="{ 'width.px':200 }"></svg-icon>-->
+          <img width="200" height="200" src="logo/logo_stroke.svg" uk-svg>
+          <img width="200" src="logo/logo_text.svg" uk-svg>
+        </div>
+
+        <div
+          *ngIf="error"
+          class="uk-text-center uk-margin uk-text-danger"
+          uk-margin
+        >
+          Ошибка авторизации
         </div>
 
         <form
@@ -30,11 +40,14 @@
           </div>
 
           <button
+            *ngIf="!isLoading"
             class="uk-button uk-button-secondary uk-width-expand uk-margin-small-bottom"
             [disabled]="!form.valid"
           >
             Войти
           </button>
+
+          <span *ngIf="isLoading" class="uk-text-center uk-align-center" uk-spinner="ratio: 1"></span>
 
         </form>
 
