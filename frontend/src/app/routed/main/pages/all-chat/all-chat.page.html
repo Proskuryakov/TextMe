@@ -1,0 +1,158 @@
+
+<nav class="uk-navbar-container uk-margin uk-box-shadow-medium" uk-navbar>
+
+  <app-left-navbar-logo></app-left-navbar-logo>
+
+  <div class="nav-overlay uk-navbar-right">
+    <a class="uk-navbar-toggle"
+       uk-search-icon
+       uk-toggle="target: .nav-overlay; animation: uk-animation-fade"
+       href="#"
+    ></a>
+
+    <a class="uk-navbar-toggle"
+       uk-icon="settings"
+       uk-toggle="target: #filter-panel"
+    ></a>
+
+    <a class="uk-navbar-toggle"
+       uk-icon="plus"
+    ></a>
+  </div>
+
+  <div class="nav-overlay uk-navbar-left uk-flex-1" hidden>
+
+    <div class="uk-navbar-item uk-width-expand">
+      <form class="uk-search uk-search-navbar uk-width-1-1">
+        <input class="uk-search-input" type="search" placeholder="Поиск..." autofocus>
+      </form>
+    </div>
+
+    <a class="uk-navbar-toggle"
+       uk-close
+       uk-toggle="target: .nav-overlay; animation: uk-animation-fade"
+       href="#"></a>
+
+  </div>
+
+</nav>
+
+<div id="filter-panel" uk-modal>
+  <div
+    class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical "
+  >
+
+    <div class="uk-margin-small uk-flex uk-flex-middle uk-flex-left">
+
+
+      <div class="uk-text-bold uk-margin-right">
+        Тип:
+      </div>
+
+      <div>
+        <select class="uk-select">
+          <option>все чаты</option>
+          <option>беседы</option>
+          <option>личные сообщения</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="uk-margin-small uk-flex uk-flex-middle uk-flex-left">
+
+      <div class="uk-text-bold uk-margin-right">
+        Сообщения:
+      </div>
+
+      <div>
+        <select class="uk-select">
+          <option>все</option>
+          <option>прочитанные</option>
+          <option>непрочитанные</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="uk-margin-small">
+      <button
+        uk-toggle="target: #filter-panel"
+        class="uk-button uk-button-default uk-width-expand"
+      >Применить
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="uk-panel-scrollable uk-width-expand uk-margin uk-width-2-3@m uk-width-3-4@l uk-align-center"
+     uk-height-viewport="expand: true">
+
+  <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
+    <tbody>
+    <tr>
+      <td class="uk-table-shrink">
+        <img class="uk-preserve-width uk-border-rounded"
+             src="logo/avatar.jpg"
+             width="40" height="40" alt=""
+        >
+      </td>
+
+      <td class="uk-text-truncate">
+        <div class="uk-margin-remove-bottom uk-text-bold">
+          DCLover
+        </div>
+        <div class="uk-margin-remove-top uk-text-meta">
+          Вы: Только что посмотрела Лигу Справедливости. Фильм - огонь!
+        </div>
+      </td>
+
+      <td class="uk-table-shrink">
+        <div class="uk-flex uk-flex-column uk-text-right">
+          <div class="uk-margin-remove-bottom uk-text-meta">
+            21:12
+          </div>
+          <div class="uk-margin-remove-top">
+            <!--                            <span class="uk-badge uk-background-secondary"></span>-->
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="uk-background-muted">
+      <td class="uk-table-shrink">
+        <img class="uk-preserve-width uk-border-rounded"
+             src="logo/avatar.jpg"
+             width="40" height="40" alt=""
+        >
+      </td>
+
+      <td class="uk-text-truncate">
+        <div class="uk-margin-remove-bottom uk-text-bold">
+          Сурок
+        </div>
+        <div class="uk-margin-remove-top uk-text-meta">
+          Почему ты мне не отвечаешь?
+        </div>
+      </td>
+
+      <td class="uk-table-shrink">
+        <div class="uk-flex uk-flex-column uk-text-right">
+          <div class="uk-margin-remove-bottom uk-text-meta">
+            11.03.21
+          </div>
+          <div class="uk-margin-remove-top">
+            <span class="uk-badge uk-background-secondary">15</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    </tbody>
+  </table>
+
+</div>
+
+<app-navigation-panel class="uk-hidden@m"></app-navigation-panel>
