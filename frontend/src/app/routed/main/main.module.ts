@@ -7,6 +7,7 @@ import { NavigationPanelComponent } from './components/navigation-panel/navigati
 import { MainPageUserCardComponent } from './components/main-page-user-card/main-page-user-card.component';
 import { LeftNavbarLogoComponent } from './components/left-navbar-logo/left-navbar-logo.component';
 import { AllChatPage } from './pages/all-chat/all-chat.page';
+import { ChatPage } from './pages/chat/chat.page';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { AllChatPage } from './pages/all-chat/all-chat.page';
     NavigationPanelComponent,
     MainPageUserCardComponent,
     LeftNavbarLogoComponent,
-    AllChatPage
+    AllChatPage,
+    ChatPage
   ],
   imports: [
     CommonModule,
