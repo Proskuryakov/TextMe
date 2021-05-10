@@ -1,30 +1,27 @@
-<div class="uk-position-bottom">
-  <div class="uk-flex uk-flex-around uk-margin-small-bottom">
-    <button class="uk-button uk-button-text">
-      <div class="uk-flex uk-flex-column">
-        <span uk-icon="icon: home;"></span>
-        Главная
+<div class="uk-flex uk-flex-around uk-margin-small-bottom">
+  <button class="uk-button uk-button-text" routerLink="/">
+    <div class="uk-flex uk-flex-column">
+      <span uk-icon="icon: home;"></span>
+      Главная
+    </div>
+  </button>
+  <button class="uk-button uk-button-text" routerLink="/chat">
+
+    <div class="uk-flex uk-flex-column">
+
+      <div>
+        <span class="uk-badge uk-background-secondary">1</span>
+        <span uk-icon="icon: comments;"></span>
       </div>
-    </button>
-    <button class="uk-button uk-button-text">
 
-      <div class="uk-flex uk-flex-column">
+      <span>Чат</span>
 
-        <div>
-          <span class="uk-badge uk-background-secondary">1</span>
-          <span uk-icon="icon: comments;"></span>
-        </div>
-
-
-        <span>Чат</span>
-
-      </div>
-    </button>
-    <button class="uk-button uk-button-text">
-      <div class="uk-flex uk-flex-column">
-        <span uk-icon="icon: user;"></span>
-        Профиль
-      </div>
-    </button>
-  </div>
+    </div>
+  </button>
+  <button class="uk-button uk-button-text" routerLink="/profile">
+    <div class="uk-flex uk-flex-column">
+      <span uk-icon="icon: user;"></span>
+      Профиль
+    </div>
+  </button>
 </div>
