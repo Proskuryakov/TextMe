@@ -1,18 +1,11 @@
-<div class="uk-hidden@m">
+<div class="">
 
   <nav class="uk-navbar-container uk-margin uk-box-shadow-medium" uk-navbar>
 
-    <div class="nav-overlay uk-navbar-left">
-      <div class="uk-navbar-item uk-logo">
-        <img
-          class="uk-preserve-width uk-margin-small-right"
-          src="logo/logo_fill.svg" height="40" uk-svg>
-        <img
-          class="uk-preserve-width uk-animation-stroke"
-          src="logo/logo_text.svg" height="25" uk-svg>
-      </div>
-    </div>
+<!--    основная часть навигационной панели слева-->
+    <app-left-navbar-logo></app-left-navbar-logo>
 
+<!--    кнопка поиска справа-->
     <div class="nav-overlay uk-navbar-right">
 
       <a class="uk-navbar-toggle" uk-search-icon uk-toggle="target: .nav-overlay; animation: uk-animation-fade"
@@ -20,6 +13,7 @@
 
     </div>
 
+<!--    появляющаяся форма поиска-->
     <div class="nav-overlay uk-navbar-left uk-flex-1" hidden>
 
       <div class="uk-navbar-item uk-width-expand">
@@ -38,52 +32,26 @@
   <div class="uk-position-center uk-visible-toggle uk-card uk-card-body uk-card-small"
        tabindex="-1"
        uk-slider
-
        uk-height-match="target: > ul > li > div > .uk-card-body"
   >
 
-
-    <ul class="uk-slider-items uk-child-width-1-1 uk-child-width-1-2@s uk-grid">
+    <ul class="uk-slider-items uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-grid">
       <li>
-        <div class="uk-card uk-card-default uk-display-block">
-
-          <div class="uk-inline uk-position-top-right uk-padding-small">
-            <span uk-icon="icon: more-vertical;"></span>
-            <div class="uk-padding-small" uk-dropdown="mode: click; pos: bottom-left">
-              <button class="uk-button uk-button-text">Пожаловаться</button>
-              <button class="uk-button uk-button-text">Добавить в избранное</button>
-              <button class="uk-button uk-button-text">Больше не показывать</button>
-            </div>
-          </div>
-
-          <div class="uk-card-header">
-            <div class="uk-grid-small uk-flex-middle" uk-grid>
-              <div class="uk-width-auto">
-                <img class="uk-border-rounded" width="100" height="100" src="logo/logo_white_blueback.svg">
-              </div>
-
-              <div class="uk-width-expand">
-                <h3 class="uk-card-title uk-margin-remove-bottom">Райя</h3>
-                <p class="uk-text-meta uk-margin-remove-top">Однажды мир прогнется под нас</p>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="uk-card-body">
-            <span class="uk-label">Тег</span>
-          </div>
-
-          <div class="uk-card-footer">
-            <button type="button" class="uk-button uk-button-text">
-              Начать беседу
-            </button>
-          </div>
-
-        </div>
+        <app-main-page-user-card></app-main-page-user-card>
+      </li>
+      <li>
+        <app-main-page-user-card></app-main-page-user-card>
+      </li>
+      <li>
+        <app-main-page-user-card></app-main-page-user-card>
+      </li>
+      <li>
+        <app-main-page-user-card></app-main-page-user-card>
+      </li>
+      <li>
+        <app-main-page-user-card></app-main-page-user-card>
       </li>
     </ul>
-
 
 
     <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous
@@ -93,6 +61,9 @@
 
   </div>
 
-  <app-navigation-panel></app-navigation-panel>
+  <app-navigation-panel class="uk-hidden@m uk-position-bottom"></app-navigation-panel>
+
+
+
 
 </div>
