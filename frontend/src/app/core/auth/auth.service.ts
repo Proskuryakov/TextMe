@@ -1,8 +1,8 @@
-import {APP_INITIALIZER, Injectable, Provider} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {User, Token} from './models';
 
 @Injectable({
@@ -35,7 +35,15 @@ export class AuthService {
   }
 
   deleteToken(): void {
-    const removeToken = localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  signup(user: User): Observable<void> {
+    return this.http.post<void>(`${environment.api}/auth/register`, user);
+  }
+
+  activate(code: string): Observable<void>{
+    return this.http.get<void>(`${environment.api}/auth/activate/${code}`);
   }
 
 }

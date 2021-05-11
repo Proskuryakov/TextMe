@@ -9,6 +9,14 @@
           <img width="200" src="logo/logo_text.svg" uk-svg>
         </div>
 
+        <div
+          *ngIf="error"
+          class="uk-text-center uk-margin uk-text-danger"
+          uk-margin
+        >
+          {{errorMessage}}
+        </div>
+
         <form
           #form="ngForm"
           class="uk-form-stacked"
@@ -24,32 +32,34 @@
           <div class="uk-margin-small">
             <label class="uk-form-label" for="name">Ваш nickname</label>
             <div class="uk-form-controls">
-              <input class="uk-input" id="name" type="text" name="login" ngModel required>
+              <input class="uk-input" id="name" type="text" name="login" ngModel required min="4">
             </div>
           </div>
 
           <div class="uk-margin-small">
             <label class="uk-form-label" for="password">Пароль</label>
             <div class="uk-form-controls">
-              <input class="uk-input" id="password" type="password" ngModel required name="password">
+              <input class="uk-input" id="password" type="password" ngModel required name="password" min="6">
             </div>
           </div>
           <div class="uk-margin-small-top">
             <label class="uk-form-label" for="password_again">Повторите пароль</label>
             <div class="uk-form-controls">
-              <input class="uk-input" id="password_again" type="password" ngModel required name="repeat_password">
+              <input class="uk-input" id="password_again" type="password" ngModel required name="repeat_password" min="6">
             </div>
           </div>
 
           <button
+            *ngIf="!isLoading"
             type="button"
             class="uk-button uk-button-secondary uk-width-expand uk-margin-medium-top"
-            uk-toggle="target: #verify-mail-panel"
-            [disabled]="!form.valid"
+            [disabled]="!form.valid || !isButtonActive"
             (click)="signupClick(form.value)"
           >
             Зарегистрироваться
           </button>
+
+          <span *ngIf="isLoading" class="uk-text-center uk-align-center" uk-spinner="ratio: 1"></span>
 
         </form>
 
@@ -66,30 +76,8 @@
   <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
 
     <div class="uk-margin-small uk-text-center">
-      На вашу почту <b>{{formData?.email}}</b> был выслан код подтверждения. Введите его в поле снизу.
-    </div>
-
-    <div class="uk-width-expand">
-      <form>
-        <input class="uk-input" type="text">
-
-        <button
-          type="button"
-          class="uk-button uk-button-secondary uk-width-expand uk-margin-small-top uk-margin-bottom"
-          (click)="confirmEmail()"
-        >
-          Подтвердить
-        </button>
-
-        <button
-          type="button"
-          class="uk-button uk-button-text uk-width-expand"
-          (click)="repeatVerificationCode()"
-        >
-          выслать код повторно
-        </button>
-
-      </form>
+      На вашу почту <b>{{formData?.email}}</b> была выслана ссылка, для подтверждения регистрации. <br>
+      Пожалуйста, перейдите по ней.
     </div>
 
   </div>

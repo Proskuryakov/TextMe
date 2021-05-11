@@ -8,6 +8,7 @@ import {LoginPage} from './pages/login/login.page';
 import {FormsModule} from '@angular/forms';
 import { SignupPage } from './pages/signup/signup.page';
 import { StartPage } from './pages/start/start.page';
+import { ActivatePage } from './pages/activate/activate.page';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { StartPage } from './pages/start/start.page';
   declarations: [
     LoginPage,
     SignupPage,
-    StartPage
+    StartPage,
+    ActivatePage
   ]
 })
 export class StartModule {
