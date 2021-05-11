@@ -8,6 +8,7 @@ import { MainPageUserCardComponent } from './components/main-page-user-card/main
 import { LeftNavbarLogoComponent } from './components/left-navbar-logo/left-navbar-logo.component';
 import { AllChatPage } from './pages/all-chat/all-chat.page';
 import { ChatPage } from './pages/chat/chat.page';
+import { ProfilePage } from './pages/profile/profile.page';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { ChatPage } from './pages/chat/chat.page';
     MainPageUserCardComponent,
     LeftNavbarLogoComponent,
     AllChatPage,
-    ChatPage
+    ChatPage,
+    ProfilePage
   ],
   imports: [
     CommonModule,
