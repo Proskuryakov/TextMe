@@ -14,3 +14,5 @@
 Курсовой проект: [Курсовой проект.docx](/Documents/Курсовой%20проект.docx) и [Курсовой проект.pdf](/Documents/Курсовой%20проект.pdf)
 
 [Диаграммы](/Documents/Diagrams)
+
+[Демо видео](/Documents/demo.mkv)
