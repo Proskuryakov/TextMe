@@ -15,4 +15,5 @@
 
 [Диаграммы](/Documents/Diagrams)
 
-[Демо видео](/Documents/demo.mkv)
+[Демо видео в гитхабе](/Documents/demo.mkv)
+[Демо видео на gdrive для просмотра](https://drive.google.com/file/d/1h7PCqwaMXUAjxqgJFjQ7SOpZEEAHpRrk/view?usp=sharing)
