@@ -38,7 +38,7 @@ public interface UserMapper {
     })
     UserProfileInfo findUserInfoById(Integer userId);
 
-    @Select("SELECT f.url FROM files as f WHERE f.id = #{userId}")
+    @Select("SELECT f.url FROM files f, users u WHERE u.id = 4 AND f.id = u.image_id")
     String findAvatarByUserId(Integer userId);
 
     @Select("SELECT ar.* FROM user_app_role as uar, app_roles as ar WHERE uar.user_id = #{userId} AND ar.id = uar.role_id")
@@ -69,4 +69,7 @@ public interface UserMapper {
 
     @Insert("INSERT INTO inactive_emails (email, uuid, user_id) VALUES(#{email}, #{code}, #{user_id}) ON CONFLICT DO NOTHING")
     int saveInactiveEmail(String email, String code, Integer user_id);
+
+    @Update("UPDATE users SET nickname = #{nickname} WHERE id = #{userId} AND NOT EXISTS(SELECT FROM users WHERE nickname = #{nickname})")
+    boolean saveNickname(Integer userId, String nickname);
 }

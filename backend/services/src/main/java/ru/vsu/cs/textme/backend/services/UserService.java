@@ -1,5 +1,7 @@
 package ru.vsu.cs.textme.backend.services;
 
+import lombok.extern.java.Log;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import static ru.vsu.cs.textme.backend.db.model.AppRole.USER;
 import static ru.vsu.cs.textme.backend.utils.FileUtils.saveFile;
 
 @Service
+@Log(topic = "org.slf4j.Logger")
 public class UserService {
     private final UserMapper userMapper;
     private final AuthService authService;
@@ -72,7 +75,7 @@ public class UserService {
     }
 
     public static final String AVATAR = "avatar.jpeg";
-    public static final String PHOTOS = "users/%s/photos/";
+    public static final String PHOTOS = "users-resources/%s/photos/";
 
     public void saveAvatar(MultipartFile image, String nickname) {
         userMapper.saveAvatarByNickname(nickname, AVATAR, 0);
@@ -89,5 +92,10 @@ public class UserService {
     public List<AppRole> findRoles(User user, int userId) {
         if (user.getId() == userId || user.hasRole(ADMIN)) return userMapper.findRolesByUserId(userId);
         throw new UserForbiddenException("Not permissions");
+    }
+
+    public void saveUserNickname(User user, String nickname) {
+        if (!userMapper.saveNickname(user.getId(), nickname))
+            throw new UserForbiddenException("Nickname is busy");
     }
 }

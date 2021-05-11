@@ -10,6 +10,7 @@ import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +26,20 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserProfileInfo getUser(@PathVariable @Valid @Size(min = 0) int id) {
+    public UserProfileInfo getUser(@PathVariable @Valid @Size() int id) {
         return userService.findUserInfoById(id);
+    }
+
+    @PostMapping("/nickname")
+    public void saveContent(@AuthenticationPrincipal CustomUserDetails details,
+                            @RequestBody @Valid @NotEmpty @Size(min=4, max=16) String nickname) {
+        userService.saveUserNickname(details.getUser(), nickname);
+    }
+
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    public UserProfileInfo getUser(@AuthenticationPrincipal CustomUserDetails d) {
+        return userService.findUserInfoById(d.getUser().getId());
     }
 
     @PostMapping("/image")
@@ -39,14 +52,14 @@ public class UserController {
 
     @GetMapping("/image/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String getProfileImage(@PathVariable @Valid @Size(min = 0) int id) {
+    public String getProfileImage(@PathVariable @Valid @Size() int id) {
         return userService.getAvatarUrl(id);
     }
 
     @GetMapping("/roles/{id}")
     @ResponseStatus(HttpStatus.OK)
     public List<AppRole> getRoles(@AuthenticationPrincipal CustomUserDetails details,
-                                  @PathVariable @Valid @Size(min = 0) int id) {
+                                  @PathVariable @Valid @Size() int id) {
         return userService.findRoles(details.getUser(), id);
     }
 }

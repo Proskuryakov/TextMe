@@ -17,10 +17,6 @@ public class FileUtils {
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
-
-        InputStream inputStream = file.getInputStream();
-        Path filePath = uploadPath.resolve(name);
-        Files.copy(inputStream, filePath, REPLACE_EXISTING);
-
+        Files.copy(file.getInputStream(), uploadPath.resolve(name), REPLACE_EXISTING);
     }
 }

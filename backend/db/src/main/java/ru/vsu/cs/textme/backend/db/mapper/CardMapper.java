@@ -1,0 +1,36 @@
+package ru.vsu.cs.textme.backend.db.mapper;
+
+import org.apache.ibatis.annotations.*;
+import ru.vsu.cs.textme.backend.db.model.Card;
+
+import java.util.List;
+
+@Mapper
+public interface CardMapper {
+    @Select("SELECT c.* FROM cards c, users u WHERE u.id = #{id} AND c.id = u.card_id")
+    @Results(id = "cardResult", value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "content", column = "content"),
+            @Result(property = "tags", column = "id", javaType = List.class, many = @Many(select = "findTagsByCardId")),
+    })
+    Card findCardByUserId(int id);
+
+    @Select("SELECT * FROM cards c, chats ch WHERE ch.id = #{id} AND c.id = ch.card_id")
+    @ResultMap("cardResult")
+    Card findCardByChatId(int id);
+
+    @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{id} AND t.id = ct.tag_id")
+    List<String> findTagsByCardId(int id);
+
+    @Insert("INSERT INTO tags (content) SELECT lower(#{tag}) ON CONFLICT DO NOTHING;" +
+            "INSERT INTO card_tag (card_id, tag_id) SELECT #{cardId}, id FROM tags WHERE content = #{tag}")
+    void saveCardTag(Integer cardId, String tag);
+
+    @Update("UPDATE cards SET content = #{content} WHERE id = #{cardId}")
+    void saveContentById(Integer cardId, String content);
+
+    @Delete("DELETE FROM card_tag WHERE card_id = #{cardId} AND tag_id = " +
+            "(SELECT * FROM tags WHERE content = #{tag});")
+    void deleteCardTag(Integer cardId, String tag);
+
+}
