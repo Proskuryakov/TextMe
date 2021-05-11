@@ -1,30 +1,38 @@
 package ru.vsu.cs.textme.backend.services;
 
 import org.springframework.mail.MailException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.vsu.cs.textme.backend.db.mapper.EmailMapper;
+import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.User;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
 public class EmailService {
     private final EmailSender emailSender;
-    private final EmailMapper emailMapper;
-
-    public EmailService(EmailSender emailSender, EmailMapper emailMapper) {
+    private final UserMapper emailMapper;
+    public EmailService(EmailSender emailSender, UserMapper emailMapper) {
         this.emailSender = emailSender;
         this.emailMapper = emailMapper;
     }
 
     public void saveInactiveEmail(User user, String email) throws MailException {
-        UUID uuid = UUID.randomUUID();
-        if (emailMapper.saveInactiveEmail(email, uuid.toString(), user.getId()) > 0)
-            emailSender.sendActivateMessage(email, uuid);
+        String code = Base64
+                .getEncoder()
+                .withoutPadding()
+                .encodeToString(UUID
+                        .randomUUID()
+                        .toString()
+                        .getBytes(StandardCharsets.UTF_8));
+        if (emailMapper.saveInactiveEmail(email, code, user.getId()) > 0)
+            emailSender.sendActivateMessage(email, code);
     }
 
-    public String activateEmail(UUID uuid, User user) {
-        return emailMapper.activateEmail(uuid.toString(), user.getId());
+    public User activateEmail(String code) {
+        return emailMapper.activateEmail(code);
     }
 
 }

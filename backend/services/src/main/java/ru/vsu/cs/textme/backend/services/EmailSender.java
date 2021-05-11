@@ -3,11 +3,7 @@ package ru.vsu.cs.textme.backend.services;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
-import ru.vsu.cs.textme.backend.db.model.User;
-
-import java.util.UUID;
 
 @Service
 public class EmailSender {
@@ -17,12 +13,12 @@ public class EmailSender {
         this.mailSender = mailSender;
     }
 
-    public void sendActivateMessage(String email, UUID uuid) throws MailException {
+    public void sendActivateMessage(String email, String code) throws MailException {
         var smm = new SimpleMailMessage();
         smm.setFrom(AUTH_MAIL);
         smm.setTo(email);
         smm.setSubject("Activation link");
-        smm.setText("http://localhost:8080/api/auth/activate/" + uuid.toString());
+        smm.setText("http://localhost:8080/start/activate/" + code);
         mailSender.send(smm);
     }
 }

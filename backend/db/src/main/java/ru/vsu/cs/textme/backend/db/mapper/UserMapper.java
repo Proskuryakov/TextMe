@@ -62,4 +62,11 @@ public interface UserMapper {
             "SELECT * FROM users WHERE id = #{userId};")
     @ResultMap("userResult")
     User saveRoleByUserId(Integer userId, Integer roleId);
+
+    @Select("SELECT * FROM activate_email(#{code})")
+    @ResultMap("userResult")
+    User activateEmail(String code);
+
+    @Insert("INSERT INTO inactive_emails (email, uuid, user_id) VALUES(#{email}, #{code}, #{user_id}) ON CONFLICT DO NOTHING")
+    int saveInactiveEmail(String email, String code, Integer user_id);
 }

@@ -33,13 +33,10 @@ public class AuthController {
         return new AuthResponse(token);
     }
 
-    @GetMapping("/activate/{uuid}")
+    @GetMapping("/activate/{code}")
     @ResponseStatus(HttpStatus.OK)
-    public AuthResponse activateEmail(@AuthenticationPrincipal CustomUserDetails details,
-                                      @PathVariable UUID uuid) {
-        User user = userService.activateEmail(details.getUser(), uuid);
-        String token = jwtProvider.generateToken(user);
-        return new AuthResponse(token);
+    public void activateEmail(@PathVariable String code) {
+        userService.activateEmail(code);
     }
 
     @PostMapping("/register")

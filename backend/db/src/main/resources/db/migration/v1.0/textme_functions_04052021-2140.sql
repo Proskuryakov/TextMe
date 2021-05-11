@@ -48,17 +48,19 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION activate_email(mail_id VARCHAR, us_id INTEGER)
-    RETURNS VARCHAR LANGUAGE plpgsql AS
+CREATE OR REPLACE FUNCTION activate_email(mail_code VARCHAR)
+    RETURNS users LANGUAGE plpgsql AS
 $$
 DECLARE
+    _user users;
     _mail VARCHAR;
+    _id INTEGER;
 BEGIN
-    DELETE FROM inactive_emails WHERE uuid = mail_id AND user_id = us_id RETURNING email INTO _mail;
+    DELETE FROM inactive_emails WHERE uuid = mail_code RETURNING email, user_id INTO _mail, _id;
     IF _mail IS NULL THEN
         RETURN NULL;
     END IF;
-    UPDATE users SET email = _mail WHERE id = us_id;
-    RETURN _mail;
+    UPDATE users SET email = _mail WHERE id = _id RETURNING * INTO _user;
+    RETURN _user;
 END
 $$;

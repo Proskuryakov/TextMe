@@ -1,12 +1,8 @@
 package ru.vsu.cs.textme.backend.services;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
-import ru.vsu.cs.textme.backend.db.mapper.EmailMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.services.exception.UserAuthException;
@@ -15,7 +11,6 @@ import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import static ru.vsu.cs.textme.backend.db.model.AppRole.ADMIN;
 import static ru.vsu.cs.textme.backend.db.model.AppRole.USER;
@@ -33,7 +28,7 @@ public class UserService {
         this.emailService = emailService;
     }
 
-    public void register(RegistrationRequest regUser) throws UserExistsException {
+    public User register(RegistrationRequest regUser) throws UserExistsException {
         regUser.setPassword(authService.encode(regUser.getPassword()));
 
         User user = userMapper.createUser(regUser);
@@ -42,7 +37,7 @@ public class UserService {
 
 
         emailService.saveInactiveEmail(user, regUser.getEmail());
-
+        return user;
     }
 
     public User findByNickname(String nickname) {
@@ -64,12 +59,12 @@ public class UserService {
         return user;
     }
 
-    public User activateEmail(User user, UUID uuid) {
-        String newMail = emailService.activateEmail(uuid, user);
-        if (!StringUtils.hasText(newMail))
+    public void activateEmail(String code) {
+        User user = emailService.activateEmail(code);
+        if (user == null)
             throw new UserAuthException("Activation link not exists");
-        if (!user.hasRole(USER)) user = userMapper.saveRoleByUserId(user.getId(), USER.getId());
-        return user;
+        if (!user.hasRole(USER))
+            userMapper.saveRoleByUserId(user.getId(), USER.getId());
     }
 
     public UserProfileInfo findUserInfoById(int id) {
