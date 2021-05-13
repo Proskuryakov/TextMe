@@ -13,7 +13,10 @@
 
 Курсовой проект: [Курсовой проект.docx](/Documents/Курсовой%20проект.docx) и [Курсовой проект.pdf](/Documents/Курсовой%20проект.pdf)
 
+Отчет по ролям: [Отчет по ролям.docx](/Documents/Отчет%20по%20ролям.docx) [Отчет по ролям.pdf](/Documents/Отчет%20по%20ролям.pdf)
+
 [Диаграммы](/Documents/Diagrams)
 
-[Демо видео в гитхабе](/Documents/demo.mkv)
-[Демо видео на gdrive для просмотра](https://drive.google.com/file/d/1h7PCqwaMXUAjxqgJFjQ7SOpZEEAHpRrk/view?usp=sharing)
+[Демо видео на GitHub](/Documents/demo.mkv)
+
+[Демо видео на GoogleDrive для просмотра](https://drive.google.com/file/d/1h7PCqwaMXUAjxqgJFjQ7SOpZEEAHpRrk/view?usp=sharing)
