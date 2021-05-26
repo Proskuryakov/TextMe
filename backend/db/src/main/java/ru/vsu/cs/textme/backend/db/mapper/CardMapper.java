@@ -2,6 +2,9 @@ package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.Card;
+import ru.vsu.cs.textme.backend.db.model.ChatProfileInfo;
+import ru.vsu.cs.textme.backend.db.model.Tag;
+import ru.vsu.cs.textme.backend.db.model.UserProfileInfo;
 
 import java.util.List;
 

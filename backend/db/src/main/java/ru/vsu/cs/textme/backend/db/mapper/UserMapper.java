@@ -34,7 +34,7 @@ public interface UserMapper {
             @Result(property = "id", column = "id"),
             @Result(property = "nickname", column = "nickname"),
             @Result(property = "imageUrl", column = "image_id", one = @One(select = "findAvatarByUserId")),
-            @Result(property = "card", column= "card_id", one = @One(select = "findCardById")),
+            @Result(property = "card", column = "card_id", one = @One(select = "findCardById")),
     })
     UserProfileInfo findUserInfoById(Integer userId);
 
@@ -72,4 +72,24 @@ public interface UserMapper {
 
     @Update("UPDATE users SET nickname = #{nickname} WHERE id = #{userId} AND NOT EXISTS(SELECT FROM users WHERE nickname = #{nickname})")
     boolean saveNickname(Integer userId, String nickname);
+    @Select("SELECT bu.user_who_id FROM blocked_users bu WHERE " +
+            "bu.user_blocked_id = #{one} AND " +
+            "bu.user_who_id = #{two} OR " +
+            "bu.user_blocked_id = #{two} AND " +
+            "bu.user_who_id = #{one}")
+    Integer isBlocked(Integer one, Integer two);
+
+
+    @Select("WITH user_tags AS (SELECT tag_id " +
+            "   FROM card_tag ct, cards c, users u " +
+            "   WHERE u.id = #{id} AND u.card_id = c.id AND c.id = ct.card_id) " +
+            "SELECT u.id AS id FROM cards c " +
+            "    JOIN users u ON u.card_id = c.id AND u.id != #{id} " +
+            "    JOIN card_tag ct ON c.id = ct.card_id " +
+            "    JOIN user_tags ut ON ut.tag_id = ct.tag_id " +
+            "GROUP BY u.id " +
+            "ORDER BY count(*) DESC " +
+            "LIMIT #{limit} OFFSET #{offset};")
+    @ResultMap("userInfoResult")
+    List<UserProfileInfo> findNearbyUserCards(Integer id, Integer limit, Integer offset);
 }

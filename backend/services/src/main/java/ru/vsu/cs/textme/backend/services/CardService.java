@@ -2,17 +2,27 @@ package ru.vsu.cs.textme.backend.services;
 
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.textme.backend.db.mapper.CardMapper;
+import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
+import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.Card;
+import ru.vsu.cs.textme.backend.db.model.ChatProfileInfo;
 import ru.vsu.cs.textme.backend.db.model.User;
+import ru.vsu.cs.textme.backend.db.model.UserProfileInfo;
+
+import java.util.List;
 
 @Service
 public class CardService {
     private final CardMapper cardMapper;
     private final UserService userService;
+    private final UserMapper userMapper;
+    private final ChatMapper chatMapper;
 
-    public CardService(CardMapper cardMapper, UserService userService) {
+    public CardService(CardMapper cardMapper, UserService userService, UserMapper userMapper, ChatMapper chatMapper) {
         this.cardMapper = cardMapper;
         this.userService = userService;
+        this.userMapper = userMapper;
+        this.chatMapper = chatMapper;
     }
 
     public Card findUserCardById(int userId) {
@@ -54,5 +64,13 @@ public class CardService {
 
     private void saveContentById(Card c, String content) {
         cardMapper.saveContentById(c.getId(), content);
+    }
+
+    public List<UserProfileInfo> findUserNearbyProfilesById(Integer id, Integer page) {
+        return userMapper.findNearbyUserCards(id, 10, page * 10);
+    }
+
+    public List<ChatProfileInfo> findChatNearbyProfilesById(Integer id, Integer page) {
+        return chatMapper.findNearbyChatCards(id, 10, page * 10);
     }
 }

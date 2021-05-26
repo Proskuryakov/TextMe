@@ -4,12 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.textme.backend.db.model.Card;
+import ru.vsu.cs.textme.backend.db.model.ChatProfileInfo;
+import ru.vsu.cs.textme.backend.db.model.UserProfileInfo;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.CardService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/card")
@@ -53,4 +56,16 @@ public class CardController {
         return cardService.findChatCardById(id);
     }
 
+    @GetMapping("/users/{page}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserProfileInfo> getNearbyUsersCards(@AuthenticationPrincipal CustomUserDetails details,
+                                               @PathVariable @Valid @Size Integer page) {
+        return cardService.findUserNearbyProfilesById(details.getUser().getId(), page);
+    }
+    @GetMapping("/chats/{page}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ChatProfileInfo> getNearbyChatCards(@AuthenticationPrincipal CustomUserDetails details,
+                                                    @PathVariable @Valid @Size Integer page) {
+        return cardService.findChatNearbyProfilesById(details.getUser().getId(), page);
+    }
 }
