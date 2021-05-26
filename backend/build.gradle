@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.5'
+    id 'org.springframework.boot' version '2.4.6'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'war'
@@ -42,5 +42,10 @@ allprojects {
 }
 
 dependencies {
+    compile project(':db')
+    compile project(':services')
+    compile project(':api')
+    compile project(':security')
+
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
