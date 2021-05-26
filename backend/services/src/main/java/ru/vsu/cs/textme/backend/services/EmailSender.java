@@ -19,6 +19,8 @@ public class EmailSender {
         smm.setTo(email);
         smm.setSubject("Activation link");
         smm.setText("http://localhost:4200/start/activate/" + code);
-        mailSender.send(smm);
+        try {
+            mailSender.send(smm);
+        } catch (MailException ignored) {}
     }
 }
