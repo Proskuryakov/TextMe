@@ -1,4 +1,4 @@
-package ru.vsu.cs.textme.backend.db.model;
+package ru.vsu.cs.textme.backend.db.model.info;
 
 import lombok.Data;
 

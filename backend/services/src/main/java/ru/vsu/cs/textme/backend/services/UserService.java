@@ -1,12 +1,12 @@
 package ru.vsu.cs.textme.backend.services;
 
 import lombok.extern.java.Log;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
+import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
 import ru.vsu.cs.textme.backend.services.exception.UserAuthException;
 import ru.vsu.cs.textme.backend.services.exception.UserExistsException;
 import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
@@ -70,7 +70,7 @@ public class UserService {
             userMapper.saveRoleByUserId(user.getId(), USER.getId());
     }
 
-    public UserProfileInfo findUserInfoById(int id) {
+    public CardInfo findUserInfoById(int id) {
         return userMapper.findUserInfoById(id);
     }
 

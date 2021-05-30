@@ -5,7 +5,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.model.AppRole;
-import ru.vsu.cs.textme.backend.db.model.UserProfileInfo;
+import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.UserService;
 
@@ -13,7 +13,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -26,7 +25,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserProfileInfo getUser(@PathVariable @Valid @Size() int id) {
+    public CardInfo getUser(@PathVariable @Valid @Size() int id) {
         return userService.findUserInfoById(id);
     }
 
@@ -38,7 +37,7 @@ public class UserController {
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    public UserProfileInfo getUser(@AuthenticationPrincipal CustomUserDetails d) {
+    public CardInfo getUser(@AuthenticationPrincipal CustomUserDetails d) {
         return userService.findUserInfoById(d.getUser().getId());
     }
 

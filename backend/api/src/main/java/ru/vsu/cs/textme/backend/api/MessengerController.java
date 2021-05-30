@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vsu.cs.textme.backend.db.model.ChatMessage;
 import ru.vsu.cs.textme.backend.db.model.DirectMessage;
+import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.MessengerService;
 
@@ -24,7 +25,7 @@ public class MessengerController {
 
     @GetMapping("/direct")
     @ResponseStatus(HttpStatus.OK)
-    public Map<Integer, List<DirectMessage>> getDirectList(@AuthenticationPrincipal CustomUserDetails details) {
+    public Map<CardInfo, List<DirectMessage>> getDirectList(@AuthenticationPrincipal CustomUserDetails details) {
         return messengerService.getDirects(details.getUser().getId());
     }
 

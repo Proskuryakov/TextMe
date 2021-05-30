@@ -2,6 +2,8 @@ package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.*;
+import ru.vsu.cs.textme.backend.db.model.info.Card;
+import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
 
 import java.util.List;
 
@@ -32,11 +34,11 @@ public interface UserMapper {
     @Select("SELECT * FROM users WHERE id = #{userId}")
     @Results(id = "userInfoResult", value = {
             @Result(property = "id", column = "id"),
-            @Result(property = "nickname", column = "nickname"),
+            @Result(property = "name", column = "nickname"),
             @Result(property = "imageUrl", column = "image_id", one = @One(select = "findAvatarByUserId")),
             @Result(property = "card", column = "card_id", one = @One(select = "findCardById")),
     })
-    UserProfileInfo findUserInfoById(Integer userId);
+    CardInfo findUserInfoById(Integer userId);
 
     @Select("SELECT f.url FROM files f, users u WHERE u.id = 4 AND f.id = u.image_id")
     String findAvatarByUserId(Integer userId);
@@ -91,5 +93,5 @@ public interface UserMapper {
             "ORDER BY count(*) DESC " +
             "LIMIT #{limit} OFFSET #{offset};")
     @ResultMap("userInfoResult")
-    List<UserProfileInfo> findNearbyUserCards(Integer id, Integer limit, Integer offset);
+    List<CardInfo> findNearbyUserCards(Integer id, Integer limit, Integer offset);
 }

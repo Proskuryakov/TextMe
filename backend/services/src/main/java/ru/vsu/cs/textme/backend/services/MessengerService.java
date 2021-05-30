@@ -5,6 +5,8 @@ import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.DirectMapper;
 import ru.vsu.cs.textme.backend.db.model.ChatMessage;
 import ru.vsu.cs.textme.backend.db.model.DirectMessage;
+import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
+
 import java.util.*;
 
 @Service
@@ -17,12 +19,12 @@ public class MessengerService {
         this.chatMapper = chatMapper;
     }
 
-    public Map<Integer, List<DirectMessage>> getDirects(Integer id) {
-        List<Integer> directList = directMapper.getAllDirects(id);
-        var map = new HashMap<Integer, List<DirectMessage>>();
+    public Map<CardInfo, List<DirectMessage>> getDirects(Integer id) {
+        List<CardInfo> directList = directMapper.getAllDirects(id);
+        var map = new HashMap<CardInfo, List<DirectMessage>>();
         if (directList != null) {
-            for (var nickname : directList) {
-                map.put(id, getDirectPage(id, nickname, 0));
+            for (var user : directList) {
+                map.put(user, getDirectPage(id, user.getId(), 0));
             }
         }
         return map;
@@ -50,7 +52,7 @@ public class MessengerService {
         var members = chatMapper.findChatMembers(chat);
         if (members != null) {
             for (var m : members) {
-                if (m.getUser().getId().equals(userId))
+                if (m.getId().equals(userId))
                     return chatMapper.getMessages(chat, 128, page * 128);
             }
         }
