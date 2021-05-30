@@ -17,7 +17,8 @@ public interface ChatMapper {
     String PROFILE_RESULT = "chatProfileResult";
     String FIND_AVATAR = "findAvatarById";
     String FIND_TAGS = "findTagsById";
-    String MESSAGE_RESULT = "chatMsgResult";
+    String CHAT_MESSAGE_RESULT = "chatMsgResult";
+    String MESSAGE_RESULT = "messageResult";
     String ROLE_RESULT = "roleResult";
     String USER_RESULT = "userInfoResult";
 
@@ -80,7 +81,7 @@ public interface ChatMapper {
     ChatRole findChatRoleById(Integer id);
 
     @Select("SELECT * FROM chat_messages WHERE message_id = #{id}")
-    @Results(id = MESSAGE_RESULT, value = {
+    @Results(id = CHAT_MESSAGE_RESULT, value = {
             @Result(property = "chat", column = "chat_id", one = @One(resultMap = CHAT_RESULT)),
             @Result(property = "user", column = "user_id", one = @One(resultMap = USER_RESULT)),
             @Result(property = "message", column = "message_id", one = @One(resultMap = MESSAGE_RESULT)),
@@ -102,16 +103,16 @@ public interface ChatMapper {
 
     @Select("UPDATE messages SET status_id = #{status} WHERE id = #{id};" +
             "SELECT * FROM chat_messages WHERE message_id = #{id};")
-    @ResultMap(MESSAGE_RESULT)
+    @ResultMap(CHAT_MESSAGE_RESULT)
     ChatMessage setStatusById(Integer id, Integer status);
 
     @Select("SELECT FROM new_chat_msg(#{from}, #{to}, #{message})")
-    @ResultMap(MESSAGE_RESULT)
+    @ResultMap(CHAT_MESSAGE_RESULT)
     ChatMessage save(String from, Integer to, String message);
 
     @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};" +
             "SELECT * FROM chat_messages WHERE message_id = #{id};")
-    @ResultMap(MESSAGE_RESULT)
+    @ResultMap(CHAT_MESSAGE_RESULT)
     ChatMessage update(String msg, Integer id);
 
     @Select("SELECT c.id FROM chats c, user_chat_role uc\n" +
@@ -122,7 +123,7 @@ public interface ChatMapper {
     @Select("SELECT cm.* FROM chat_messages cm, messages m \n" +
             "WHERE chat_id = #{chat} AND cm.message_id = m.id AND m.status_id != 2\n" +
             "LIMIT #{limit} OFFSET #{offset}\n")
-    @ResultMap(MESSAGE_RESULT)
+    @ResultMap(CHAT_MESSAGE_RESULT)
     List<ChatMessage> getMessages(Integer chat, Integer limit, Integer offset);
 
     @Select("SELECT * FROM chats ORDER BY random() LIMIT #{limit}")
