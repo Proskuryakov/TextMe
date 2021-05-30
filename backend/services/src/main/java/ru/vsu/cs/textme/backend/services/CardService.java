@@ -38,6 +38,9 @@ public class CardService {
     }
 
     public void addUserTag(User user, String tag) {
+        Card c = cardMapper.findCardByUserId(user.getId());
+        if (c.getTags() != null && c.getTags().contains(tag.toLowerCase())) return;
+        cardMapper.deleteCardTag(c.getId(), tag);
         addTag(cardMapper.findCardByUserId(user.getId()), tag);
     }
 
@@ -47,7 +50,7 @@ public class CardService {
 
     public void deleteTag(User user, String tag) {
         Card c = cardMapper.findCardByUserId(user.getId());
-        if (c.getTags() != null && c.getTags().contains(tag.toLowerCase())) return;
+        if (c.getTags() == null || !c.getTags().contains(tag.toLowerCase())) return;
         cardMapper.deleteCardTag(c.getId(), tag);
     }
 

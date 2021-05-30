@@ -32,6 +32,6 @@ public interface CardMapper {
     void saveContentById(Integer cardId, String content);
 
     @Delete("DELETE FROM card_tag WHERE card_id = #{cardId} AND tag_id = " +
-            "(SELECT * FROM tags WHERE content = #{tag});")
+            "(SELECT t.id FROM tags t WHERE t.content = #{tag});")
     void deleteCardTag(Integer cardId, String tag);
 }

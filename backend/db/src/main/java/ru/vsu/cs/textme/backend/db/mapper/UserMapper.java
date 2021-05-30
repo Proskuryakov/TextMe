@@ -36,7 +36,7 @@ public interface UserMapper {
     @Results(id = CARD_RESULT,value = {
             @Result(property = "id", column = "id"),
             @Result(property = "content", column = "content"),
-            @Result(property = "tags", column = "id", javaType = Tag.class, many = @Many(select = FIND_TAGS)),
+            @Result(property = "tags", column = "id", javaType = List.class, many = @Many(select = FIND_TAGS)),
     })
     Card findCardById(Integer cardId);
 
