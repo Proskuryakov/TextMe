@@ -5,7 +5,7 @@ import ru.vsu.cs.textme.backend.db.mapper.CardMapper;
 import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
-import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
+import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.db.model.User;
 
 import java.util.List;
@@ -65,11 +65,11 @@ public class CardService {
         cardMapper.saveContentById(c.getId(), content);
     }
 
-    public List<CardInfo> findUserNearbyProfilesById(Integer id, Integer page) {
+    public List<Profile> findUserNearbyProfilesById(Integer id, Integer page) {
         return userMapper.findNearbyUserCards(id, 10, page * 10);
     }
 
-    public List<CardInfo> findChatNearbyProfilesById(Integer id, Integer page) {
+    public List<Profile> findChatNearbyProfilesById(Integer id, Integer page) {
         return chatMapper.findNearbyChatCards(id, 10, page * 10);
     }
 }

@@ -6,8 +6,8 @@ import ru.vsu.cs.textme.backend.db.model.ChatRole;
 import ru.vsu.cs.textme.backend.db.model.User;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class ChatMemberInfo extends Info {
+public class ChatMemberInfo {
+    private Info member;
     private ChatRole role;
 }

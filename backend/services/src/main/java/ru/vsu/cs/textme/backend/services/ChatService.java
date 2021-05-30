@@ -27,7 +27,7 @@ public class ChatService {
     }
 
     private MessageError getError(String name, Integer c) {
-        Chat chat = chatMapper.findChatInfoById(c);
+        Chat chat = chatMapper.findChatById(c);
         if (chat == null) return ADDRESS_NOT_FOUND;
         var role = chat.getRole(name);
         return role == null ? ADDRESS_NOT_FOUND : role == ROLE_BLOCKED ? TO_BLOCKED : null;

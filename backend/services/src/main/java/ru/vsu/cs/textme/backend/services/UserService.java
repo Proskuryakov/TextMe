@@ -6,7 +6,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
-import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
+import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.services.exception.UserAuthException;
 import ru.vsu.cs.textme.backend.services.exception.UserExistsException;
 import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
@@ -70,8 +70,8 @@ public class UserService {
             userMapper.saveRoleByUserId(user.getId(), USER.getId());
     }
 
-    public CardInfo findUserInfoById(int id) {
-        return userMapper.findUserInfoById(id);
+    public Profile findUserInfoById(int id) {
+        return userMapper.findProfileById(id);
     }
 
     public static final String AVATAR = "avatar.jpeg";

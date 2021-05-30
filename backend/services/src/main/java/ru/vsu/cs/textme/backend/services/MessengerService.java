@@ -5,7 +5,7 @@ import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.DirectMapper;
 import ru.vsu.cs.textme.backend.db.model.ChatMessage;
 import ru.vsu.cs.textme.backend.db.model.DirectMessage;
-import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
+import ru.vsu.cs.textme.backend.db.model.info.Info;
 
 import java.util.*;
 
@@ -19,9 +19,9 @@ public class MessengerService {
         this.chatMapper = chatMapper;
     }
 
-    public Map<CardInfo, List<DirectMessage>> getDirects(Integer id) {
-        List<CardInfo> directList = directMapper.getAllDirects(id);
-        var map = new HashMap<CardInfo, List<DirectMessage>>();
+    public Map<Info, List<DirectMessage>> getDirects(Integer id) {
+        List<Info> directList = directMapper.getAllDirects(id);
+        var map = new HashMap<Info, List<DirectMessage>>();
         if (directList != null) {
             for (var user : directList) {
                 map.put(user, getDirectPage(id, user.getId(), 0));
@@ -30,12 +30,12 @@ public class MessengerService {
         return map;
     }
 
-    public Map<Integer, List<ChatMessage>> getChats(Integer userId) {
+    public Map<Info, List<ChatMessage>> getChats(Integer userId) {
         var chatList = chatMapper.getAllChats(userId);
-        var map = new HashMap<Integer, List<ChatMessage>>();
+        var map = new HashMap<Info, List<ChatMessage>>();
         if (chatList != null) {
             for (var chat : chatList) {
-                map.put(chat, getChatPage(chat, 0));
+                map.put(chat, getChatPage(chat.getId(), 0));
             }
         }
         return map;
@@ -52,7 +52,7 @@ public class MessengerService {
         var members = chatMapper.findChatMembers(chat);
         if (members != null) {
             for (var m : members) {
-                if (m.getId().equals(userId))
+                if (m.getMember().getId().equals(userId))
                     return chatMapper.getMessages(chat, 128, page * 128);
             }
         }

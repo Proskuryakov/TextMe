@@ -2,7 +2,7 @@ package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.*;
-import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
+import ru.vsu.cs.textme.backend.db.model.info.Info;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public interface DirectMapper {
             @Result(property = "nickname", column = "nickname"),
             @Result(property = "imageUrl", column = "image_id", one = @One(select = "findAvatarByUserId")),
     })
-    CardInfo findUserInfoById(Integer userId);
+    Info findUserInfoById(Integer userId);
 
     @Select("SELECT dm.* FROM direct_messages dm, messages m \n" +
             "WHERE (dm.user_from_id = #{from} AND dm.user_to_id = #{to} " +
@@ -69,5 +69,5 @@ public interface DirectMapper {
             "SELECT dm.user_from_id as id FROM direct_messages dm, messages m\n" +
             "WHERE user_to_id = #{id}  AND m.id = dm.message_id AND m.status_id != 2;")
     @ResultMap("userInfoResult")
-    List<CardInfo> getAllDirects(Integer id);
+    List<Info> getAllDirects(Integer id);
 }

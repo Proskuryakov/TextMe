@@ -3,42 +3,72 @@ package ru.vsu.cs.textme.backend.db.mapper;
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
-import ru.vsu.cs.textme.backend.db.model.info.CardInfo;
+import ru.vsu.cs.textme.backend.db.model.info.Info;
+import ru.vsu.cs.textme.backend.db.model.info.Profile;
 
 import java.util.List;
 
 
 @Mapper
 public interface UserMapper {
+    String USER_RESULT = "userResult";
+    String CARD_RESULT =  "cardResult";
+    String INFO_RESULT = "userInfoResult";
+    String PROFILE_RESULT = "profileResult";
+    String FIND_AVATAR = "findAvatarById";
+    String FIND_USER_ROLES = "findRolesByUserId";
+    String FIND_TAGS = "findTagsByCardId";
+
+    @Select("SELECT url FROM files WHERE id = #{id}")
+    String findAvatarById(Integer id);
+
     @Select("SELECT * FROM users WHERE id = #{userId}")
-    @Results(id = "userResult", value = {
+    @Results(id = USER_RESULT, value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "name", column = "nickname"),
+            @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
+            @Result(property = "roles", column= "id", javaType = List.class,  many = @Many(select = FIND_USER_ROLES)),
+    })
+    User findUserInfo(Integer userId);
+
+    @Select("SELECT * FROM cards WHERE cards.id = #{cardId}")
+    @Results(id = CARD_RESULT,value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "content", column = "content"),
+            @Result(property = "tags", column = "id", javaType = Tag.class, many = @Many(select = FIND_TAGS)),
+    })
+    Card findCardById(Integer cardId);
+
+    @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{cardId} AND t.id = ct.tag_id")
+    List<String> findTagsByCardId(Integer cardId);
+
+    @Select("SELECT * FROM users WHERE id = #{userId}")
+    @Results(id = PROFILE_RESULT, value = {
+            @Result(property = "info", column = "id", one = @One(resultMap = INFO_RESULT)),
+            @Result(property = "card", column = "card_id", one = @One(resultMap = CARD_RESULT)),
+    })
+    Profile findProfileById(Integer userId);
+
+    @Select("SELECT * FROM users WHERE id = #{userId}")
+    @Results(id = USER_RESULT, value = {
             @Result(property = "id", column = "id"),
             @Result(property = "nickname", column = "nickname"),
             @Result(property = "password", column = "password"),
-            @Result(property = "roles", column= "id", javaType = List.class,  many = @Many(select = "findRolesByUserId")),
+            @Result(property = "roles", column= "id", javaType = List.class,  many = @Many(select = FIND_USER_ROLES)),
     })
     User findUserById(Integer userId);
 
     @Select("SELECT * FROM users WHERE email = #{email}")
-    @ResultMap("userResult")
+    @ResultMap(USER_RESULT)
     User findUserByEmail(String email);
 
     @Select("SELECT * FROM users WHERE nickname = #{nickname}")
-    @ResultMap("userResult")
+    @ResultMap(USER_RESULT)
     User findUserByNickname(String nickname);
 
     @Select("SELECT * FROM create_user(#{nickname},#{email},#{password});")
-    @ResultMap("userResult")
+    @ResultMap(USER_RESULT)
     User createUser(RegistrationRequest user);
-
-    @Select("SELECT * FROM users WHERE id = #{userId}")
-    @Results(id = "userInfoResult", value = {
-            @Result(property = "id", column = "id"),
-            @Result(property = "name", column = "nickname"),
-            @Result(property = "imageUrl", column = "image_id", one = @One(select = "findAvatarByUserId")),
-            @Result(property = "card", column = "card_id", one = @One(select = "findCardById")),
-    })
-    CardInfo findUserInfoById(Integer userId);
 
     @Select("SELECT f.url FROM files f, users u WHERE u.id = 4 AND f.id = u.image_id")
     String findAvatarByUserId(Integer userId);
@@ -46,27 +76,16 @@ public interface UserMapper {
     @Select("SELECT ar.* FROM user_app_role as uar, app_roles as ar WHERE uar.user_id = #{userId} AND ar.id = uar.role_id")
     List<AppRole> findRolesByUserId(Integer userId);
 
-    @Select("SELECT * FROM cards WHERE cards.id = #{cardId}")
-    @Results(id = "cardResult",value = {
-            @Result(property = "id", column = "id"),
-            @Result(property = "content", column = "content"),
-            @Result(property = "tags", column = "id", javaType = Tag.class, many = @Many(select = "findTagsByCardId")),
-    })
-    Card findCardById(Integer cardId);
-
-    @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{cardId} AND t.id = ct.tag_id")
-    List<String> findTagsByCardId(Integer cardId);
-
     @Update("CALL save_avatar(#{nickname}, #{fileName}, #{fileType})")
     void saveAvatarByNickname(String nickname, String fileName, Integer fileType);
 
     @Select("INSERT INTO user_app_role (user_id, role_id) VALUES (#{userId}, #{roleId}) ON CONFLICT DO NOTHING;" +
             "SELECT * FROM users WHERE id = #{userId};")
-    @ResultMap("userResult")
+    @ResultMap(USER_RESULT)
     User saveRoleByUserId(Integer userId, Integer roleId);
 
     @Select("SELECT * FROM activate_email(#{code})")
-    @ResultMap("userResult")
+    @ResultMap(USER_RESULT)
     User activateEmail(String code);
 
     @Insert("INSERT INTO inactive_emails (email, uuid, user_id) VALUES(#{email}, #{code}, #{user_id}) ON CONFLICT DO NOTHING")
@@ -92,6 +111,6 @@ public interface UserMapper {
             "GROUP BY u.id " +
             "ORDER BY count(*) DESC " +
             "LIMIT #{limit} OFFSET #{offset};")
-    @ResultMap("userInfoResult")
-    List<CardInfo> findNearbyUserCards(Integer id, Integer limit, Integer offset);
+    @ResultMap(PROFILE_RESULT)
+    List<Profile> findNearbyUserCards(Integer id, Integer limit, Integer offset);
 }

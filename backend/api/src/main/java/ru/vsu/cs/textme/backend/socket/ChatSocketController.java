@@ -29,7 +29,7 @@ public class ChatSocketController {
         var msg = chatService.send(id, content, principal.getName());
         for (var member : msg.getChat().getMembers()) {
             if (member.getRole() != ChatRole.ROLE_BLOCKED)
-                template.convertAndSendToUser(member.getName(), "/user/queue/send/chat", msg);
+                template.convertAndSendToUser(member.getMember().getName(), "/user/queue/send/chat", msg);
 
         }
     }
@@ -39,7 +39,7 @@ public class ChatSocketController {
         var msg = chatService.update(id, message, principal.getName());
         for (var member : msg.getChat().getMembers()) {
             if (member.getRole() != ChatRole.ROLE_BLOCKED)
-                template.convertAndSendToUser(member.getName(), "/user/queue/update/chat", msg);
+                template.convertAndSendToUser(member.getMember().getName(), "/user/queue/update/chat", msg);
 
         }
     }
@@ -50,7 +50,7 @@ public class ChatSocketController {
         if (msg != null)
             for (var member : msg.getChat().getMembers())
                 if (member.getRole() != ChatRole.ROLE_BLOCKED)
-                    template.convertAndSendToUser(member.getName(), "/user/queue/delete/chat", msg);
+                    template.convertAndSendToUser(member.getMember().getName(), "/user/queue/delete/chat", msg);
     }
 
 
@@ -60,7 +60,7 @@ public class ChatSocketController {
         if (msg != null)
             for (var member : msg.getChat().getMembers())
                 if (member.getRole() != ChatRole.ROLE_BLOCKED)
-                    template.convertAndSendToUser(member.getName(), "/user/queue/read/chat", msg);
+                    template.convertAndSendToUser(member.getMember().getName(), "/user/queue/read/chat", msg);
     }
 
     @MessageExceptionHandler
