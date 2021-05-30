@@ -16,7 +16,7 @@ public class TagService {
         this.tagMapper = tagMapper;
     }
 
-    public List<Tag> getTags(String begin) {
+    public List<String> getTags(String begin) {
         return tagMapper.getTagsLike(begin + '%', MAX_LIKE_TAG);
     }
 }
