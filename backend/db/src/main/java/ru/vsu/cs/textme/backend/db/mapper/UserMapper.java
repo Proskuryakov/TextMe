@@ -84,13 +84,6 @@ public interface UserMapper {
     @ResultMap(USER_RESULT)
     User saveRoleByUserId(Integer userId, Integer roleId);
 
-    @Select("SELECT * FROM activate_email(#{code})")
-    @ResultMap(USER_RESULT)
-    User activateEmail(String code);
-
-    @Insert("INSERT INTO inactive_emails (email, uuid, user_id) VALUES(#{email}, #{code}, #{user_id}) ON CONFLICT DO NOTHING")
-    int saveInactiveEmail(String email, String code, Integer user_id);
-
     @Update("UPDATE users SET nickname = #{nickname} WHERE id = #{userId} AND NOT EXISTS(SELECT FROM users WHERE nickname = #{nickname})")
     boolean saveNickname(Integer userId, String nickname);
     @Select("SELECT bu.user_who_id FROM blocked_users bu WHERE " +
@@ -115,4 +108,14 @@ public interface UserMapper {
 
     @Update("UPDATE users SET password = #{password} WHERE users.id = #{id} RETURNING *")
     void savePassword(Integer id, String pass);
+
+    @Select("SELECT * FROM activate_email(#{code})")
+    @ResultMap(USER_RESULT)
+    User activateEmail(String code);
+
+    @Insert("INSERT INTO inactive_emails (email, uuid, user_id) VALUES(#{email}, #{code}, #{user_id}) ON CONFLICT DO NOTHING")
+    int saveInactiveEmail(String email, String code, Integer user_id);
+
+    @Select("SELECT uuid FROM inactive_emails WHERE user_id = #{id} AND email = #{email}")
+    String getInactiveUuid(Integer id, String email);
 }

@@ -44,4 +44,10 @@ public class AuthController {
     public void registerUser(@RequestBody @Valid RegistrationRequest request) {
         userService.register(request);
     }
+
+    @PostMapping("/activate/resend")
+    @ResponseStatus(HttpStatus.OK)
+    public void resendMail(@RequestBody @Valid RegistrationRequest request) {
+        userService.resendMail(request);
+    }
 }
