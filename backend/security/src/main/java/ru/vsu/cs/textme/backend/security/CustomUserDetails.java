@@ -5,8 +5,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.vsu.cs.textme.backend.db.model.AppRole;
 import ru.vsu.cs.textme.backend.db.model.User;
+import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,28 +18,30 @@ public class CustomUserDetails implements UserDetails {
 
     public static CustomUserDetails toCustomUserDetails(User user) {
         CustomUserDetails c = new CustomUserDetails();
-        c.user = user;
-        c.grantedAuthorities = user
-                .getRoles()
-                .stream()
-                .map((Function<AppRole, GrantedAuthority>) appRole -> new SimpleGrantedAuthority(appRole.getContent()))
-                .collect(Collectors.toList());
+        if (user != null) {
+            c.user = user;
+            c.grantedAuthorities = user
+                    .getRoles()
+                    .stream()
+                    .map((Function<AppRole, GrantedAuthority>) appRole -> new SimpleGrantedAuthority(appRole.getContent()))
+                    .collect(Collectors.toList());
+        }
         return c;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return grantedAuthorities;
+        return user == null ? Collections.emptyList() :grantedAuthorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user == null ? "" :user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getNickname();
+        return  user == null ? "" :user.getNickname();
     }
 
     @Override

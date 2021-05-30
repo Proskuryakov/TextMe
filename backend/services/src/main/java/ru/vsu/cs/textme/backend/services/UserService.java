@@ -7,6 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
+import ru.vsu.cs.textme.backend.db.model.request.AuthRequest;
+import ru.vsu.cs.textme.backend.db.model.request.ChangePasswordRequest;
+import ru.vsu.cs.textme.backend.db.model.request.RegistrationRequest;
 import ru.vsu.cs.textme.backend.services.exception.UserException;
 import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
 
@@ -30,13 +33,11 @@ public class UserService {
         this.emailService = emailService;
     }
 
-    public User changePassword(User user, ChangePasswordRequest request) {
+    public void changePassword(User user, ChangePasswordRequest request) {
         if (request.isSimilar())  throw new UserException("SIMILAR PASSWORDS");
         if (!authService.auth(user, request.getOld()))  throw new UserException("BAD PASSWORD");
         String encoded = authService.encode(request.getChange());
         userMapper.savePassword(user.getId(), encoded);
-        user.setPassword(encoded);
-        return user;
     }
 
     public User register(RegistrationRequest regUser) throws UserException {
@@ -111,9 +112,11 @@ public class UserService {
         throw new UserForbiddenException("NOT PERMS");
     }
 
-    public void saveUserNickname(User user, String nickname) {
+    public User saveUserNickname(User user, String nickname) {
         if (!userMapper.saveNickname(user.getId(), nickname))
             throw new UserForbiddenException("NAME IS BUSY");
+        user.setNickname(nickname);
+        return user;
     }
 
 }

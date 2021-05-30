@@ -5,14 +5,16 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.model.AppRole;
-import ru.vsu.cs.textme.backend.db.model.ChangePasswordRequest;
+import ru.vsu.cs.textme.backend.db.model.AuthResponse;
+import ru.vsu.cs.textme.backend.db.model.User;
+import ru.vsu.cs.textme.backend.db.model.request.ChangePasswordRequest;
+import ru.vsu.cs.textme.backend.db.model.request.NicknameRequest;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.security.JwtProvider;
 import ru.vsu.cs.textme.backend.services.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -35,15 +37,16 @@ public class UserController {
     }
 
     @PostMapping("/nickname")
-    public void saveContent(@AuthenticationPrincipal CustomUserDetails details,
-                            @RequestBody @Valid @NotEmpty @Size(min=4, max=16) String nickname) {
-        userService.saveUserNickname(details.getUser(), nickname);
+    public AuthResponse saveContent(@AuthenticationPrincipal CustomUserDetails details,
+                            @RequestBody @Valid NicknameRequest nickname) {
+        User user = userService.saveUserNickname(details.getUser(), nickname.getName());
+        return new AuthResponse(provider.generateToken(user));
     }
     @PostMapping("/pass")
     @ResponseStatus(HttpStatus.OK)
-    public String changePass(@RequestBody @Valid @NotNull ChangePasswordRequest request,
+    public void changePass(@RequestBody @Valid @NotNull ChangePasswordRequest request,
                              @AuthenticationPrincipal CustomUserDetails details) {
-        return provider.generateToken(userService.changePassword(details.getUser(), request));
+        userService.changePassword(details.getUser(), request);
     }
 
     @GetMapping("/")

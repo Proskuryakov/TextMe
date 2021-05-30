@@ -1,18 +1,15 @@
 package ru.vsu.cs.textme.backend.api;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.security.JwtProvider;
-import ru.vsu.cs.textme.backend.db.model.AuthRequest;
+import ru.vsu.cs.textme.backend.db.model.request.AuthRequest;
 import ru.vsu.cs.textme.backend.db.model.AuthResponse;
-import ru.vsu.cs.textme.backend.db.model.RegistrationRequest;
+import ru.vsu.cs.textme.backend.db.model.request.RegistrationRequest;
 import ru.vsu.cs.textme.backend.db.model.User;
 import ru.vsu.cs.textme.backend.services.UserService;
 
 import javax.validation.Valid;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")

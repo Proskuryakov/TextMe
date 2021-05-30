@@ -4,13 +4,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ru.vsu.cs.textme.backend.db.model.request.ContentRequest;
+import ru.vsu.cs.textme.backend.db.model.request.TagRequest;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.CardService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -34,22 +35,22 @@ public class CardController {
     @PostMapping("/user/tag")
     @ResponseStatus(HttpStatus.OK)
     public void addUserTag(@AuthenticationPrincipal CustomUserDetails details,
-                  @RequestBody @Valid @NotEmpty @Size(max = 64) String tag) {
-        cardService.addUserTag(details.getUser(), tag);
+                  @RequestBody @Valid TagRequest tag) {
+        cardService.addUserTag(details.getUser(), tag.getTag());
     }
 
     @DeleteMapping("/user/tag")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUserTag(@AuthenticationPrincipal CustomUserDetails details,
-                           @RequestBody @Valid @NotEmpty @Size(max = 64) String tag) {
-        cardService.deleteTag(details.getUser(), tag);
+                           @RequestBody @Valid TagRequest tag) {
+        cardService.deleteTag(details.getUser(), tag.getTag());
     }
 
     @PostMapping("/user/content")
     @ResponseStatus(HttpStatus.OK)
     public void saveContent(@AuthenticationPrincipal CustomUserDetails details,
-                  @RequestBody @Valid @Size(max = 256) String content) {
-        cardService.saveUserContent(details.getUser(), content);
+                  @RequestBody @Valid ContentRequest content) {
+        cardService.saveUserContent(details.getUser(), content.getContent());
     }
 
     @GetMapping("/chat/{id}")
@@ -62,7 +63,7 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     public List<Profile> getNearbyUsersCards(@AuthenticationPrincipal CustomUserDetails details,
                                              @PathVariable @Valid @Size Integer page,
-                                             @RequestParam @Nullable String tag) {
+                                             @RequestParam("tag") @Nullable String tag) {
         if (tag != null) tag = URLEncoder.encode(tag, StandardCharsets.UTF_8);
         return cardService.findNearbyUserProfilesById(details.getUser().getId(), page, encode(tag));
     }
@@ -77,7 +78,7 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     public List<Profile> getNearbyChatCards(@AuthenticationPrincipal CustomUserDetails details,
                                             @PathVariable @Valid @Size Integer page,
-                                            @RequestParam @Nullable String tag) {
+                                            @RequestParam("tag") @Nullable String tag) {
         return cardService.findNearbyChatProfilesById(details.getUser().getId(), page, encode(tag));
     }
 

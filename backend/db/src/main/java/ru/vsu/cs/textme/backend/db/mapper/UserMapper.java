@@ -5,6 +5,7 @@ import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
+import ru.vsu.cs.textme.backend.db.model.request.RegistrationRequest;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public interface UserMapper {
             @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
 
     })
-    Info findInfoById(Integer id);
+    Info CHAT_MESSAGE_RESULT(Integer id);
 
     @Select("SELECT * FROM cards WHERE cards.id = #{cardId}")
     @Results(id = CARD_RESULT,value = {
@@ -68,7 +69,7 @@ public interface UserMapper {
 
     @Select("SELECT * FROM create_user(#{nickname},#{email},#{password});")
     @ResultMap(USER_RESULT)
-    User createUser(RegistrationRequest user);
+    User createUser(RegistrationRequest request);
 
     @Select("SELECT f.url FROM files f, users u WHERE u.id = 4 AND f.id = u.image_id")
     String findAvatarByUserId(Integer userId);
@@ -106,7 +107,7 @@ public interface UserMapper {
     @ResultMap(PROFILE_RESULT)
     List<Profile> findSpecialProfiles(Integer id, String tags, Integer limit, Integer offset);
 
-    @Update("UPDATE users SET password = #{password} WHERE users.id = #{id} RETURNING *")
+    @Update("UPDATE users SET password = #{pass} WHERE users.id = #{id} RETURNING *")
     void savePassword(Integer id, String pass);
 
     @Select("SELECT * FROM activate_email(#{code})")
