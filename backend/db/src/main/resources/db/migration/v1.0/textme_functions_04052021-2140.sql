@@ -32,19 +32,20 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION save_avatar(nick VARCHAR, path VARCHAR, type INTEGER)
-    RETURNS users LANGUAGE plpgsql AS
+create procedure save_avatar(u_id integer, path character varying)
+    language plpgsql
+as
 $$
 DECLARE
-    _id INTEGER;
+im_id INTEGER;
 BEGIN
-    SELECT _id = image_id FROM users WHERE nickname = nick;
-    IF _id THEN
-        UPDATE files SET url = path, path_type = type WHERE image_id = _id;
-    ELSE
-        INSERT INTO files (url, path_type) VALUES (path, type) RETURNING id AS _id;
-        UPDATE users SET image_id = _id WHERE nickname = nick;
-    END IF;
+SELECT image_id FROM users WHERE id = u_id INTO im_id;
+IF im_id IS NOT NULL THEN
+UPDATE files SET url = path, path_type = 0 WHERE id = im_id;
+ELSE
+        INSERT INTO files (url, path_type) VALUES (path, 0) RETURNING id INTO im_id;
+UPDATE users SET image_id = im_id WHERE id = u_id;
+END IF;
 END;
 $$;
 

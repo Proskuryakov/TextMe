@@ -92,15 +92,9 @@ public class UserService {
         return userMapper.findProfileById(id);
     }
 
-    public static final String AVATAR = "avatar.jpeg";
-    public static final String PHOTOS = "users-resources/%s/photos/";
+    public void saveAvatar(int userId, String path) {
+        userMapper.saveAvatarById(userId, path);
 
-    public void saveAvatar(MultipartFile image, String nickname) {
-        userMapper.saveAvatarByNickname(nickname, AVATAR, 0);
-        try {
-            saveFile(String.format(PHOTOS, nickname), AVATAR, image);
-        }
-        catch (IOException ignored) {}
     }
 
     public String getAvatarUrl(int userId) {

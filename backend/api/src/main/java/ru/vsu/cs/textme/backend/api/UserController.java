@@ -1,5 +1,6 @@
 package ru.vsu.cs.textme.backend.api;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -12,23 +13,22 @@ import ru.vsu.cs.textme.backend.db.model.request.NicknameRequest;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.security.JwtProvider;
+import ru.vsu.cs.textme.backend.services.StorageService;
 import ru.vsu.cs.textme.backend.services.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final StorageService storageService;
     private final JwtProvider provider;
-
-    public UserController(UserService userService, JwtProvider provider) {
-        this.userService = userService;
-        this.provider = provider;
-    }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -60,7 +60,27 @@ public class UserController {
     public void setProfileImage(@AuthenticationPrincipal CustomUserDetails details,
                                 @RequestParam("image") MultipartFile image) {
         if (image == null) return;
-        userService.saveAvatar(image, details.getUsername());
+        String type = image.getContentType();
+        if (type == null) return;
+        int id = details.getUser().getId();
+        switch (type) {
+            case "image/jpeg":
+            case "image/png":
+                try {
+                    String path = storageService.upload(
+                            image.getInputStream(),
+                            type.substring(6),
+                            id
+
+                    );
+                    if(path.isEmpty()) return;
+                    userService.saveAvatar(id, path);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+
     }
 
     @GetMapping("/image/{id}")

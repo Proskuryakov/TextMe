@@ -78,8 +78,6 @@ public interface UserMapper {
     @Select("SELECT ar.* FROM user_app_role as uar, app_roles as ar WHERE uar.user_id = #{userId} AND ar.id = uar.role_id")
     List<AppRole> findRolesByUserId(Integer userId);
 
-    @Update("CALL save_avatar(#{nickname}, #{fileName}, #{fileType})")
-    void saveAvatarByNickname(String nickname, String fileName, Integer fileType);
 
     @Select("INSERT INTO user_app_role (user_id, role_id) VALUES (#{userId}, #{roleId}) ON CONFLICT DO NOTHING;" +
             "SELECT * FROM users WHERE id = #{userId};")
@@ -121,4 +119,7 @@ public interface UserMapper {
 
     @Select("SELECT uuid FROM inactive_emails WHERE user_id = #{id} AND email = #{email}")
     String getInactiveUuid(Integer id, String email);
+
+    @Update("CALL save_avatar(#{userId}, #{path})")
+    int saveAvatarById(int userId, String path);
 }
