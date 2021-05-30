@@ -26,7 +26,7 @@ public interface UserMapper {
     @Select("SELECT * FROM users WHERE id = #{id}")
     @Results(id = INFO_RESULT, value = {
             @Result(property = "id", column = "id"),
-            @Result(property = "name", column = "title"),
+            @Result(property = "name", column = "nickname"),
             @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
 
     })
