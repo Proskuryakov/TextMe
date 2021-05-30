@@ -114,19 +114,6 @@ public interface ChatMapper {
     @ResultMap(MESSAGE_RESULT)
     ChatMessage update(String msg, Integer id);
 
-    @Select("WITH user_tags AS (SELECT tag_id " +
-            "   FROM card_tag ct, cards c, users u " +
-            "   WHERE u.id = #{id} AND u.card_id = c.id AND c.id = ct.card_id) " +
-            "SELECT ch.id AS id FROM cards c " +
-            "    JOIN chats ch ON ch.card_id = c.id" +
-            "    JOIN card_tag ct ON c.id = ct.card_id " +
-            "    JOIN user_tags ut ON ut.tag_id = ct.tag_id " +
-            "GROUP BY ch.id " +
-            "ORDER BY count(*) DESC " +
-            "LIMIT #{limit} OFFSET #{offset};")
-    @ResultMap(PROFILE_RESULT)
-    List<Profile> findNearbyChatCards(Integer id, Integer limit, Integer offset);
-
     @Select("SELECT c.id FROM chats c, user_chat_role uc\n" +
             "WHERE uc.user_id = #{userId} AND uc.chat_id = c.id AND uc.role_id != 3")
     @ResultMap(INFO_RESULT)
@@ -137,4 +124,18 @@ public interface ChatMapper {
             "LIMIT #{limit} OFFSET #{offset}\n")
     @ResultMap(MESSAGE_RESULT)
     List<ChatMessage> getMessages(Integer chat, Integer limit, Integer offset);
+
+    @Select("SELECT * FROM chats ORDER BY random() LIMIT #{limit}")
+    @ResultMap(PROFILE_RESULT)
+    List<Profile> findRandomProfiles(Integer limit);
+
+
+    @Select("SELECT ch.id AS id FROM chats ch\n" +
+            "    JOIN card_tag ct ON ct.card_id = ch.card_id\n" +
+            "    JOIN tags t ON t.id = ct.tag_id AND t.content =ANY(#{tags}::varchar[])\n" +
+            "GROUP BY ch.id\n" +
+            "ORDER BY count(*) DESC\n" +
+            "LIMIT #{limit} OFFSET #{offset};")
+    @ResultMap(PROFILE_RESULT)
+    List<Profile> findSpecialProfiles(String tags, Integer limit, Integer offset);
 }

@@ -1,6 +1,8 @@
 package ru.vsu.cs.textme.backend.services;
 
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import ru.vsu.cs.textme.backend.db.mapper.CardMapper;
 import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
@@ -8,6 +10,9 @@ import ru.vsu.cs.textme.backend.db.model.info.Card;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.db.model.User;
 
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -65,11 +70,41 @@ public class CardService {
         cardMapper.saveContentById(c.getId(), content);
     }
 
-    public List<Profile> findUserNearbyProfilesById(Integer id, Integer page) {
-        return userMapper.findNearbyUserCards(id, 10, page * 10);
+    private static final Integer CARD_LIMIT = 10;
+
+    public List<Profile> findNearbyUserProfilesById(Integer id, Integer page, @NotNull String tag) {
+        List<String> list = StringUtils.hasText(tag) ?
+                Collections.singletonList(tag) :
+                cardMapper.findCardByUserId(id).getTags();
+        return findUserProfilesByIdLike(id, page, list);
     }
 
-    public List<Profile> findChatNearbyProfilesById(Integer id, Integer page) {
-        return chatMapper.findNearbyChatCards(id, 10, page * 10);
+    public List<Profile> findUserProfilesByIdLike(Integer id, Integer page, @Nullable List<String> tags) {
+        if (tags == null) return Collections.emptyList();
+        return userMapper.findSpecialProfiles(id, toString(tags), CARD_LIMIT, page * CARD_LIMIT);
+    }
+
+    public List<Profile> findNearbyChatProfilesById(Integer id, Integer page, @NotNull String tag) {
+        List<String> list =  StringUtils.hasText(tag) ?
+                Collections.singletonList(tag) :
+                cardMapper.findCardByUserId(id).getTags();
+        return findChatProfilesByIdLike(page, list);
+    }
+
+    public List<Profile> findChatProfilesByIdLike(Integer page, @Nullable List<String> tags) {
+        if (tags == null) return Collections.emptyList();
+        return chatMapper.findSpecialProfiles(toString(tags), CARD_LIMIT, page * CARD_LIMIT);
+    }
+
+    public List<Profile> findRandomUserProfiles() {
+        return userMapper.findRandomProfiles(CARD_LIMIT);
+    }
+
+    public List<Profile> findRandomChatProfiles() {
+        return chatMapper.findRandomProfiles(CARD_LIMIT);
+    }
+
+    private String toString(List<String> tags) {
+        return '{' + String.join(",", tags) + '}';
     }
 }

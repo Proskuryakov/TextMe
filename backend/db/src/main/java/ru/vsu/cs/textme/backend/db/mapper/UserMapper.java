@@ -100,17 +100,16 @@ public interface UserMapper {
             "bu.user_who_id = #{one}")
     Integer isBlocked(Integer one, Integer two);
 
+    @Select("SELECT * FROM users ORDER BY random() LIMIT #{limit}")
+    @ResultMap(PROFILE_RESULT)
+    List<Profile> findRandomProfiles(Integer limit);
 
-    @Select("WITH user_tags AS (SELECT tag_id " +
-            "   FROM card_tag ct, cards c, users u " +
-            "   WHERE u.id = #{id} AND u.card_id = c.id AND c.id = ct.card_id) " +
-            "SELECT u.id AS id FROM cards c " +
-            "    JOIN users u ON u.card_id = c.id AND u.id != #{id} " +
-            "    JOIN card_tag ct ON c.id = ct.card_id " +
-            "    JOIN user_tags ut ON ut.tag_id = ct.tag_id " +
-            "GROUP BY u.id " +
-            "ORDER BY count(*) DESC " +
+    @Select("SELECT u.id AS id FROM users u\n" +
+            "    JOIN card_tag ct ON u.card_id = ct.card_id AND u.id != #{id}\n" +
+            "    JOIN tags t ON t.id = ct.tag_id AND t.content =ANY(#{tags}::varchar[])\n" +
+            "GROUP BY u.id\n" +
+            "ORDER BY count(*) DESC\n" +
             "LIMIT #{limit} OFFSET #{offset};")
     @ResultMap(PROFILE_RESULT)
-    List<Profile> findNearbyUserCards(Integer id, Integer limit, Integer offset);
+    List<Profile> findSpecialProfiles(Integer id, String tags, Integer limit, Integer offset);
 }
