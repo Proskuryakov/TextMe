@@ -65,7 +65,7 @@ public class CardController {
                                              @PathVariable @Valid @Size Integer page,
                                              @RequestParam("tag") @Nullable String tag) {
         if (tag != null) tag = URLEncoder.encode(tag, StandardCharsets.UTF_8);
-        return cardService.findNearbyUserProfilesById(details.getUser().getId(), page, encode(tag));
+        return cardService.findNearbyUserProfilesById(details.getUser().getId(), page, tag);
     }
 
     @GetMapping("/users/random")
@@ -79,16 +79,12 @@ public class CardController {
     public List<Profile> getNearbyChatCards(@AuthenticationPrincipal CustomUserDetails details,
                                             @PathVariable @Valid @Size Integer page,
                                             @RequestParam("tag") @Nullable String tag) {
-        return cardService.findNearbyChatProfilesById(details.getUser().getId(), page, encode(tag));
+        return cardService.findNearbyChatProfilesById(details.getUser().getId(), page, tag);
     }
 
     @GetMapping("/chats/random")
     @ResponseStatus(HttpStatus.OK)
     public List<Profile> getRandomChatCards() {
         return cardService.findRandomChatProfiles();
-    }
-
-    private String encode(@Nullable String str) {
-        return (str == null)  ? "" : URLEncoder.encode(str, StandardCharsets.UTF_8);
     }
 }

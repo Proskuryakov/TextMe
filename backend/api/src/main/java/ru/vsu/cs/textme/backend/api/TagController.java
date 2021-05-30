@@ -1,17 +1,18 @@
 package ru.vsu.cs.textme.backend.api;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.textme.backend.db.model.Tag;
 import ru.vsu.cs.textme.backend.services.TagService;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
-@RestController("/api/tag")
+@RestController()
+@RequestMapping("/api/tag")
 public class TagController {
     private final TagService tagService;
 
@@ -21,7 +22,7 @@ public class TagController {
 
     @GetMapping("/like/{begin}")
     @ResponseStatus(OK)
-    public List<Tag> getTags(@PathVariable String begin) {
+    public List<String> getTags(@PathVariable String begin) {
         return tagService.getTags(begin);
     }
 }
