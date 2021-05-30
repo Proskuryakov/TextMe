@@ -18,3 +18,13 @@ spring:
     show-sql: true
 jwt:
   secret: 'l~2Ф8аyg77G*(&TRа@к&%8M<f65&j_K=Еаг6'
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAWNNEUSADYX3FVOEH
+      secretKey: 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
+    region: eu-central-1
+    s3:
+      bucket: textme-filestorage
+      url: https://textme-filestorage.s3.eu-central-1.amazonaws.com/
+
