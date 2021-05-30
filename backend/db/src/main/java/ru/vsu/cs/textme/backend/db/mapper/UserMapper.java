@@ -112,4 +112,7 @@ public interface UserMapper {
             "LIMIT #{limit} OFFSET #{offset};")
     @ResultMap(PROFILE_RESULT)
     List<Profile> findSpecialProfiles(Integer id, String tags, Integer limit, Integer offset);
+
+    @Update("UPDATE users SET password = #{password} WHERE users.id = #{id} RETURNING *")
+    void savePassword(Integer id, String pass);
 }

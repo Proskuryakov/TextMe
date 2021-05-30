@@ -31,6 +31,15 @@ public class UserService {
         this.emailService = emailService;
     }
 
+    public User changePassword(User user, ChangePasswordRequest request) {
+        if (request.isSimilar())  throw new UserAuthException("SIMILAR PASSWORDS");
+        if (!authService.auth(user, request.getOld()))  throw new UserAuthException("BAD PASSWORD");
+        String encoded = authService.encode(request.getChange());
+        userMapper.savePassword(user.getId(), encoded);
+        user.setPassword(encoded);
+        return user;
+    }
+
     public User register(RegistrationRequest regUser) throws UserExistsException {
         regUser.setPassword(authService.encode(regUser.getPassword()));
 
