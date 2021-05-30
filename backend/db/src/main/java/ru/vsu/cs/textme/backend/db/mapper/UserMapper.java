@@ -22,15 +22,6 @@ public interface UserMapper {
     @Select("SELECT url FROM files WHERE id = #{id}")
     String findAvatarById(Integer id);
 
-    @Select("SELECT * FROM users WHERE id = #{userId}")
-    @Results(id = USER_RESULT, value = {
-            @Result(property = "id", column = "id"),
-            @Result(property = "name", column = "nickname"),
-            @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
-            @Result(property = "roles", column= "id", javaType = List.class,  many = @Many(select = FIND_USER_ROLES)),
-    })
-    User findUserInfo(Integer userId);
-
     @Select("SELECT * FROM cards WHERE cards.id = #{cardId}")
     @Results(id = CARD_RESULT,value = {
             @Result(property = "id", column = "id"),
