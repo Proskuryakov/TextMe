@@ -1,19 +1,18 @@
-package ru.vsu.cs.textme.backend.db.model;
+package ru.vsu.cs.textme.backend.db.model.request;
 
 import lombok.Data;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-public class AuthRequest {
+public class RegistrationRequest {
     @Email
-    @Nullable
+    @NotNull
     private String email;
     @Size(min = 4, max = 16)
-    @Nullable
+    @NotNull
     private String nickname;
     @Size(min = 6, max = 64)
     @NotNull
