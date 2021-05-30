@@ -1,7 +1,8 @@
 package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
-import ru.vsu.cs.textme.backend.db.model.*;
+import ru.vsu.cs.textme.backend.db.model.AppRole;
+import ru.vsu.cs.textme.backend.db.model.User;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
@@ -13,12 +14,23 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     String USER_RESULT = "userResult";
-    String CARD_RESULT =  "cardResult";
+    String FIND_CARD = "findCardById";
     String INFO_RESULT = "userInfoResult";
     String PROFILE_RESULT = "profileResult";
     String FIND_AVATAR = "findAvatarById";
     String FIND_USER_ROLES = "findRolesByUserId";
     String FIND_TAGS = "findTagsByCardId";
+
+    @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{id} AND t.id = ct.tag_id")
+    List<String> findTagsByCardId(int id);
+
+    @Select("SELECT * FROM cards WHERE cards.id = #{cardId}")
+    @Results(id = FIND_CARD, value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "content", column = "content"),
+            @Result(property = "tags", column = "id", javaType = List.class, many = @Many(select = FIND_TAGS)),
+    })
+    Card findCardById(Integer cardId);
 
     @Select("SELECT url FROM files WHERE id = #{id}")
     String findAvatarById(Integer id);
@@ -30,23 +42,12 @@ public interface UserMapper {
             @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
 
     })
-    Info CHAT_MESSAGE_RESULT(Integer id);
-
-    @Select("SELECT * FROM cards WHERE cards.id = #{cardId}")
-    @Results(id = CARD_RESULT,value = {
-            @Result(property = "id", column = "id"),
-            @Result(property = "content", column = "content"),
-            @Result(property = "tags", column = "id", javaType = Tag.class, many = @Many(select = FIND_TAGS)),
-    })
-    Card findCardById(Integer cardId);
-
-    @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{cardId} AND t.id = ct.tag_id")
-    List<String> findTagsByCardId(Integer cardId);
+    Info findInfoById(Integer id);
 
     @Select("SELECT * FROM users WHERE id = #{userId}")
     @Results(id = PROFILE_RESULT, value = {
-            @Result(property = "info", column = "id", one = @One(resultMap = INFO_RESULT)),
-            @Result(property = "card", column = "card_id", one = @One(resultMap = CARD_RESULT)),
+            @Result(property = "card", column = "card_id", javaType = Card.class, one = @One(select = FIND_CARD)),
+            @Result(property = "info", column = "id", javaType = Info.class, one = @One(resultMap = INFO_RESULT)),
     })
     Profile findProfileById(Integer userId);
 
@@ -55,7 +56,7 @@ public interface UserMapper {
             @Result(property = "id", column = "id"),
             @Result(property = "nickname", column = "nickname"),
             @Result(property = "password", column = "password"),
-            @Result(property = "roles", column= "id", javaType = List.class,  many = @Many(select = FIND_USER_ROLES)),
+            @Result(property = "roles", column = "id", javaType = List.class, many = @Many(select = FIND_USER_ROLES)),
     })
     User findUserById(Integer userId);
 
@@ -87,6 +88,7 @@ public interface UserMapper {
 
     @Update("UPDATE users SET nickname = #{nickname} WHERE id = #{userId} AND NOT EXISTS(SELECT FROM users WHERE nickname = #{nickname})")
     boolean saveNickname(Integer userId, String nickname);
+
     @Select("SELECT bu.user_who_id FROM blocked_users bu WHERE " +
             "bu.user_blocked_id = #{one} AND " +
             "bu.user_who_id = #{two} OR " +
