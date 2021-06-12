@@ -21,13 +21,13 @@ public class ChatController {
     private final StorageService storageService;
 
 
-    @GetMapping("/create")
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.OK)
     public Chat createChat(@AuthenticationPrincipal CustomUserDetails details, @RequestBody ChatNameRequest request) {
          return chatService.create(details.getUser().getId(), request.getName());
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteChat(@AuthenticationPrincipal CustomUserDetails details, @PathVariable Integer id) {
         chatService.deleteChat(details.getUser().getId(), id);
