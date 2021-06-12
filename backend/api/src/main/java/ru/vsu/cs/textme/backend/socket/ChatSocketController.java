@@ -50,9 +50,9 @@ public class ChatSocketController {
         }
     }
 
-    @MessageMapping("/chat/delete-message/#{id}")
-    public void deleteMessage(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.deleteBy(principal.getUsername(), id);
+    @MessageMapping("/chat/delete-message/{msgId}")
+    public void deleteMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
+        var msg = chatService.deleteBy(principal.getUsername(), msgId);
         if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {
@@ -62,9 +62,9 @@ public class ChatSocketController {
 
     }
 
-    @MessageMapping("/chat/read-message/{id}")
-    public void read(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.readBy(principal.getUsername(), id);
+    @MessageMapping("/chat/read-message/{msgId}")
+    public void read(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
+        var msg = chatService.readBy(principal.getUsername(), msgId);
         if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {

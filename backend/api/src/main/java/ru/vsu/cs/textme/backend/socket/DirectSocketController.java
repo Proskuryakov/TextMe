@@ -35,20 +35,20 @@ public class DirectSocketController {
         template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/update", out);
     }
 
-    @MessageMapping("/direct/delete-message/#{id}")
-    public void deleteMessage(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
-        var out=  directService.deleteBy(principal.getUsername(), id);
+    @MessageMapping("/direct/delete-message/{msgId}")
+    public void deleteMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
+        var out=  directService.deleteBy(principal.getUsername(), msgId);
 
-        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/delete", id);
-        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/delete", id);
+        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/delete", msgId);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/delete", msgId);
     }
 
 
-    @MessageMapping("/direct/read-message/#{id}")
-    public void readMessage(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
-        var out=  directService.readBy(principal.getUsername(), id);
-        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/read", id);
-        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/read", id);
+    @MessageMapping("/direct/read-message/{msgId}")
+    public void readMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
+        var out=  directService.readBy(principal.getUsername(), msgId);
+        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/read", msgId);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/read", msgId);
     }
 
 
