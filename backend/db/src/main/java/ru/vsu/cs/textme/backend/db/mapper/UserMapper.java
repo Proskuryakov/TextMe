@@ -121,5 +121,5 @@ public interface UserMapper {
     String getInactiveUuid(Integer id, String email);
 
     @Update("CALL save_avatar(#{userId}, #{path})")
-    int saveAvatarById(int userId, String path);
+    boolean saveAvatarById(int userId, String path);
 }

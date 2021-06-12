@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
+import ru.vsu.cs.textme.backend.services.exception.ChatException;
 
 import static ru.vsu.cs.textme.backend.db.model.ChatRole.ROLE_BLOCKED;
 import static ru.vsu.cs.textme.backend.db.model.MessageError.*;
@@ -54,5 +55,48 @@ public class ChatService {
         return message != null && (
                 message.isRecipient(user) &&
                 chatMapper.setStatusById(msg, READ.ordinal()) != null) ? message : null;
+    }
+
+    public Chat create(Integer userId, String name) {
+        return chatMapper.createChat(userId, name);
+    }
+
+    public void deleteChat(Integer userId, Integer chatId) {
+        var members = chatMapper.findChatMembers(chatId);
+        if (members == null) return;
+        for (var member : members) {
+            if ( member.isSameId(userId)) {
+                if (member.getRole().canDeleteChat())
+                    chatMapper.deleteChat(chatId);
+                break;
+            }
+        }
+    }
+
+    public void changeName(Integer userId, Integer chatId, String name) {
+        var members = chatMapper.findChatMembers(chatId);
+        if (members == null) return;
+        for (var member : members) {
+            if (member.isSameId(userId)) {
+                if (member.getRole().canChangeName())
+                    chatMapper.setTitle(chatId, name);
+                break;
+            }
+        }
+    }
+
+    public boolean canUpdateAvatar(Integer userId, Integer chatId) {
+        var members = chatMapper.findChatMembers(chatId);
+        if (members == null) return false;
+        for (var member : members) {
+            if (member.isSameId(userId)) {
+                return member.getRole().canUpdateAvatar();
+            }
+        }
+        return false;
+    }
+
+    public void saveAvatar(Integer chatId, String path) {
+        chatMapper.saveAvatarById(chatId, path);
     }
 }

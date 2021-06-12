@@ -1,4 +1,4 @@
-package ru.vsu.cs.textme.backend.services;
+package ru.vsu.cs.textme.backend.services.exception;
 
 import ru.vsu.cs.textme.backend.db.model.MessageError;
 

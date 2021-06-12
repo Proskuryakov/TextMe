@@ -42,6 +42,7 @@ public class UserController {
         User user = userService.saveUserNickname(details.getUser(), nickname.getName());
         return new AuthResponse(provider.generateToken(user));
     }
+
     @PostMapping("/pass")
     @ResponseStatus(HttpStatus.OK)
     public void changePass(@RequestBody @Valid @NotNull ChangePasswordRequest request,
@@ -63,24 +64,13 @@ public class UserController {
         String type = image.getContentType();
         if (type == null) return;
         int id = details.getUser().getId();
-        switch (type) {
-            case "image/jpeg":
-            case "image/png":
-                try {
-                    String path = storageService.upload(
-                            image.getInputStream(),
-                            type.substring(6),
-                            id
-
-                    );
-                    if(path.isEmpty()) return;
-                    userService.saveAvatar(id, path);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
+        try {
+            String path = storageService.uploadUserAvatar(image.getInputStream(), type, id);
+            if (path.isEmpty()) return;
+            userService.saveAvatar(id, path);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
     @GetMapping("/image/{id}")

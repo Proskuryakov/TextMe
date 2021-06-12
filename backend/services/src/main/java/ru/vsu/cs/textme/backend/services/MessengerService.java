@@ -5,9 +5,10 @@ import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.DirectMapper;
 import ru.vsu.cs.textme.backend.db.model.ChatMessage;
 import ru.vsu.cs.textme.backend.db.model.DirectMessage;
-import ru.vsu.cs.textme.backend.db.model.info.Info;
+import ru.vsu.cs.textme.backend.db.model.info.ChatMessageInfo;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MessengerService {
@@ -19,43 +20,45 @@ public class MessengerService {
         this.chatMapper = chatMapper;
     }
 
-    public Map<Info, List<DirectMessage>> getDirects(Integer id) {
-        List<Info> directList = directMapper.getAllDirects(id);
-        var map = new HashMap<Info, List<DirectMessage>>();
-        if (directList != null) {
-            for (var user : directList) {
-                map.put(user, getDirectPage(id, user.getId(), 0));
-            }
-        }
-        return map;
-    }
-
-    public Map<Info, List<ChatMessage>> getChats(Integer userId) {
-        var chatList = chatMapper.getAllChats(userId);
-        var map = new HashMap<Info, List<ChatMessage>>();
-        if (chatList != null) {
-            for (var chat : chatList) {
-                map.put(chat, getChatPage(chat.getId(), 0));
-            }
-        }
-        return map;
+    public List<DirectMessage> getDirects(Integer id, Integer page) {
+        return directMapper.getAllDirects(id, page);
     }
 
     public List<DirectMessage> getDirectPage(Integer from, Integer to, Integer page) {
         return directMapper.getMessages(from, to, 128, page * 128);
     }
 
-    public List<ChatMessage> getChatPage(Integer chat, Integer page) {
-        return chatMapper.getMessages(chat, 128, page * 128);
+    public List<ChatMessageInfo> getChatList(Integer userId) {
+        var chatList = chatMapper.getAllChats(userId);
+        var list = new ArrayList<ChatMessageInfo>();
+        if (chatList != null) {
+            for (var chatInfo : chatList) {
+                var chatMessages = getChatPage(chatInfo.getId(), 0);
+                if (chatMessages == null || chatMessages.isEmpty()) continue;
+                var chatMessage = chatMessages.get(0);
+                list.add(new ChatMessageInfo(chatMessage.getUser(), chatInfo, chatMessage.getMessage()));
+            }
+        }
+        return list;
     }
-    public List<ChatMessage> getChatPage(Integer userId, Integer chat, Integer page) {
-        var members = chatMapper.findChatMembers(chat);
+
+    public List<ChatMessageInfo> getChatPage(Integer userId, Integer chatId, Integer page) {
+        var members = chatMapper.findChatMembers(chatId);
         if (members != null) {
-            for (var m : members) {
-                if (m.getMember().getId().equals(userId))
-                    return chatMapper.getMessages(chat, 128, page * 128);
+            for (var member : members) {
+                if (member.getMember().getId().equals(userId)) {
+                    var list = chatMapper.getMessages(chatId, 128, page * 128);
+                    return  (list == null) ? Collections.emptyList() : list.stream()
+                            .map(msg -> new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage()))
+                            .collect(Collectors.toList());
+                }
             }
         }
         return Collections.emptyList();
     }
+
+    public List<ChatMessage> getChatPage(Integer chat, Integer page) {
+        return chatMapper.getMessages(chat, 128, page * 128);
+    }
+
 }

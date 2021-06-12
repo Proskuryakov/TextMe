@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.textme.backend.db.mapper.DirectMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
+import ru.vsu.cs.textme.backend.services.exception.DirectException;
 
 import static ru.vsu.cs.textme.backend.db.model.MessageError.MESSAGE_NOT_FOUND;
 import static ru.vsu.cs.textme.backend.db.model.MessageError.TIMEOUT;

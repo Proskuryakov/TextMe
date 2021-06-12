@@ -12,84 +12,87 @@ import java.util.List;
 @Mapper
 public interface ChatMapper {
     String CHAT_RESULT = "chatResult";
-    String INFO_RESULT = "chatInfoResult";
+    String CHAT_INFO_RESULT = "chatInfoResult";
     String CARD_RESULT = "chatCardResult";
-    String PROFILE_RESULT = "chatProfileResult";
-    String FIND_AVATAR = "findAvatarById";
-    String FIND_TAGS = "findTagsById";
+    String CHAT_PROFILE_RESULT = "chatProfileResult";
     String CHAT_MESSAGE_RESULT = "chatMsgResult";
     String MESSAGE_RESULT = "messageResult";
-    String ROLE_RESULT = "roleResult";
-    String USER_RESULT = "userInfoResult";
+    String ROLE_RESULT = "chatRoleResult";
+    String MESSAGE_STATUS_RESULT = "messageStatusResult";
+    String USER_INFO_RESULT = "userInfoResult";
+    String CHAT_MEMBERS_RESULT = "chatMembersResult";
 
-    @Select("SELECT nickname FROM users WHERE id = #{id}")
-    String findNicknameById(Integer id);
+    String AVATAR_SELECT = "findAvatarById";
+    String TAGS_SELECT = "findTagsByCardId";
+
     @Select("SELECT url FROM files WHERE id = #{id}")
     String findAvatarById(Integer id);
 
+    @Select("SELECT * FROM users WHERE id = #{userId}")
+    @Results(id = USER_INFO_RESULT, value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "name", column = "nickname"),
+            @Result(property = "imageUrl", column = "image_id", one = @One(select = AVATAR_SELECT)),
+    })
+    Info findUserInfoById(Integer userId);
+
     @Select("SELECT * FROM chats WHERE id = #{id}")
-    @Results(id = INFO_RESULT, value = {
+    @Results(id = CHAT_INFO_RESULT, value = {
             @Result(property = "id", column = "id"),
             @Result(property = "name", column = "title"),
-            @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
-
+            @Result(property = "imageUrl", column = "image_id", one = @One(select = AVATAR_SELECT)),
     })
     Info findInfoById(Integer id);
 
     @Select("SELECT * FROM chats WHERE id = #{id}")
-    @Results(id = PROFILE_RESULT, value = {
-            @Result(property = "info", column = "id", one = @One(resultMap = INFO_RESULT)),
+    @Results(id = CHAT_PROFILE_RESULT, value = {
+            @Result(property = "info", column = "id", one = @One(resultMap = CHAT_INFO_RESULT)),
             @Result(property = "card", column = "card_id", one = @One(resultMap = CARD_RESULT)),
     })
     Profile findProfileById(Integer id);
 
-    @Select("SELECT * FROM chats WHERE id = #{id}")
-    @Results(id = CHAT_RESULT, value = {
-            @Result(property = "info", column = "id", one = @One(resultMap = INFO_RESULT)),
-            @Result(property = "members", column = "id", javaType = List.class, many = @Many(select = "findChatMembers")),
-    })
-    Chat findChatById(Integer id);
-
-
     @Select("SELECT * FROM cards WHERE cards.id = #{cardId}")
-    @Results(id = CARD_RESULT,value = {
+    @Results(id = CARD_RESULT, value = {
             @Result(property = "id", column = "id"),
             @Result(property = "content", column = "content"),
-            @Result(property = "tags", column = "id", javaType = Tag.class, many = @Many(select = FIND_TAGS)),
+            @Result(property = "tags", column = "id", javaType = Tag.class, many = @Many(select = TAGS_SELECT)),
     })
     Card findCardById(Integer cardId);
+
     @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{cardId} AND t.id = ct.tag_id")
     List<String> findTagsByCardId(Integer cardId);
 
-    @Select("SELECT * FROM users WHERE id = #{userId}")
-    @Results(id = USER_RESULT, value = {
-            @Result(property = "id", column = "id"),
-            @Result(property = "name", column = "nickname"),
-            @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
-    })
-    Info findUserInfoById(Integer userId);
-
-    @Select("SELECT user_id, role_id FROM user_chat_role WHERE chat_id = #{id}")
-    @Results(id = "memberResult", value = {
-            @Result(property = "member", column = "user_id", one = @One(resultMap = INFO_RESULT)),
-            @Result(property = "role", column = "role_id", one = @One(select = ROLE_RESULT)),
-    })
-    List<ChatMemberInfo> findChatMembers(Integer id);
 
     @Select("SELECT content FROM chat_roles WHERE id = #{id}")
     @Results(id = ROLE_RESULT)
     ChatRole findChatRoleById(Integer id);
 
+
+    @Select("SELECT content FROM message_statuses WHERE id = #{id}")
+    @Results(id = MESSAGE_STATUS_RESULT)
+    MessageStatus findMessageStatusById(Integer id);
+
+    @Select("SELECT * FROM chats WHERE id = #{id}")
+    @Results(id = CHAT_RESULT, value = {
+            @Result(property = "info", column = "id", one = @One(resultMap = CHAT_INFO_RESULT)),
+            @Result(property = "members", column = "id", javaType = List.class, many = @Many(resultMap = CHAT_MEMBERS_RESULT)),
+    })
+    Chat findChatById(Integer id);
+
+    @Select("SELECT user_id, role_id FROM user_chat_role WHERE chat_id = #{id}")
+    @Results(id = CHAT_MEMBERS_RESULT, value = {
+            @Result(property = "member", column = "user_id", one = @One(resultMap = USER_INFO_RESULT)),
+            @Result(property = "role", column = "role_id", one = @One(resultMap = ROLE_RESULT)),
+    })
+    List<ChatMemberInfo> findChatMembers(Integer id);
+
     @Select("SELECT * FROM chat_messages WHERE message_id = #{id}")
     @Results(id = CHAT_MESSAGE_RESULT, value = {
             @Result(property = "chat", column = "chat_id", one = @One(resultMap = CHAT_RESULT)),
-            @Result(property = "user", column = "user_id", one = @One(resultMap = USER_RESULT)),
+            @Result(property = "user", column = "user_id", one = @One(resultMap = USER_INFO_RESULT)),
             @Result(property = "message", column = "message_id", one = @One(resultMap = MESSAGE_RESULT)),
     })
     ChatMessage findChatMessageById(Integer id);
-
-    @Select("SELECT content FROM message_statuses WHERE id = #{id}")
-    MessageStatus findMessageStatusById(Integer id);
 
     @Select("SELECT * FROM messages WHERE id = #{id}")
     @Results(id = MESSAGE_RESULT, value = {
@@ -97,7 +100,7 @@ public interface ChatMapper {
             @Result(property = "content", column = "content"),
             @Result(property = "dateCreate", column = "date_create"),
             @Result(property = "dateUpdate", column = "date_update"),
-            @Result(property = "status", column= "status_id", one = @One(select = "findMessageStatusById")),
+            @Result(property = "status", column= "status_id", one = @One(resultMap = MESSAGE_STATUS_RESULT)),
     })
     Message findMessageById(Integer id);
 
@@ -117,7 +120,7 @@ public interface ChatMapper {
 
     @Select("SELECT c.id FROM chats c, user_chat_role uc\n" +
             "WHERE uc.user_id = #{userId} AND uc.chat_id = c.id AND uc.role_id != 3")
-    @ResultMap(INFO_RESULT)
+    @ResultMap(CHAT_INFO_RESULT)
     List<Info> getAllChats(Integer userId);
 
     @Select("SELECT cm.* FROM chat_messages cm, messages m \n" +
@@ -127,9 +130,8 @@ public interface ChatMapper {
     List<ChatMessage> getMessages(Integer chat, Integer limit, Integer offset);
 
     @Select("SELECT * FROM chats ORDER BY random() LIMIT #{limit}")
-    @ResultMap(PROFILE_RESULT)
+    @ResultMap(CHAT_PROFILE_RESULT)
     List<Profile> findRandomProfiles(Integer limit);
-
 
     @Select("SELECT ch.id AS id FROM chats ch\n" +
             "    JOIN card_tag ct ON ct.card_id = ch.card_id\n" +
@@ -137,6 +139,19 @@ public interface ChatMapper {
             "GROUP BY ch.id\n" +
             "ORDER BY count(*) DESC\n" +
             "LIMIT #{limit} OFFSET #{offset};")
-    @ResultMap(PROFILE_RESULT)
+    @ResultMap(CHAT_PROFILE_RESULT)
     List<Profile> findSpecialProfiles(String tags, Integer limit, Integer offset);
+
+    @Select("SELECT * FROM create_chat(#{userId}, #{name})")
+    @ResultMap(CHAT_RESULT)
+    Chat createChat(Integer userId, String name);
+
+    @Delete("DELETE FROM chats WHERE id = #{id}")
+    boolean deleteChat(Integer chatId);
+
+    @Update("UPDATE chats SET title = #{title} WHERE id = #{id}")
+    boolean setTitle(Integer chatId, String title);
+
+    @Update("CALL save_chat_avatar(#{chatId}, #{path})")
+    boolean saveAvatarById(Integer chatId, String path);
 }
