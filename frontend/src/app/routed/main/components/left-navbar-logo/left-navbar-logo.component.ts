@@ -11,15 +11,8 @@ export class LeftNavbarLogoComponent implements OnInit {
 
   imageSize = 50;
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {}
 
-  logout(): void {
-    this.authService.deleteToken();
-    this.router.navigate(['/start']);
-  }
 }

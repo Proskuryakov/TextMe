@@ -9,6 +9,7 @@ import { LeftNavbarLogoComponent } from './components/left-navbar-logo/left-navb
 import { AllChatPage } from './pages/all-chat/all-chat.page';
 import { ChatPage } from './pages/chat/chat.page';
 import { ProfilePage } from './pages/profile/profile.page';
+import {FormsModule} from '@angular/forms';
 
 
 @NgModule({
@@ -21,9 +22,10 @@ import { ProfilePage } from './pages/profile/profile.page';
     ChatPage,
     ProfilePage
   ],
-  imports: [
-    CommonModule,
-    MainRoutingModule
-  ]
+    imports: [
+        CommonModule,
+        MainRoutingModule,
+        FormsModule
+    ]
 })
 export class MainModule { }

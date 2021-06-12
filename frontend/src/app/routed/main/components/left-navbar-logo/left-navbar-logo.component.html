@@ -23,26 +23,10 @@
         </a>
       </li>
       <li class="uk-active">
-        <a>
+        <a routerLink="/profile">
           <span uk-icon="user"></span>
           <span >Профиль</span>
         </a>
-        <div class="uk-navbar-dropdown">
-          <ul class="uk-nav uk-navbar-dropdown-nav">
-
-            <li>
-              <div
-                routerLink="/profile"
-                class="uk-navbar-item uk-flex uk-flex-row uk-flex-between uk-padding-remove"
-              >
-                <img class="uk-border-rounded" width="{{imageSize}}" height="{{imageSize}}" src="logo/avatar.jpg" >
-                <span class="uk-text uk-text-bold">MyNickname</span>
-              </div>
-            </li>
-
-            <li><a (click)="logout()">Выйти</a></li>
-          </ul>
-        </div>
       </li>
 
     </ul>

@@ -38,6 +38,10 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
   }
 
+  updateToken(newToken: Token): void{
+    localStorage.setItem(this.tokenKey, newToken.accessToken);
+  }
+
   signup(user: User): Observable<void> {
     return this.http.post<void>(`${environment.api}/auth/register`, user);
   }
