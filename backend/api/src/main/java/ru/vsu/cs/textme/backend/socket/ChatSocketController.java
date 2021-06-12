@@ -10,11 +10,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.ChatMessageInfo;
+import ru.vsu.cs.textme.backend.db.model.request.NewChatMessageRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.ChatException;
 import ru.vsu.cs.textme.backend.services.ChatService;
-
-import java.security.Principal;
 
 @Controller
 public class ChatSocketController {
@@ -27,49 +26,50 @@ public class ChatSocketController {
     }
 
 
-    @MessageMapping("/chat/send/{id}")
-    public void sendMessage(@DestinationVariable Integer id, @Payload String content, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.send(id, content, principal.getUsername());
+    @MessageMapping("/chat/send-message/")
+    public void sendMessage(@Payload NewChatMessageRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
+        var msg = chatService.send(request, principal.getUsername());
+        if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {
-            if (member.getRole() != ChatRole.ROLE_BLOCKED)
+            if (member.getRole().canRead())
                 template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/send", response);
 
         }
     }
 
-    @MessageMapping("/chat/update/{id}")
-    public void updateMessage(@DestinationVariable Integer id, @Payload MessageUpdate message,@AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.update(id, message, principal.getUsername());
+    @MessageMapping("/chat/update-message/")
+    public void updateMessage(@Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
+        var msg = chatService.update(message, principal.getUsername());
+        if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {
-            if (member.getRole() != ChatRole.ROLE_BLOCKED)
+            if (member.getRole().canRead())
                 template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/update", response);
 
         }
     }
 
-    @MessageMapping("/chat/delete/{id}")
-    public void deleteMessage(@DestinationVariable Integer id, @Payload Integer message,@AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.deleteBy(principal.getUsername(), id, message);
-        if (msg != null) {
-            var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
-            for (var member : msg.getChat().getMembers()) {
-                if (member.getRole() != ChatRole.ROLE_BLOCKED)
-                    template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/delete", response);
-            }
+    @MessageMapping("/chat/delete-message/#{id}")
+    public void deleteMessage(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
+        var msg = chatService.deleteBy(principal.getUsername(), id);
+        if (msg == null) return;
+        var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
+        for (var member : msg.getChat().getMembers()) {
+            if (member.getRole().canRead())
+                template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/delete", response);
         }
+
     }
 
-    @MessageMapping("/chat/read/{id}")
-    public void read(@DestinationVariable Integer id, @Payload Integer message, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.readBy(principal.getUsername(), id, message);
-        if (msg != null) {
-            var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
-            for (var member : msg.getChat().getMembers()) {
-                if (member.getRole() != ChatRole.ROLE_BLOCKED)
-                    template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/read", response);
-            }
+    @MessageMapping("/chat/read-message/{id}")
+    public void read(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
+        var msg = chatService.readBy(principal.getUsername(), id);
+        if (msg == null) return;
+        var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
+        for (var member : msg.getChat().getMembers()) {
+            if (member.getRole().canRead())
+                template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/read", response);
         }
     }
 

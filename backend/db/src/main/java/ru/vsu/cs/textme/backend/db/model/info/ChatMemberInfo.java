@@ -14,4 +14,8 @@ public class ChatMemberInfo {
     public boolean isSameId(Integer userId) {
         return member.getId().equals(userId);
     }
+
+    public boolean isSameNickname(String name) {
+        return member.getName().equals(name);
+    }
 }

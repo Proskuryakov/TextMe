@@ -4,10 +4,10 @@ import ru.vsu.cs.textme.backend.db.model.MessageError;
 
 public class DirectException extends RuntimeException {
     private MessageError error;
-    private String recipient;
+    private String payload;
 
-    public DirectException(MessageError err, String recipient) {
+    public DirectException(MessageError err, String payload) {
         this.error = err;
-        this.recipient = recipient;
+        this.payload = payload;
     }
 }

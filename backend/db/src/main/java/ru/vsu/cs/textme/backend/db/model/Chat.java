@@ -1,7 +1,6 @@
 package ru.vsu.cs.textme.backend.db.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
 
@@ -28,8 +27,8 @@ public class Chat {
 
     public boolean canDeleteMessage(String name) {
         for (var m : members) {
-            if (m.getRole() != ChatRole.ROLE_BLOCKED &&
-                    (m.getMember().getName().equals(name) || m.getRole().deleteMessages())) return true;
+            if (m.getMember().getName().equals(name) && m.getRole().canSend() ||
+                    m.getRole().canDeleteOtherMessages()) return true;
         }
         return false;
     }

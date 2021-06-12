@@ -55,10 +55,9 @@ public interface DirectMapper {
     @ResultMap(DIRECT_MESSAGE_RESULT)
     DirectMessage update(String msg, Integer id);
 
-    @Update("UPDATE messages SET status_id = #{status} WHERE id = #{id};" +
-            "SELECT * FROM direct_messages WHERE message_id = #{id};")
+    @Update("UPDATE messages SET status_id = #{status} WHERE id = #{id};")
     @ResultMap(DIRECT_MESSAGE_RESULT)
-    DirectMessage setStatusById(Integer id, Integer status);
+    boolean setStatusById(Integer id, Integer status);
 
     @Select("SELECT dm.* FROM direct_messages dm, messages m \n" +
             "WHERE (dm.user_from_id = #{from} AND dm.user_to_id = #{to} " +

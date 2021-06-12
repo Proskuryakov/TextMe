@@ -4,9 +4,11 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
+import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
+import ru.vsu.cs.textme.backend.db.model.request.NewChatMessageRequest;
+import ru.vsu.cs.textme.backend.db.model.request.PostChatRoleRequest;
 import ru.vsu.cs.textme.backend.services.exception.ChatException;
 
-import static ru.vsu.cs.textme.backend.db.model.ChatRole.ROLE_BLOCKED;
 import static ru.vsu.cs.textme.backend.db.model.MessageError.*;
 import static ru.vsu.cs.textme.backend.db.model.MessageStatus.DELETED;
 import static ru.vsu.cs.textme.backend.db.model.MessageStatus.READ;
@@ -21,40 +23,75 @@ public class ChatService {
         this.userMapper = userMapper;
     }
 
-    public ChatMessage send(Integer chat, String message, String user) {
-        var err = getError(user, chat);
-        if (err != null) throw new ChatException(err,chat);
-        return chatMapper.save(user, chat, message);
+    public ChatMessage send(NewChatMessageRequest request, String user) {
+        var members = chatMapper.findChatMembers(request.getChatId());
+        if (members == null) throw new ChatException(ADDRESS_NOT_FOUND, request.getChatId());
+
+        for (var member : members) {
+            if (member.isSameNickname(user)) {
+                if (member.getRole().canSend())
+                    return chatMapper.save(user, request.getChatId(), request.getMessage());
+                else
+                    break;
+            }
+        }
+        throw new ChatException(NOT_PERMS, request.getChatId());
     }
 
-    private MessageError getError(String name, Integer c) {
-        Chat chat = chatMapper.findChatById(c);
-        if (chat == null) return ADDRESS_NOT_FOUND;
-        var role = chat.getRole(name);
-        return role == null ? ADDRESS_NOT_FOUND : role == ROLE_BLOCKED ? TO_BLOCKED : null;
+
+    public ChatMessage update(MessageUpdate update, String user) {
+        var msg = chatMapper.findChatMessageByMessageId(update.getId());
+        if (msg == null)
+            throw new ChatException(MESSAGE_NOT_FOUND, update.getId());
+        if (!msg.getMessage().canUpdate())
+            throw new ChatException(TIMEOUT, update.getId());
+
+        for (var member : msg.getChat().getMembers()) {
+            if (member.isSameNickname(user)) {
+                if (member.getRole().canSend())
+                    return chatMapper.update(update.getContent(), update.getId());
+                else
+                    break;
+            }
+        }
+
+        throw new ChatException(NOT_PERMS, msg.getChat().getInfo().getId());
     }
 
-    public ChatMessage update(Integer id, MessageUpdate update, String user) {
-        var msg = chatMapper.findMessageById(update.getId());
-        MessageError err = msg == null ? MESSAGE_NOT_FOUND :
-                (err = getError(user, id)) != null ? err :
-                        msg.canUpdate() ? TIMEOUT : null;
-        if (err != null) throw new ChatException(err, id);
-        return chatMapper.update(update.getContent(), update.getId());
+    public ChatMessage deleteBy(String user, Integer msgId) {
+        var msg = chatMapper.findChatMessageByMessageId(msgId);
+        if (msg == null)
+            throw new ChatException(MESSAGE_NOT_FOUND, msgId);
+        for (var member : msg.getChat().getMembers()) {
+            if (member.isSameNickname(user)) {
+                if (msg.getChat().canDeleteMessage(user)) {
+                    if (chatMapper.setStatusById(msg.getMessage().getId(), DELETED.ordinal())) {
+                        msg.getMessage().setStatus(DELETED);
+                        return msg;
+                    }
+                }
+                break;
+            }
+        }
+        throw new ChatException(NOT_PERMS, msg.getChat().getInfo().getId());
     }
 
-    public ChatMessage deleteBy(String user, Integer chat, Integer msg) {
-        var message = chatMapper.findChatMessageById(chat);
-        return message != null && (
-                message.getChat().canDeleteMessage(user) &&
-                chatMapper.setStatusById(msg, DELETED.ordinal()) != null) ? message : null;
-    }
-
-    public ChatMessage readBy(String user, Integer chat, Integer msg) {
-        var message = chatMapper.findChatMessageById(chat);
-        return message != null && (
-                message.isRecipient(user) &&
-                chatMapper.setStatusById(msg, READ.ordinal()) != null) ? message : null;
+    public ChatMessage readBy(String user, Integer msgId) {
+        var msg = chatMapper.findChatMessageByMessageId(msgId);
+        if (msg == null)
+            throw new ChatException(MESSAGE_NOT_FOUND, msgId);
+        for (var member : msg.getChat().getMembers()) {
+            if (member.isSameNickname(user)) {
+                if (member.getRole().canRead()) {
+                    if (chatMapper.setStatusById(msg.getMessage().getId(), READ.ordinal())) {
+                        msg.getMessage().setStatus(READ);
+                        return msg;
+                    }
+                }
+                break;
+            }
+        }
+        throw new ChatException(NOT_PERMS, msg.getChat().getInfo().getId());
     }
 
     public Chat create(Integer userId, String name) {
@@ -98,5 +135,34 @@ public class ChatService {
 
     public void saveAvatar(Integer chatId, String path) {
         chatMapper.saveAvatarById(chatId, path);
+    }
+
+    public void setUserRole(Integer userId, Integer chatId, PostChatRoleRequest request) {
+        if (canChangeRole(userId, chatId, request.getMember(), request.getRole())) {
+            chatMapper.setChatRole(chatId, request.getMember(), request.getRole().getId());
+        }
+    }
+
+    public boolean canChangeRole(Integer userId, Integer chatId, Integer memberId, ChatRole to) {
+        var members = chatMapper.findChatMembers(chatId);
+        if (members == null) return false;
+        ChatMemberInfo toChange = null;
+        for (var member : members) {
+            if (member.isSameId(memberId)) {
+                toChange = member;
+                break;
+            }
+        }
+        if (toChange == null) return false;
+
+        for (var member : members) {
+            if (member.isSameId(userId)) {
+                if (member.getRole().canChangeRole(toChange.getRole(), to)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

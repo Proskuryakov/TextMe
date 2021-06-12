@@ -92,7 +92,7 @@ public interface ChatMapper {
             @Result(property = "user", column = "user_id", one = @One(resultMap = USER_INFO_RESULT)),
             @Result(property = "message", column = "message_id", one = @One(resultMap = MESSAGE_RESULT)),
     })
-    ChatMessage findChatMessageById(Integer id);
+    ChatMessage findChatMessageByMessageId(Integer id);
 
     @Select("SELECT * FROM messages WHERE id = #{id}")
     @Results(id = MESSAGE_RESULT, value = {
@@ -104,10 +104,9 @@ public interface ChatMapper {
     })
     Message findMessageById(Integer id);
 
-    @Select("UPDATE messages SET status_id = #{status} WHERE id = #{id};" +
-            "SELECT * FROM chat_messages WHERE message_id = #{id};")
+    @Update("UPDATE messages SET status_id = #{status} WHERE id = #{id};")
     @ResultMap(CHAT_MESSAGE_RESULT)
-    ChatMessage setStatusById(Integer id, Integer status);
+    boolean setStatusById(Integer id, Integer status);
 
     @Select("SELECT FROM new_chat_msg(#{from}, #{to}, #{message})")
     @ResultMap(CHAT_MESSAGE_RESULT)
@@ -154,4 +153,7 @@ public interface ChatMapper {
 
     @Update("CALL save_chat_avatar(#{chatId}, #{path})")
     boolean saveAvatarById(Integer chatId, String path);
+
+    @Insert("INSERT INTO user_chat_role (user_id, chat_id, role_id) VALUES(#{userId},#{chatId},#{roleId}) ON CONFLICT DO NOTHING")
+    void setChatRole(Integer chatId, Integer userId, Integer roleId);
 }

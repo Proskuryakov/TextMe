@@ -6,11 +6,11 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.MessageUpdate;
+import ru.vsu.cs.textme.backend.db.model.request.NewChatMessageRequest;
+import ru.vsu.cs.textme.backend.db.model.request.NewDirectMessageRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.DirectException;
 import ru.vsu.cs.textme.backend.services.DirectService;
-
-import java.security.Principal;
 
 @Controller
 public class DirectSocketController {
@@ -21,33 +21,34 @@ public class DirectSocketController {
         this.template = template;
     }
 
-    @MessageMapping("/direct/send/{to}")
-    public void sendMessage(@DestinationVariable String to, @Payload String message, @AuthenticationPrincipal CustomUserDetails principal) {
-        var out = directService.send(principal.getUsername(), to, message);
+    @MessageMapping("/direct/send-message/")
+    public void sendMessage(@Payload NewDirectMessageRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
+        var out = directService.send(principal.getUsername(), request);
         template.convertAndSendToUser(principal.getUsername(), "/queue/direct/send", out);
-        template.convertAndSendToUser(to, "/queue/direct/send", out);
+        template.convertAndSendToUser(request.getRecipient(), "/queue/direct/send", out);
     }
 
-    @MessageMapping("/direct/update/{to}")
-    public void updateMessage(@DestinationVariable String to, @Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
-        var out = directService.update(principal.getUsername(), to, message);
+    @MessageMapping("/direct/update-message/")
+    public void updateMessage(@Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
+        var out = directService.update(principal.getUsername(), message);
         template.convertAndSendToUser(principal.getUsername(), "/queue/direct/update", out);
-        template.convertAndSendToUser(to, "/queue/direct/update", out);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/update", out);
     }
 
-    @MessageMapping("/direct/delete/{to}")
-    public void deleteMessage(@DestinationVariable String to, @Payload Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
-        if ( !directService.deleteBy(principal.getUsername(), to, id)) return;
+    @MessageMapping("/direct/delete-message/#{id}")
+    public void deleteMessage(@Payload Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
+        var out=  directService.deleteBy(principal.getUsername(), id);
+
         template.convertAndSendToUser(principal.getUsername(), "/queue/direct/delete", id);
-        template.convertAndSendToUser(to, "/queue/direct/delete", id);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/delete", id);
     }
 
 
-    @MessageMapping("/direct/read/{to}")
-    public void read(@DestinationVariable String to, @Payload Integer id,  @AuthenticationPrincipal CustomUserDetails principal) {
-        if (!directService.readBy(principal.getUsername(), to, id)) return;
+    @MessageMapping("/direct/read-message/#{id}")
+    public void readMessage(@Payload Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
+        var out=  directService.readBy(principal.getUsername(), id);
         template.convertAndSendToUser(principal.getUsername(), "/queue/direct/read", id);
-        template.convertAndSendToUser(to, "/queue/direct/read", id);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/read", id);
     }
 
 
