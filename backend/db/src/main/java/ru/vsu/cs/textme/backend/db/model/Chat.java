@@ -8,7 +8,7 @@ import ru.vsu.cs.textme.backend.db.model.info.Info;
 import java.util.List;
 
 @Data
-public class Chat{
+public class Chat {
     private Info info;
     private List<ChatMemberInfo> members;
 

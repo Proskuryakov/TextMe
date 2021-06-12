@@ -10,4 +10,8 @@ import ru.vsu.cs.textme.backend.db.model.info.Info;
 public class ChatMemberInfo {
     private Info member;
     private ChatRole role;
+
+    public boolean isSameId(Integer userId) {
+        return member.getId().equals(userId);
+    }
 }

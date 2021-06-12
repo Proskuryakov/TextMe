@@ -13,4 +13,16 @@ public enum ChatRole {
     public boolean deleteMessages() {
         return deleteMessages;
     }
+
+    public boolean canDeleteChat() {
+        return this == ROLE_OWNER;
+    }
+
+    public boolean canChangeName() {
+        return this == ROLE_MODER || this == ROLE_OWNER;
+    }
+
+    public boolean canUpdateAvatar() {
+        return this == ROLE_MODER || this == ROLE_OWNER;
+    }
 }
