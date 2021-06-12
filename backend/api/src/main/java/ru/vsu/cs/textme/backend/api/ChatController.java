@@ -14,7 +14,8 @@ import ru.vsu.cs.textme.backend.services.StorageService;
 
 import java.io.IOException;
 
-@RestController("/api/chat")
+@RestController
+@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
