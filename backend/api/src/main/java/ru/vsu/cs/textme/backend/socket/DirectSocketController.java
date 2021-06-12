@@ -36,7 +36,7 @@ public class DirectSocketController {
     }
 
     @MessageMapping("/direct/delete-message/#{id}")
-    public void deleteMessage(@Payload Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
+    public void deleteMessage(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
         var out=  directService.deleteBy(principal.getUsername(), id);
 
         template.convertAndSendToUser(principal.getUsername(), "/queue/direct/delete", id);
@@ -45,7 +45,7 @@ public class DirectSocketController {
 
 
     @MessageMapping("/direct/read-message/#{id}")
-    public void readMessage(@Payload Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
+    public void readMessage(@DestinationVariable Integer id, @AuthenticationPrincipal CustomUserDetails principal) {
         var out=  directService.readBy(principal.getUsername(), id);
         template.convertAndSendToUser(principal.getUsername(), "/queue/direct/read", id);
         template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/read", id);
