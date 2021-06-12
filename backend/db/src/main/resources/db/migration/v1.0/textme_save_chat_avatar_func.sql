@@ -1,4 +1,4 @@
-create procedure save_chat_avatar(ch_id integer, path character varying)
+create or replace procedure save_chat_avatar(ch_id integer, path character varying)
     language plpgsql
 as
 $$

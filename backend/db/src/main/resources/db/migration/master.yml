@@ -37,12 +37,3 @@ databaseChangeLog:
             path: v1.0/textme_save_chat_avatar_func.sql
             relativeToChangelogFile: true
             splitStatements: false
-  - changeSet:
-      id: text_me_chat_role_admin
-      author: wiselder
-      comment: change chat roles
-      changes:
-        - sqlFile:
-            path: v1.0/text_me_chat_role_admin.sql
-            relativeToChangelogFile: true
-            splitStatements: false

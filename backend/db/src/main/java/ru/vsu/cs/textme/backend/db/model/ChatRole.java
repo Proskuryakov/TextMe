@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum ChatRole {
-    ROLE_BLOCKED(3),
-    ROLE_MEMBER(0),
-    ROLE_MODER(1),
-    ROLE_OWNER(2) {
+    ROLE_OWNER(0) {
         @Override
         public boolean canChangeRole(ChatRole from, ChatRole to) {
             return true;
         }
     },
-    ROLE_ADMIN(4) {
+    ROLE_ADMIN(1) {
         private boolean canInteract(ChatRole role) {
             return role == ROLE_MODER || role == ROLE_MEMBER || role == ROLE_BLOCKED;
         }
@@ -21,7 +18,11 @@ public enum ChatRole {
         public boolean canChangeRole(ChatRole from, ChatRole to) {
             return canInteract(from) && canInteract(to);
         }
-    };
+    },
+    ROLE_MODER(2),
+    ROLE_MEMBER(3),
+    ROLE_BLOCKED(4);
+
     private final int id;
 
     public boolean canDeleteOtherMessages() {

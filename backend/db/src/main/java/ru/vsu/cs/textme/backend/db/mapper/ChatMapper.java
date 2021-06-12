@@ -17,10 +17,10 @@ public interface ChatMapper {
     String CHAT_PROFILE_RESULT = "chatProfileResult";
     String CHAT_MESSAGE_RESULT = "chatMsgResult";
     String MESSAGE_RESULT = "messageResult";
-    String ROLE_RESULT = "chatRoleResult";
     String MESSAGE_STATUS_RESULT = "messageStatusResult";
-    String USER_INFO_RESULT = "userInfoResult";
-    String CHAT_MEMBERS_RESULT = "chatMembersResult";
+
+    String USER_INFO_SELECT = "findUserInfoById";
+    String CHAT_MEMBERS_SELECT = "findChatMembers";
 
     String AVATAR_SELECT = "findAvatarById";
     String TAGS_SELECT = "findTagsByCardId";
@@ -29,7 +29,7 @@ public interface ChatMapper {
     String findAvatarById(Integer id);
 
     @Select("SELECT * FROM users WHERE id = #{userId}")
-    @Results(id = USER_INFO_RESULT, value = {
+    @Results(id = USER_INFO_SELECT, value = {
             @Result(property = "id", column = "id"),
             @Result(property = "name", column = "nickname"),
             @Result(property = "imageUrl", column = "image_id", one = @One(select = AVATAR_SELECT)),
@@ -62,12 +62,6 @@ public interface ChatMapper {
     @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{cardId} AND t.id = ct.tag_id")
     List<String> findTagsByCardId(Integer cardId);
 
-
-    @Select("SELECT content FROM chat_roles WHERE id = #{id}")
-    @Results(id = ROLE_RESULT)
-    ChatRole findChatRoleById(Integer id);
-
-
     @Select("SELECT content FROM message_statuses WHERE id = #{id}")
     @Results(id = MESSAGE_STATUS_RESULT)
     MessageStatus findMessageStatusById(Integer id);
@@ -75,21 +69,22 @@ public interface ChatMapper {
     @Select("SELECT * FROM chats WHERE id = #{id}")
     @Results(id = CHAT_RESULT, value = {
             @Result(property = "info", column = "id", one = @One(resultMap = CHAT_INFO_RESULT)),
-            @Result(property = "members", column = "id", javaType = List.class, many = @Many(resultMap = CHAT_MEMBERS_RESULT)),
+            @Result(property = "members", column = "id", javaType = List.class, many = @Many(select = CHAT_MEMBERS_SELECT)),
     })
     Chat findChatById(Integer id);
 
     @Select("SELECT user_id, role_id FROM user_chat_role WHERE chat_id = #{id}")
-    @Results(id = CHAT_MEMBERS_RESULT, value = {
-            @Result(property = "member", column = "user_id", one = @One(resultMap = USER_INFO_RESULT)),
-            @Result(property = "role", column = "role_id", one = @One(resultMap = ROLE_RESULT)),
+    @Results(id = CHAT_MEMBERS_SELECT, value = {
+            @Result(property = "member", column = "user_id", one = @One(select = USER_INFO_SELECT)),
+            @Result(property = "role", column = "role_id", javaType =  ChatRole.class,
+                    typeHandler = org.apache.ibatis.type.EnumOrdinalTypeHandler.class),
     })
     List<ChatMemberInfo> findChatMembers(Integer id);
 
     @Select("SELECT * FROM chat_messages WHERE message_id = #{id}")
     @Results(id = CHAT_MESSAGE_RESULT, value = {
             @Result(property = "chat", column = "chat_id", one = @One(resultMap = CHAT_RESULT)),
-            @Result(property = "user", column = "user_id", one = @One(resultMap = USER_INFO_RESULT)),
+            @Result(property = "user", column = "user_id", one = @One(resultMap = USER_INFO_SELECT)),
             @Result(property = "message", column = "message_id", one = @One(resultMap = MESSAGE_RESULT)),
     })
     ChatMessage findChatMessageByMessageId(Integer id);
@@ -118,7 +113,7 @@ public interface ChatMapper {
     ChatMessage update(String msg, Integer id);
 
     @Select("SELECT c.id FROM chats c, user_chat_role uc\n" +
-            "WHERE uc.user_id = #{userId} AND uc.chat_id = c.id AND uc.role_id != 3")
+            "WHERE uc.user_id = #{userId} AND uc.chat_id = c.id AND uc.role_id != 4 AND uc.role_id != 5")
     @ResultMap(CHAT_INFO_RESULT)
     List<Info> getAllChats(Integer userId);
 
@@ -134,7 +129,7 @@ public interface ChatMapper {
 
     @Select("SELECT ch.id AS id FROM chats ch\n" +
             "    JOIN card_tag ct ON ct.card_id = ch.card_id\n" +
-            "    JOIN tags t ON t.id = ct.tag_id AND t.content =ANY(#{tags}::varchar[])\n" +
+            "    JOIN tags t ON t.id = ct.tag_id AND t.content = ANY(#{tags}::varchar[])\n" +
             "GROUP BY ch.id\n" +
             "ORDER BY count(*) DESC\n" +
             "LIMIT #{limit} OFFSET #{offset};")
@@ -149,7 +144,7 @@ public interface ChatMapper {
     boolean deleteChat(Integer chatId);
 
     @Update("UPDATE chats SET title = #{title} WHERE id = #{id}")
-    boolean setTitle(Integer chatId, String title);
+    boolean setTitle(Integer id, String title);
 
     @Update("CALL save_chat_avatar(#{chatId}, #{path})")
     boolean saveAvatarById(Integer chatId, String path);
