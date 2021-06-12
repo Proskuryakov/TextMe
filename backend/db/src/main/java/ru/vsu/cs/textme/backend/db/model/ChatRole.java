@@ -25,4 +25,8 @@ public enum ChatRole {
     public boolean canUpdateAvatar() {
         return this == ROLE_MODER || this == ROLE_OWNER;
     }
+
+    public boolean canChangeCard() {
+        return this == ROLE_OWNER;
+    }
 }

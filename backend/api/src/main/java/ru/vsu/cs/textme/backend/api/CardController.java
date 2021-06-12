@@ -43,7 +43,7 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteUserTag(@AuthenticationPrincipal CustomUserDetails details,
                            @RequestBody @Valid TagRequest tag) {
-        cardService.deleteTag(details.getUser(), tag.getTag());
+        cardService.deleteUserTag(details.getUser(), tag.getTag());
     }
 
     @PostMapping("/user/content")
@@ -57,6 +57,30 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     public Card getChatCard(@PathVariable @Valid @Size int id) {
         return cardService.findChatCardById(id);
+    }
+
+    @PostMapping("/chat/tag/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addChatTag(@AuthenticationPrincipal CustomUserDetails details,
+                           @PathVariable Integer id,
+                           @RequestBody @Valid TagRequest tag) {
+        cardService.addChatTag(details.getUser().getId(), id, tag.getTag());
+    }
+
+    @DeleteMapping("/chat/tag/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteChatTag(@AuthenticationPrincipal CustomUserDetails details,
+                              @PathVariable Integer id,
+                              @RequestBody @Valid TagRequest tag) {
+        cardService.deleteChatTag(details.getUser().getId(), id, tag.getTag());
+    }
+
+    @PostMapping("/chat/content{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void saveChatContent(@AuthenticationPrincipal CustomUserDetails details,
+                                @PathVariable Integer id,
+                                @RequestBody @Valid ContentRequest content) {
+        cardService.saveChatContent(details.getUser().getId(),id, content.getContent());
     }
 
     @GetMapping("/users/{page}")

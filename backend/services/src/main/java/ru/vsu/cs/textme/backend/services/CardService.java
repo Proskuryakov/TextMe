@@ -6,12 +6,13 @@ import org.springframework.util.StringUtils;
 import ru.vsu.cs.textme.backend.db.mapper.CardMapper;
 import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
+import ru.vsu.cs.textme.backend.db.model.Chat;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
+import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.db.model.User;
 
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,14 +45,39 @@ public class CardService {
         addTag(cardMapper.findCardByUserId(user.getId()), tag);
     }
 
-    public void addChatCard(Integer cardId, String tag) {
-        addTag(cardMapper.findCardByChatId(cardId), tag);
+    public void addChatTag(Integer userId, Integer chatId, String tag) {
+        Chat chat = chatMapper.findChatById(chatId);
+        if (chat == null) return;
+        for (ChatMemberInfo member : chat.getMembers()) {
+            if (member.isSameId(userId)) {
+                if (member.getRole().canChangeCard()) {
+                    addTag(cardMapper.findCardByChatId(chatId), tag);
+                }
+                break;
+            }
+        }
     }
 
-    public void deleteTag(User user, String tag) {
-        Card c = cardMapper.findCardByUserId(user.getId());
-        if (c.getTags() == null || !c.getTags().contains(tag.toLowerCase())) return;
-        cardMapper.deleteCardTag(c.getId(), tag);
+    public void deleteUserTag(User user, String tag) {
+        deleteTag(cardMapper.findCardByUserId(user.getId()), tag);
+    }
+
+    public void deleteChatTag(Integer userId, Integer chatId, String tag) {
+        Chat chat = chatMapper.findChatById(chatId);
+        if (chat == null) return;
+        for (ChatMemberInfo member : chat.getMembers()) {
+            if (member.isSameId(userId)) {
+                if (member.getRole().canChangeCard()) {
+                    deleteTag(cardMapper.findCardByChatId(chatId),tag);
+                }
+                return;
+            }
+        }
+    }
+
+    private void deleteTag(Card card, String tag) {
+        if (card.getTags() == null || !card.getTags().contains(tag.toLowerCase())) return;
+        cardMapper.deleteCardTag(card.getId(), tag);
     }
 
     public static final int MAX_TAGS = 16;
@@ -61,16 +87,26 @@ public class CardService {
     }
 
     public void saveUserContent(User user, String content) {
-        saveContentById(cardMapper.findCardByUserId(user.getId()), content);
+        saveContent(cardMapper.findCardByUserId(user.getId()), content);
     }
 
-    public void saveChatContent(User user, Integer chatId, String content) {
-        //todo
-        //saveContentById(cardMapper.findCardByChatId(chatId), content);
+    public void saveChatContent(Integer userId, Integer chatId, String content) {
+        Chat chat = chatMapper.findChatById(chatId);
+        if (chat == null) return;
+        for (ChatMemberInfo member : chat.getMembers()) {
+            if (member.isSameId(userId)) {
+                if (member.getRole().canChangeCard()) {
+                    saveContent(cardMapper.findCardByChatId(chatId), content);
+                }
+                return;
+            }
+        }
     }
 
-    private void saveContentById(Card c, String content) {
-        cardMapper.saveContentById(c.getId(), content);
+
+    private void saveContent(Card card, String content) {
+        if (card == null) return;
+        cardMapper.saveContentById(card.getId(), content);
     }
 
     private static final Integer CARD_LIMIT = 10;
@@ -110,4 +146,5 @@ public class CardService {
     private String toString(List<String> tags) {
         return '{' + String.join(",", tags) + '}';
     }
+
 }
