@@ -21,8 +21,8 @@ jwt:
 cloud:
   aws:
     credentials:
-      accessKey: AKIAWNNEUSADYX3FVOEH
-      secretKey: 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
+      accessKey: ""
+      secretKey: ""
     region: eu-central-1
     s3:
       bucket: textme-filestorage
