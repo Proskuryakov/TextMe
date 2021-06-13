@@ -139,7 +139,7 @@ public class ChatService {
 
     public void setUserRole(Integer userId, Integer chatId, PostChatRoleRequest request) {
         if (canChangeRole(userId, chatId, request.getMember(), request.getRole())) {
-            chatMapper.setChatRole(chatId, request.getMember(), request.getRole().getId());
+            chatMapper.saveChatRole(chatId, request.getMember(), request.getRole().getId());
         }
     }
 
@@ -164,5 +164,32 @@ public class ChatService {
         }
 
         return false;
+    }
+
+    public void joinChat(Integer userId, Integer chatId) {
+        Chat chat = chatMapper.findChatById(chatId);
+        if (chat == null) throw  new ChatException(ADDRESS_NOT_FOUND, chatId);
+        for (var member : chat.getMembers()) {
+            if (member.isSameId(userId)) {
+                if (member.getRole().canJoinChat()) break;
+                else throw new ChatException(NOT_PERMS, chatId);
+            }
+        }
+        chatMapper.saveChatRole(chatId, userId, ChatRole.ROLE_MEMBER.getId());
+    }
+
+    public void leaveChat(Integer userId, Integer chatId) {
+        Chat chat = chatMapper.findChatById(chatId);
+        if (chat == null) throw  new ChatException(ADDRESS_NOT_FOUND, chatId);
+        for (var member : chat.getMembers()) {
+            if (member.isSameId(userId)) {
+                if (member.getRole().canLeaveChat()) {
+                    chatMapper.saveChatRole(chatId, userId, ChatRole.ROLE_LEAVE.getId());
+                    break;
+                }
+                else throw new ChatException(NOT_PERMS, chatId);
+            }
+        }
+
     }
 }

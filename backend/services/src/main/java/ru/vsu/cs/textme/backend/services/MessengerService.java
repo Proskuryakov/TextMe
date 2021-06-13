@@ -47,18 +47,20 @@ public class MessengerService {
         if (members != null) {
             for (var member : members) {
                 if (member.getMember().getId().equals(userId)) {
-                    var list = chatMapper.getMessages(chatId, 128, page * 128);
-                    return  (list == null) ? Collections.emptyList() : list.stream()
-                            .map(msg -> new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage()))
-                            .collect(Collectors.toList());
+                    if (member.getRole().canRead()) {
+                        var list = getChatPage(chatId, page);
+                        return (list == null) ? Collections.emptyList() : list.stream()
+                                .map(msg -> new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage()))
+                                .collect(Collectors.toList());
+                    }
+                    break;
                 }
             }
         }
         return Collections.emptyList();
     }
 
-    public List<ChatMessage> getChatPage(Integer chat, Integer page) {
+    private List<ChatMessage> getChatPage(Integer chat, Integer page) {
         return chatMapper.getMessages(chat, 128, page * 128);
     }
-
 }

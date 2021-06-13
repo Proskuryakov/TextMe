@@ -66,4 +66,16 @@ public class ChatController {
             e.printStackTrace();
         }
     }
+
+    @PostMapping("/join/{id}")
+    public void join(@AuthenticationPrincipal CustomUserDetails details,
+                        @PathVariable Integer id) {
+        chatService.joinChat(details.getUser().getId(), id);
+    }
+
+    @PostMapping("/leave/{id}")
+    public void leave(@AuthenticationPrincipal CustomUserDetails details,
+                     @PathVariable Integer id) {
+        chatService.leaveChat(details.getUser().getId(), id);
+    }
 }

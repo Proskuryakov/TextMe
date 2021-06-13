@@ -21,9 +21,14 @@ public enum ChatRole {
     },
     ROLE_MODER(2),
     ROLE_MEMBER(3),
-    ROLE_BLOCKED(4);
+    ROLE_LEAVE(4),
+    ROLE_BLOCKED(5);
 
     private final int id;
+
+    public int getId() {
+        return this.id;
+    }
 
     public boolean canDeleteOtherMessages() {
         return this == ROLE_MODER || this == ROLE_ADMIN || this == ROLE_OWNER ;
@@ -49,15 +54,19 @@ public enum ChatRole {
         return false;
     }
 
-    public int getId() {
-        return this.id;
-    }
-
     public boolean canRead() {
-        return this != ROLE_BLOCKED;
+        return this != ROLE_BLOCKED && this != ROLE_LEAVE;
     }
 
     public boolean canSend() {
-        return canRead();
+        return this != ROLE_BLOCKED && this != ROLE_LEAVE;
+    }
+
+    public boolean canJoinChat() {
+        return this == ROLE_LEAVE;
+    }
+
+    public boolean canLeaveChat() {
+        return this != ROLE_LEAVE && this != ROLE_BLOCKED && this != ROLE_OWNER;
     }
 }

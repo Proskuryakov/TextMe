@@ -118,7 +118,7 @@ public interface ChatMapper {
     List<Info> getAllChats(Integer userId);
 
     @Select("SELECT cm.* FROM chat_messages cm, messages m \n" +
-            "WHERE chat_id = #{chat} AND cm.message_id = m.id AND m.status_id != 2\n" +
+            "WHERE cm.chat_id = #{chat} AND cm.message_id = m.id AND m.status_id != 2\n" +
             "LIMIT #{limit} OFFSET #{offset}\n")
     @ResultMap(CHAT_MESSAGE_RESULT)
     List<ChatMessage> getMessages(Integer chat, Integer limit, Integer offset);
@@ -149,6 +149,6 @@ public interface ChatMapper {
     @Update("CALL save_chat_avatar(#{chatId}, #{path})")
     boolean saveAvatarById(Integer chatId, String path);
 
-    @Insert("INSERT INTO user_chat_role (user_id, chat_id, role_id) VALUES(#{userId},#{chatId},#{roleId}) ON CONFLICT DO NOTHING")
-    void setChatRole(Integer chatId, Integer userId, Integer roleId);
+    @Insert("INSERT INTO user_chat_role (user_id, chat_id, role_id) VALUES(#{userId},#{chatId},#{roleId}) ON CONFLICT DO UPDATE")
+    void saveChatRole(Integer chatId, Integer userId, Integer roleId);
 }
