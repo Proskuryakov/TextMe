@@ -1,7 +1,9 @@
 package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
+import org.springframework.cglib.core.Block;
 import ru.vsu.cs.textme.backend.db.model.AppRole;
+import ru.vsu.cs.textme.backend.db.model.Blocked;
 import ru.vsu.cs.textme.backend.db.model.User;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
@@ -20,6 +22,14 @@ public interface UserMapper {
     String FIND_AVATAR = "findAvatarById";
     String FIND_USER_ROLES = "findRolesByUserId";
     String FIND_TAGS = "findTagsByCardId";
+    String FIND_CURRENT_BLOCKED = "findLastBlockUserById";
+
+    @Select("SELECT * FROM banned_users WHERE user_banned_id = #{id} AND time_to > now() LIMIT(1)")
+    @Results(value = {
+            @Result(property = "from", column = "time_from"),
+            @Result(property = "to", column = "time_to")
+    })
+    Blocked findLastBlockUserById(int id);
 
     @Select("SELECT t.content FROM card_tag as ct, tags as t WHERE ct.card_id = #{id} AND t.id = ct.tag_id")
     List<String> findTagsByCardId(int id);
@@ -57,6 +67,7 @@ public interface UserMapper {
             @Result(property = "nickname", column = "nickname"),
             @Result(property = "password", column = "password"),
             @Result(property = "roles", column = "id", javaType = List.class, many = @Many(select = FIND_USER_ROLES)),
+            @Result(property = "blocked", column = "id", javaType = Blocked.class, one = @One(select = FIND_CURRENT_BLOCKED)),
     })
     User findUserById(Integer userId);
 

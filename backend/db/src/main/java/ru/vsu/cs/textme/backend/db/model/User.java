@@ -10,6 +10,7 @@ public class User {
     private String nickname;
     private String password;
     private List<AppRole> roles;
+    private Blocked blocked;
 
     public boolean hasRole(AppRole role) {
         return roles.stream().anyMatch(r -> r == role);
