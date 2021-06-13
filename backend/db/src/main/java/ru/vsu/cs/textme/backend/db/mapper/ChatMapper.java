@@ -151,4 +151,7 @@ public interface ChatMapper {
 
     @Insert("INSERT INTO user_chat_role (user_id, chat_id, role_id) VALUES(#{userId},#{chatId},#{roleId}) ON CONFLICT DO UPDATE")
     void saveChatRole(Integer chatId, Integer userId, Integer roleId);
+
+    @Insert("INSERT INTO user_chat_status (user_id, chat_id, status_id) VALUES(#{userId},#{chatId},#{statusId}) ON CONFLICT DO UPDATE")
+    void saveChatStatus(Integer chatId, Integer userId, Integer statusId);
 }

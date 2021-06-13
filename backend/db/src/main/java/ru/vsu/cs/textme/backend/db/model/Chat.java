@@ -13,21 +13,21 @@ public class Chat {
 
     public boolean isMember(String name) {
         for (var m : members) {
-            if (m.getMember().getName().equals(name)) return true;
+            if (m.isSameNickname(name)) return true;
         }
         return false;
     }
 
     public ChatRole getRole(String name) {
         for (var m : members) {
-            if (m.getMember().getName().equals(name)) return m.getRole();
+            if (m.isSameNickname(name)) return m.getRole();
         }
         return null;
     }
 
     public boolean canDeleteMessage(String name) {
         for (var m : members) {
-            if (m.getMember().getName().equals(name) && m.getRole().canSend() ||
+            if (m.isSameNickname(name) && m.canSend() ||
                     m.getRole().canDeleteOtherMessages()) return true;
         }
         return false;

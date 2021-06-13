@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.model.Chat;
 import ru.vsu.cs.textme.backend.db.model.request.ChatNameRequest;
 import ru.vsu.cs.textme.backend.db.model.request.PostChatRoleRequest;
+import ru.vsu.cs.textme.backend.db.model.request.PostChatStatusRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.ChatService;
 import ru.vsu.cs.textme.backend.services.StorageService;
@@ -47,6 +48,15 @@ public class ChatController {
                             @RequestBody PostChatRoleRequest request) {
         chatService.setUserRole(details.getUser().getId(), id, request);
     }
+
+    @PostMapping("/status/{id}")
+    public void setStatus(@AuthenticationPrincipal CustomUserDetails details,
+                              @PathVariable Integer id,
+                              @RequestBody PostChatStatusRequest request) {
+
+        chatService.setUserStatus(details.getUser().getId(), id, request);
+    }
+
     @PostMapping("/image/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void setProfileImage(@AuthenticationPrincipal CustomUserDetails details,
@@ -78,4 +88,6 @@ public class ChatController {
                      @PathVariable Integer id) {
         chatService.leaveChat(details.getUser().getId(), id);
     }
+
+
 }

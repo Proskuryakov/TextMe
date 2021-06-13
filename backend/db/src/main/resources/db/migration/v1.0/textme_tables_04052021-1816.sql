@@ -20,15 +20,21 @@ INSERT INTO app_roles VALUES (2, 'ROLE_ADMIN') ON CONFLICT DO NOTHING ;
 
 CREATE TABLE IF NOT EXISTS chat_roles (
     id          INTEGER         NOT NULL    PRIMARY KEY,
-    content     VARCHAR(16)     NOT NULL
+    content     VARCHAR(32)     NOT NULL
 );
 
 INSERT INTO chat_roles VALUES (0, 'ROLE_OWNER') ON CONFLICT DO NOTHING;
 INSERT INTO chat_roles VALUES (1, 'ROLE_ADMIN') ON CONFLICT DO NOTHING;
 INSERT INTO chat_roles VALUES (2, 'ROLE_MODER') ON CONFLICT DO NOTHING;
-INSERT INTO chat_roles VALUES (3, 'ROLE_MEMBER') ON CONFLICT DO NOTHING;
-INSERT INTO chat_roles VALUES (4, 'ROLE_LEAVE') ON CONFLICT DO NOTHING;
-INSERT INTO chat_roles VALUES (5, 'ROLE_BLOCKED') ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS chat_statuses (
+  id          INTEGER         NOT NULL    PRIMARY KEY,
+  content     VARCHAR(32)     NOT NULL
+);
+
+INSERT INTO chat_statuses VALUES (0, 'STATUS_MEMBER') ON CONFLICT DO NOTHING;
+INSERT INTO chat_statuses VALUES (1, 'STATUS_LEAVE') ON CONFLICT DO NOTHING;
+INSERT INTO chat_statuses VALUES (2, 'STATUS_KICK') ON CONFLICT DO NOTHING;
 
 
 CREATE TABLE IF NOT EXISTS files (
@@ -158,5 +164,15 @@ CREATE TABLE IF NOT EXISTS user_chat_role (
     CONSTRAINT ucr_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT ucr_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES chats (id) ON DELETE CASCADE,
     CONSTRAINT ucr_role_id_fkey FOREIGN KEY (role_id) REFERENCES chat_roles (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_chat_status (
+    user_id     INTEGER         NOT NULL,
+    chat_id     INTEGER         NOT NULL,
+    status_id     INTEGER         NOT NULL,
+    CONSTRAINT user_chat_status_pkey PRIMARY KEY (user_id, chat_id, status_id),
+    CONSTRAINT ucs_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT ucs_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES chats (id) ON DELETE CASCADE,
+    CONSTRAINT ucs_role_id_fkey FOREIGN KEY (status_id) REFERENCES chat_statuses (id) ON DELETE CASCADE
 );
 

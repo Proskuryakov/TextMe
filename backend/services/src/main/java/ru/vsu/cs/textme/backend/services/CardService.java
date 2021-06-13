@@ -50,7 +50,7 @@ public class CardService {
         if (chat == null) return;
         for (ChatMemberInfo member : chat.getMembers()) {
             if (member.isSameId(userId)) {
-                if (member.getRole().canChangeCard()) {
+                if (member.getRole().canChangeChatInfo()) {
                     addTag(cardMapper.findCardByChatId(chatId), tag);
                 }
                 break;
@@ -67,7 +67,7 @@ public class CardService {
         if (chat == null) return;
         for (ChatMemberInfo member : chat.getMembers()) {
             if (member.isSameId(userId)) {
-                if (member.getRole().canChangeCard()) {
+                if (member.getRole().canChangeChatInfo()) {
                     deleteTag(cardMapper.findCardByChatId(chatId),tag);
                 }
                 return;
@@ -95,7 +95,7 @@ public class CardService {
         if (chat == null) return;
         for (ChatMemberInfo member : chat.getMembers()) {
             if (member.isSameId(userId)) {
-                if (member.getRole().canChangeCard()) {
+                if (member.getRole().canChangeChatInfo()) {
                     saveContent(cardMapper.findCardByChatId(chatId), content);
                 }
                 return;

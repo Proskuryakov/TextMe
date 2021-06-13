@@ -47,7 +47,7 @@ public class MessengerService {
         if (members != null) {
             for (var member : members) {
                 if (member.getMember().getId().equals(userId)) {
-                    if (member.getRole().canRead()) {
+                    if (member.canRead()) {
                         var list = getChatPage(chatId, page);
                         return (list == null) ? Collections.emptyList() : list.stream()
                                 .map(msg -> new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage()))

@@ -3,7 +3,6 @@ package ru.vsu.cs.textme.backend.services;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
@@ -13,12 +12,10 @@ import ru.vsu.cs.textme.backend.db.model.request.RegistrationRequest;
 import ru.vsu.cs.textme.backend.services.exception.UserException;
 import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
 
-import java.io.IOException;
 import java.util.List;
 
 import static ru.vsu.cs.textme.backend.db.model.AppRole.ADMIN;
 import static ru.vsu.cs.textme.backend.db.model.AppRole.USER;
-import static ru.vsu.cs.textme.backend.utils.FileUtils.saveFile;
 
 @Service
 @Log(topic = "org.slf4j.Logger")

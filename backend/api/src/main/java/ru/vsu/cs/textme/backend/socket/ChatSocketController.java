@@ -32,7 +32,7 @@ public class ChatSocketController {
         if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {
-            if (member.getRole().canRead())
+            if (member.canRead())
                 template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/send", response);
 
         }
@@ -44,7 +44,7 @@ public class ChatSocketController {
         if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {
-            if (member.getRole().canRead())
+            if (member.canRead())
                 template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/update", response);
 
         }
@@ -56,7 +56,7 @@ public class ChatSocketController {
         if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {
-            if (member.getRole().canRead())
+            if (member.canRead())
                 template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/delete", response);
         }
 
@@ -68,7 +68,7 @@ public class ChatSocketController {
         if (msg == null) return;
         var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
         for (var member : msg.getChat().getMembers()) {
-            if (member.getRole().canRead())
+            if (member.canRead())
                 template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/read", response);
         }
     }
