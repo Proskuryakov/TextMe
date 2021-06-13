@@ -92,7 +92,7 @@ public interface UserMapper {
             "bu.user_who_id = #{two} OR " +
             "bu.user_blocked_id = #{two} AND " +
             "bu.user_who_id = #{one}")
-    Integer isBlocked(Integer one, Integer two);
+    Integer findBlocked(Integer one, Integer two);
 
     @Select("SELECT * FROM users ORDER BY random() LIMIT #{limit}")
     @ResultMap(PROFILE_RESULT)
@@ -122,4 +122,10 @@ public interface UserMapper {
 
     @Update("CALL save_avatar(#{userId}, #{path})")
     boolean saveAvatarById(int userId, String path);
+
+    @Insert("INSERT INTO blocked_users (user_who_id, user_blocked_id) VALUES(#{object}, #{subject}) ON CONFLICT DO NOTHING RETURNING")
+    void saveBlocked(int object, int subject);
+
+    @Delete("DELETE FROM blocked_users WHERE user_who_id = #{object} AND user_blocked_id = #{subject}")
+    boolean removeBlocked(int object, int subject);
 }

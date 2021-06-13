@@ -72,7 +72,7 @@ public class DirectService {
         User to = userMapper.findUserByNickname(t);
         if (to == null) return MessageError.ADDRESS_NOT_FOUND;
         Integer fId = from.getId(), tId = to.getId();
-        Integer block = userMapper.isBlocked(fId, tId);
+        Integer block = userMapper.findBlocked(fId, tId);
         if (fId.equals(block))
             return MessageError.FROM_BLOCKED;
         else if (tId.equals(block))

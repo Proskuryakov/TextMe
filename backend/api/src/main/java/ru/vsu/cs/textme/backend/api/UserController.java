@@ -36,9 +36,17 @@ public class UserController {
         return userService.findUserInfoById(id);
     }
 
+    @PostMapping("/block/{id}/{blocked}")
+    @ResponseStatus(HttpStatus.OK)
+    public void blockUser(@AuthenticationPrincipal CustomUserDetails details,
+                          @PathVariable @Valid @Size() int id,
+                          @PathVariable boolean blocked) {
+        userService.setBlocked(details.getUser().getId(), id, blocked);
+    }
+
     @PostMapping("/nickname")
     public AuthResponse saveContent(@AuthenticationPrincipal CustomUserDetails details,
-                            @RequestBody @Valid NicknameRequest nickname) {
+                                    @RequestBody @Valid NicknameRequest nickname) {
         User user = userService.saveUserNickname(details.getUser(), nickname.getName());
         return new AuthResponse(provider.generateToken(user));
     }
@@ -46,7 +54,7 @@ public class UserController {
     @PostMapping("/pass")
     @ResponseStatus(HttpStatus.OK)
     public void changePass(@RequestBody @Valid @NotNull ChangePasswordRequest request,
-                             @AuthenticationPrincipal CustomUserDetails details) {
+                           @AuthenticationPrincipal CustomUserDetails details) {
         userService.changePassword(details.getUser(), request);
     }
 

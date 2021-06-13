@@ -110,4 +110,10 @@ public class UserService {
         return user;
     }
 
+    public void setBlocked(int object, int subject, boolean isBlocked) {
+        if (isBlocked)
+            userMapper.saveBlocked(object, subject);
+        else
+            userMapper.removeBlocked(object, subject);
+    }
 }
