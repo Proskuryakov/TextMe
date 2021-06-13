@@ -169,10 +169,22 @@ CREATE TABLE IF NOT EXISTS user_chat_role (
 CREATE TABLE IF NOT EXISTS user_chat_status (
     user_id     INTEGER         NOT NULL,
     chat_id     INTEGER         NOT NULL,
-    status_id     INTEGER         NOT NULL,
+    status_id   INTEGER         NOT NULL,
     CONSTRAINT user_chat_status_pkey PRIMARY KEY (user_id, chat_id, status_id),
     CONSTRAINT ucs_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT ucs_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES chats (id) ON DELETE CASCADE,
     CONSTRAINT ucs_role_id_fkey FOREIGN KEY (status_id) REFERENCES chat_statuses (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+    user_id     INTEGER         NOT NULL,
+    card_id     INTEGER         NOT NULL,
+    message     VARCHAR(2048)   NOT NULL,
+    reviewer_id INTEGER         NULL,
+    review_date DATE            NULL,
+    CONSTRAINT reports_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT reports_card_id_fkey FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
+    CONSTRAINT reports_reviewer_id_fkey FOREIGN KEY (reviewer_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT reports_pkey PRIMARY KEY (user_id, card_id)
 );
 
