@@ -96,11 +96,11 @@ public class StorageService {
     }
 
     private String generateFileName(int userId) {
-        return String.format("%d.jpeg", userId);
+        return String.format("avatars/user-%d.jpeg", userId);
     }
 
     private String generateChatFileName(int chatId) {
-        return String.format("%s.jpeg", Base64Util.encode(UUID.randomUUID().toString()));
+        return String.format("avatars/chat-%d.jpeg", chatId);
     }
 }
 
