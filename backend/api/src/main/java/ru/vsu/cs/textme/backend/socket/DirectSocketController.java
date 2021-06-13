@@ -24,31 +24,31 @@ public class DirectSocketController {
     @MessageMapping("/direct/send-message/")
     public void sendMessage(@Payload NewDirectMessageRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
         var out = directService.send(principal.getUsername(), request);
-        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/send", out);
-        template.convertAndSendToUser(request.getRecipient(), "/queue/direct/send", out);
+        template.convertAndSendToUser(principal.getUsername(), "/queue/messenger/send", out);
+        template.convertAndSendToUser(request.getRecipient(), "/queue/messenger/send", out);
     }
 
     @MessageMapping("/direct/update-message/")
     public void updateMessage(@Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
         var out = directService.update(principal.getUsername(), message);
-        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/update", out);
-        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/update", out);
+        template.convertAndSendToUser(principal.getUsername(), "/queue/messenger/update", out);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/messenger/update", out);
     }
 
     @MessageMapping("/direct/delete-message/{msgId}")
     public void deleteMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
         var out=  directService.deleteBy(principal.getUsername(), msgId);
 
-        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/delete", msgId);
-        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/delete", msgId);
+        template.convertAndSendToUser(principal.getUsername(), "/queue/messenger/delete", msgId);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/messenger/delete", msgId);
     }
 
 
     @MessageMapping("/direct/read-message/{msgId}")
     public void readMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
         var out=  directService.readBy(principal.getUsername(), msgId);
-        template.convertAndSendToUser(principal.getUsername(), "/queue/direct/read", msgId);
-        template.convertAndSendToUser(out.getTo().getName(), "/queue/direct/read", msgId);
+        template.convertAndSendToUser(principal.getUsername(), "/queue/messenger/read", msgId);
+        template.convertAndSendToUser(out.getTo().getName(), "/queue/messenger/read", msgId);
     }
 
 

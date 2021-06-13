@@ -2,6 +2,7 @@ package ru.vsu.cs.textme.backend.db.model.info;
 
 import lombok.Data;
 import ru.vsu.cs.textme.backend.db.model.ChatRole;
+import ru.vsu.cs.textme.backend.db.model.ChatStatus;
 
 @Data
 public class ChatMemberInfo {
