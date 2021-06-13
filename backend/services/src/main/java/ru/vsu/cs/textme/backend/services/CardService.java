@@ -1,5 +1,6 @@
 package ru.vsu.cs.textme.backend.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -17,18 +18,11 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CardService {
     private final CardMapper cardMapper;
-    private final UserService userService;
     private final UserMapper userMapper;
     private final ChatMapper chatMapper;
-
-    public CardService(CardMapper cardMapper, UserService userService, UserMapper userMapper, ChatMapper chatMapper) {
-        this.cardMapper = cardMapper;
-        this.userService = userService;
-        this.userMapper = userMapper;
-        this.chatMapper = chatMapper;
-    }
 
     public Card findUserCardById(int userId) {
         return cardMapper.findCardByUserId(userId);

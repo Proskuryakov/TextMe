@@ -1,15 +1,18 @@
 package ru.vsu.cs.textme.backend.api;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.textme.backend.db.model.request.ContentRequest;
+import ru.vsu.cs.textme.backend.db.model.request.ReportRequest;
 import ru.vsu.cs.textme.backend.db.model.request.TagRequest;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.CardService;
+import ru.vsu.cs.textme.backend.services.ReportService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
@@ -19,12 +22,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/card")
+@RequiredArgsConstructor
 public class CardController {
     private final CardService cardService;
-
-    public CardController(CardService cardService) {
-        this.cardService = cardService;
-    }
+    private final ReportService reportService;
 
     @GetMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -111,4 +112,12 @@ public class CardController {
     public List<Profile> getRandomChatCards() {
         return cardService.findRandomChatProfiles();
     }
+
+    @PostMapping("/report")
+    @ResponseStatus(HttpStatus.OK)
+    public void reportCard(@AuthenticationPrincipal CustomUserDetails details,
+                           @RequestBody @Valid ReportRequest reportRequest) {
+        reportService.addReport(details.getUser().getId(), reportRequest);
+    }
+
 }
