@@ -9,11 +9,13 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.*;
-import ru.vsu.cs.textme.backend.db.model.info.ChatMessageInfo;
+import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
 import ru.vsu.cs.textme.backend.db.model.request.NewChatMessageRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.ChatException;
 import ru.vsu.cs.textme.backend.services.ChatService;
+
+import static ru.vsu.cs.textme.backend.db.model.info.MessageInfo.DestinationType.CHAT;
 
 @Controller
 public class ChatSocketController {
@@ -30,10 +32,10 @@ public class ChatSocketController {
     public void sendMessage(@Payload NewChatMessageRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
         var msg = chatService.send(request, principal.getUsername());
         if (msg == null) return;
-        var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
+        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
         for (var member : msg.getChat().getMembers()) {
             if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/send", response);
+                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/send", response);
 
         }
     }
@@ -42,10 +44,10 @@ public class ChatSocketController {
     public void updateMessage(@Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
         var msg = chatService.update(message, principal.getUsername());
         if (msg == null) return;
-        var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
+        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
         for (var member : msg.getChat().getMembers()) {
             if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/update", response);
+                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/update", response);
 
         }
     }
@@ -54,10 +56,10 @@ public class ChatSocketController {
     public void deleteMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
         var msg = chatService.deleteBy(principal.getUsername(), msgId);
         if (msg == null) return;
-        var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
+        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
         for (var member : msg.getChat().getMembers()) {
             if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/delete", response);
+                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/delete", response);
         }
 
     }
@@ -66,10 +68,10 @@ public class ChatSocketController {
     public void read(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
         var msg = chatService.readBy(principal.getUsername(), msgId);
         if (msg == null) return;
-        var response = new ChatMessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage());
+        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
         for (var member : msg.getChat().getMembers()) {
             if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/chat/read", response);
+                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/read", response);
         }
     }
 

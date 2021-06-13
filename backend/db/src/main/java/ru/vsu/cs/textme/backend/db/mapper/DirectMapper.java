@@ -3,6 +3,7 @@ package ru.vsu.cs.textme.backend.db.mapper;
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
+import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
 
 import java.util.List;
 
@@ -44,16 +45,15 @@ public interface DirectMapper {
             @Result(property = "to", column = "user_to_id", javaType = Info.class, one = @One(resultMap = USER_INFO_RESULT)),
             @Result(property = "message", column = "message_id",javaType = Message.class, one = @One(resultMap = MESSAGE_RESULT)),
     })
-    DirectMessage findDirectMessageById(Integer id);
+    MessageInfo findDirectMessageById(Integer id);
 
     @Select("SELECT * FROM new_direct_msg(#{from}, #{to}, #{message})")
     @ResultMap(DIRECT_MESSAGE_RESULT)
-    DirectMessage save(String from, String to, String message);
+    MessageInfo save(String from, String to, String message);
 
-    @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};" +
-            "SELECT * FROM direct_messages WHERE message_id = #{id};")
+    @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};";)
     @ResultMap(DIRECT_MESSAGE_RESULT)
-    DirectMessage update(String msg, Integer id);
+    void update(String msg, Integer id);
 
     @Update("UPDATE messages SET status_id = #{status} WHERE id = #{id};")
     @ResultMap(DIRECT_MESSAGE_RESULT)
@@ -65,7 +65,7 @@ public interface DirectMapper {
             "   AND dm.message_id = m.id AND m.status_id != 2\n" +
             "LIMIT #{limit} OFFSET #{offset};")
     @ResultMap(DIRECT_MESSAGE_RESULT)
-    List<DirectMessage> getMessages(Integer from, Integer to, Integer limit, Integer offset);
+    List<MessageInfo> getMessages(Integer from, Integer to, Integer limit, Integer offset);
 
     @Select("SELECT dm.* FROM direct_messages dm, messages m\n" +
             "WHERE user_from_id = #{id} AND m.id = dm.message_id AND m.status_id != 2\n" +
@@ -73,5 +73,5 @@ public interface DirectMapper {
             "SELECT dm.* FROM direct_messages dm, messages m\n" +
             "WHERE user_to_id = #{id}  AND m.id = dm.message_id AND m.status_id != 2;")
     @ResultMap(DIRECT_MESSAGE_RESULT)
-    List<DirectMessage> getAllDirects(Integer id, Integer page);
+    List<MessageInfo> getAllDirects(Integer id, Integer page);
 }

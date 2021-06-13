@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
-import ru.vsu.cs.textme.backend.db.model.info.ChatStatus;
+import ru.vsu.cs.textme.backend.db.model.ChatStatus;
 import ru.vsu.cs.textme.backend.db.model.request.NewChatMessageRequest;
 import ru.vsu.cs.textme.backend.db.model.request.PostChatRoleRequest;
 import ru.vsu.cs.textme.backend.db.model.request.PostChatStatusRequest;
