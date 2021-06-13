@@ -51,7 +51,7 @@ public interface DirectMapper {
     @ResultMap(DIRECT_MESSAGE_RESULT)
     MessageInfo save(String from, String to, String message);
 
-    @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};")
+    @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};";)
     @ResultMap(DIRECT_MESSAGE_RESULT)
     void update(String msg, Integer id);
 
