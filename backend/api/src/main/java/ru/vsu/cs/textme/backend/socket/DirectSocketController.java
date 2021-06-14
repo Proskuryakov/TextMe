@@ -25,10 +25,11 @@ public class DirectSocketController {
     }
 
     @MessageMapping("/direct/send-message/")
-    public void sendMessage(@Payload NewMessageRequest request, @AuthenticationPrincipal Authentication authentication) {
-//        var id = principal.getId();
-        var out = directService.send(2, request);
-        send(2, out.getTo().getId(), out, "send");
+    public void sendMessage(@Payload NewMessageRequest request, @AuthenticationPrincipal
+            Authentication principal) {
+        // var id = principal.getId();
+        // var out = directService.send(2, request);
+        // send(2, out.getTo().getId(), out, "send");
     }
 
     @MessageMapping("/direct/update-message/")

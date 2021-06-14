@@ -32,26 +32,30 @@ public class JwtFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-         logger.info("do filter...");
-        String token = getTokenFromRequest((HttpServletRequest) servletRequest);
-        if (token != null && jwtProvider.validateToken(token)) {
-            String nickname = jwtProvider.getNicknameFromToken(token);
-            CustomUserDetails details = customUserDetailsService.loadUserByUsername(nickname);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        logger.info("do filter...");
+        var authToken = getAuthToken(getAuthHeader((HttpServletRequest) servletRequest));
+        if (authToken != null) {
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private static String getTokenFromRequest(HttpServletRequest request) {
-        return getTokenFromHeader(request.getHeader(AUTHORIZATION));
+    private static String getAuthHeader(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION);
     }
 
     public static String getTokenFromHeader(String header) {
         return hasText(header) && header.startsWith("Bearer ") ? header.substring(7) : null;
     }
 
-    public static String getTokenFromHeaders(List<String> headers) {
-        return headers == null || headers.isEmpty() ? null : getTokenFromHeader(headers.get(0));
+    public UsernamePasswordAuthenticationToken getAuthToken(String header) {
+        var token = getTokenFromHeader(header);
+        if (token != null && jwtProvider.validateToken(token)) {
+            String nickname = jwtProvider.getNicknameFromToken(token);
+            var details = customUserDetailsService.loadUserByUsername(nickname);
+            return new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
+        }
+        return null;
     }
+
 }

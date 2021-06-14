@@ -27,13 +27,11 @@ import static org.springframework.util.StringUtils.hasText;
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WSConfiguration implements WebSocketMessageBrokerConfigurer {
-    private final JwtProvider provider;
-    private final CustomUserDetailsService detailsService;
-
+    private final WSChannelInterceptor interceptor;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new WSChannelInterceptor(provider, detailsService));
+        registration.interceptors(interceptor);
     }
 
     @Override
@@ -46,7 +44,6 @@ public class WSConfiguration implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setHandshakeHandler(new WSDefaultHandshakeHandler(provider, detailsService))
                 .setAllowedOriginPatterns("*")
                 .withSockJS()
                 .setSupressCors(true);

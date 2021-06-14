@@ -18,8 +18,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class WSDefaultHandshakeHandler extends DefaultHandshakeHandler {
-    private final JwtProvider provider;
-    private final CustomUserDetailsService detailsService;
 
     @Override
     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler handler, Map<String, Object> attr) {
