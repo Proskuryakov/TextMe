@@ -1,5 +1,7 @@
 package ru.vsu.cs.textme.backend.socket;
 
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -7,15 +9,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.MessageUpdate;
-import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
 import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.DirectException;
 import ru.vsu.cs.textme.backend.services.DirectService;
 
-import java.security.Principal;
 
 @Controller
+@Log4j2
 public class DirectSocketController {
     private final DirectService directService;
     private final SimpMessagingTemplate template;
@@ -25,7 +26,11 @@ public class DirectSocketController {
     }
 
     @MessageMapping("/direct/send-message/")
-    public void sendMessage(@Payload NewMessageRequest request, @AuthenticationPrincipal Authentication authentication) {
+    public void sendMessage(@Payload NewMessageRequest request,
+                            @AuthenticationPrincipal Authentication authentication) {
+        log.log(Level.INFO, "SEND MESSAGE...");
+        log.log(Level.INFO, "Authentication is " + authentication);
+
 //        var id = principal.getId();
         var out = directService.send(2, request);
         send(2, out.getTo().getId(), out, "send");
