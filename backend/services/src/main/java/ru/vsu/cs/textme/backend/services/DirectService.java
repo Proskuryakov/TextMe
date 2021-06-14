@@ -23,7 +23,9 @@ public class DirectService {
         this.directMapper = directMapper;
         this.userMapper = userMapper;
     }
-
+    private String toString(List<String> str) {
+        return '{' + String.join(",", str) + '}';
+    }
     public MessageInfo send(Integer from, NewMessageRequest request) {
         checkAccess(from, request.getRecipient());
         var message = directMapper.save(from, request.getRecipient(), request.getMessage());

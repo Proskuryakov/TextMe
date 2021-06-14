@@ -82,5 +82,4 @@ public interface DirectMapper {
 
     @Insert("CALL save_message_file(#{id}, #{path})")
     void saveMessageFile(Integer id, String path);
-
 }
