@@ -66,15 +66,15 @@ public class ChatController {
         String type = image.getContentType();
         if (type == null) return;
         int userId = details.getUser().getId();
+        chatService.checkAvatarPermissions(userId, id);
+        var path = "";
         try {
-            if (chatService.canUpdateAvatar(userId, id)) {
-                String path = storageService.uploadChatAvatar(image.getInputStream(), type, id);
-                if (path.isEmpty()) return;
-                chatService.saveAvatar(id, path);
-            }
+            path = storageService.uploadChatAvatar(image.getInputStream(), type, id);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (path.isEmpty()) return;
+        chatService.saveAvatar(id, path);
     }
 
     @PostMapping("/join/{id}")

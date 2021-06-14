@@ -43,7 +43,9 @@ public class MessengerService {
                 var chatMessages = getChatPage(chatInfo.getId(), page);
                 if (chatMessages == null || chatMessages.isEmpty()) continue;
                 var chatMessage = chatMessages.get(0);
-                list.add(new MessageInfo(chatMessage.getUser(), chatInfo, chatMessage.getMessage(), CHAT));
+                var info = chatMessage.getInfo();
+                info.setDestination(CHAT);
+                list.add(info);
             }
         }
         return list;
@@ -57,7 +59,11 @@ public class MessengerService {
                     if (member.canRead()) {
                         var list = getChatPage(chatId, page);
                         return (list == null) ? Collections.emptyList() : list.stream()
-                                .map(msg -> new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT))
+                                .map(chatMessage -> {
+                                    var info = chatMessage.getInfo();
+                                    info.setDestination(CHAT);
+                                    return info;
+                                })
                                 .collect(Collectors.toList());
                     }
                     break;

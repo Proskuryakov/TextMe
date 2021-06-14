@@ -2,10 +2,7 @@ package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.*;
-import ru.vsu.cs.textme.backend.db.model.info.Card;
-import ru.vsu.cs.textme.backend.db.model.info.Profile;
-import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
-import ru.vsu.cs.textme.backend.db.model.info.Info;
+import ru.vsu.cs.textme.backend.db.model.info.*;
 
 import java.util.List;
 
@@ -18,7 +15,8 @@ public interface ChatMapper {
     String CHAT_MESSAGE_RESULT = "chatMsgResult";
     String MESSAGE_RESULT = "messageResult";
     String MESSAGE_STATUS_RESULT = "messageStatusResult";
-
+    String MESSAGE_INFO_SELECT = "findChatMessageInfoById";
+    String MESSAGE_FILES_SELECT = "findMessageFilesById";
     String USER_INFO_SELECT = "findUserInfoById";
     String CHAT_MEMBERS_SELECT = "findChatMembers";
 
@@ -27,6 +25,9 @@ public interface ChatMapper {
 
     @Select("SELECT url FROM files WHERE id = #{id}")
     String findAvatarById(Integer id);
+
+    @Select("SELECT f.url FROM message_file mf, files f WHERE mf.message_id = #{id} AND f.id = mf.file_id")
+    List<String> findMessageFilesById(Integer id);
 
     @Select("SELECT * FROM users WHERE id = #{userId}")
     @Results(id = USER_INFO_SELECT, value = {
@@ -82,10 +83,18 @@ public interface ChatMapper {
     List<ChatMemberInfo> findChatMembers(Integer id);
 
     @Select("SELECT * FROM chat_messages WHERE message_id = #{id}")
+    @Results(id = MESSAGE_INFO_SELECT, value = {
+            @Result(property = "from", column = "user_id", javaType = Info.class, one = @One(select = USER_INFO_SELECT)),
+            @Result(property = "to", column = "chat_id", javaType = Info.class, one = @One(resultMap = CHAT_INFO_RESULT)),
+            @Result(property = "message", column = "message_id",javaType = Message.class, one = @One(resultMap = MESSAGE_RESULT)),
+            @Result(property = "images", column = "message_id",javaType = List.class, many = @Many(select = MESSAGE_FILES_SELECT)),
+    })
+    MessageInfo findChatMessageInfoById(Integer id);
+
+    @Select("SELECT * FROM chat_messages WHERE message_id = #{id}")
     @Results(id = CHAT_MESSAGE_RESULT, value = {
-            @Result(property = "chat", column = "chat_id", one = @One(resultMap = CHAT_RESULT)),
-            @Result(property = "user", column = "user_id", one = @One(resultMap = USER_INFO_SELECT)),
-            @Result(property = "message", column = "message_id", one = @One(resultMap = MESSAGE_RESULT)),
+            @Result(property = "info", column = "message_id", one = @One(select = MESSAGE_INFO_SELECT)),
+            @Result(property = "members", column = "chat_id", many = @Many(select = CHAT_MEMBERS_SELECT)),
     })
     ChatMessage findChatMessageByMessageId(Integer id);
 
@@ -105,7 +114,7 @@ public interface ChatMapper {
 
     @Select("SELECT FROM new_chat_msg(#{from}, #{to}, #{message})")
     @ResultMap(CHAT_MESSAGE_RESULT)
-    ChatMessage save(String from, Integer to, String message);
+    ChatMessage save(Integer from, Integer to, String message);
 
     @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};" +
             "SELECT * FROM chat_messages WHERE message_id = #{id};")

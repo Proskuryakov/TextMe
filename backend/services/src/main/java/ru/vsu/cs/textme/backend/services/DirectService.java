@@ -5,7 +5,7 @@ import ru.vsu.cs.textme.backend.db.mapper.DirectMapper;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
-import ru.vsu.cs.textme.backend.db.model.request.NewDirectMessageRequest;
+import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.services.exception.DirectException;
 
 import static ru.vsu.cs.textme.backend.db.model.MessageError.*;
@@ -22,24 +22,21 @@ public class DirectService {
         this.userMapper = userMapper;
     }
 
-    public MessageInfo send(String from, NewDirectMessageRequest request) {
-        var err = getAccessError(from, request.getRecipient());
-        if (err != null) throw new DirectException(err, request.getRecipient());
+    public MessageInfo send(Integer from, NewMessageRequest request) {
+        checkAccess(from, request.getRecipient());
         var message = directMapper.save(from, request.getRecipient(), request.getMessage());
         message.setDestination(DIRECT);
         return message;
     }
 
-    public MessageInfo update(String from, MessageUpdate update) {
+    public MessageInfo update(Integer from, MessageUpdate update) {
         var message = directMapper.findDirectMessageById(update.getId());
         if (message == null)
-            throw new DirectException(MESSAGE_NOT_FOUND, update.getId().toString());
-        var err = getAccessError(from, message.getTo().getName());
-        if (err != null) {
-            throw new DirectException(err, message.getTo().getName());
-        }
-        if (!message.getMessage().canUpdate()) {
-            throw new DirectException(TIMEOUT,  update.getId().toString());
+            throw new DirectException(MESSAGE_NOT_FOUND);
+        checkAccess(from, message.getTo().getId());
+
+        if (message.getMessage().expiredUpdate()) {
+            throw new DirectException(TIMEOUT);
         }
         directMapper.update(update.getContent(), update.getId());
         message.setDestination(DIRECT);
@@ -48,27 +45,27 @@ public class DirectService {
     }
 
 
-    public MessageInfo deleteBy(String from, Integer id) {
-        var message = directMapper.findDirectMessageById(id);
+    public MessageInfo deleteBy(Integer fromId, Integer msgId) {
+        var message = directMapper.findDirectMessageById(msgId);
         if (message == null)
-            throw new DirectException(MESSAGE_NOT_FOUND, id.toString());
-        if (!message.getFrom().getName().equals(from)) {
-            throw new DirectException(NOT_PERMS, id.toString());
+            throw new DirectException(MESSAGE_NOT_FOUND);
+        if (!message.getFrom().getId().equals(fromId)) {
+            throw new DirectException(NOT_PERMS);
         }
-        if (directMapper.setStatusById(id, DELETED.ordinal()))
+        if (directMapper.setStatusById(msgId, DELETED.ordinal()))
             message.getMessage().setStatus(DELETED);
         message.setDestination(DIRECT);
         return message;
     }
 
-    public MessageInfo readBy(String from, Integer id) {
-        var message = directMapper.findDirectMessageById(id);
+    public MessageInfo readBy(Integer fromId, Integer msgId) {
+        var message = directMapper.findDirectMessageById(msgId);
         if (message == null)
-            throw new DirectException(MESSAGE_NOT_FOUND, id.toString());
-        if (!message.getFrom().getName().equals(from)) {
-            throw new DirectException(NOT_PERMS, id.toString());
+            throw new DirectException(MESSAGE_NOT_FOUND);
+        if (!message.getFrom().getId().equals(fromId)) {
+            throw new DirectException(NOT_PERMS);
         }
-        if (directMapper.setStatusById(id, READ.ordinal())) {
+        if (directMapper.setStatusById(msgId, READ.ordinal())) {
             message.getMessage().setStatus(READ);
         }
         message.setDestination(DIRECT);
@@ -76,16 +73,16 @@ public class DirectService {
     }
 
 
-    public MessageError getAccessError(String f, String t) {
-        User from = userMapper.findUserByNickname(f);
-        User to = userMapper.findUserByNickname(t);
-        if (to == null) return MessageError.ADDRESS_NOT_FOUND;
+    public void checkAccess(Integer fromId, Integer toId) {
+        User from = userMapper.findUserById(fromId);
+        User to = userMapper.findUserById(toId);
+        if (to == null)
+            throw new DirectException(MessageError.ADDRESS_NOT_FOUND);
         Integer fId = from.getId(), tId = to.getId();
         Integer block = userMapper.findBlocked(fId, tId);
         if (fId.equals(block))
-            return MessageError.FROM_BLOCKED;
+            throw new DirectException(FROM_BLOCKED);
         else if (tId.equals(block))
-            return MessageError.TO_BLOCKED;
-        return null;
+            throw new DirectException(TO_BLOCKED);
     }
 }

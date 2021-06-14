@@ -65,3 +65,33 @@ BEGIN
     RETURN _user;
 END
 $$;
+
+create or replace procedure save_chat_avatar(ch_id integer, path character varying)
+    language plpgsql
+as
+$$
+DECLARE
+    im_id INTEGER;
+BEGIN
+    SELECT image_id FROM chats WHERE id = ch_id INTO im_id;
+    IF im_id IS NOT NULL THEN
+        UPDATE files SET url = path, path_type = 0 WHERE id = im_id;
+    ELSE
+        INSERT INTO files (url, path_type) VALUES (path, 0) RETURNING id INTO im_id;
+        UPDATE chats SET image_id = im_id WHERE id = ch_id;
+    END IF;
+END;
+$$;
+
+create or replace procedure save_message_file(msg_id integer, path character varying)
+    language plpgsql
+as
+$$
+DECLARE
+    im_id INTEGER;
+BEGIN
+
+    INSERT INTO files (url, path_type) VALUES (path, 0) RETURNING id INTO im_id;
+    INSERT INTO message_file (message_id, file_id) VALUES (msg_id, im_id);
+END;
+$$;

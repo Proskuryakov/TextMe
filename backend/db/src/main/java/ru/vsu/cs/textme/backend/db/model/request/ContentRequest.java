@@ -7,5 +7,5 @@ import javax.validation.constraints.Size;
 @Data
 public class ContentRequest {
     @Size(max = 256)
-    private  String content;
+    private String content;
 }

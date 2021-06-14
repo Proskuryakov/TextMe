@@ -5,11 +5,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.sun.mail.util.BASE64EncoderStream;
-import org.apache.logging.log4j.util.Base64Util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
-import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -40,6 +37,10 @@ public class StorageService {
 
     public String uploadChatAvatar(InputStream imageStream, String type, int chatId) {
         return upload(imageStream, type, generateChatFileName(chatId));
+    }
+
+    public String uploadChatMessageImage(InputStream imageStream, String type, int chatId) {
+        return upload(imageStream, type, generateChatMessageFileName(chatId));
     }
 
     private String upload(InputStream imageStream, String type, String fileName) {
@@ -101,6 +102,9 @@ public class StorageService {
 
     private String generateChatFileName(int chatId) {
         return String.format("avatars/chat-%d.jpeg", chatId);
+    }
+    private String generateChatMessageFileName(int chatId) {
+        return String.format("message-files/%d/%s.jpeg", chatId, UUID.randomUUID().toString());
     }
 }
 

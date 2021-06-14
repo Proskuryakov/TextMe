@@ -28,12 +28,3 @@ databaseChangeLog:
             path: v1.0/textme_socket_functions_00000000-0000.sql
             relativeToChangelogFile: true
             splitStatements: false
-  - changeSet:
-      id: textme_save_chat_avatar_func
-      author: wiselder
-      comment: create save_avatar for chat
-      changes:
-        - sqlFile:
-            path: v1.0/textme_save_chat_avatar_func.sql
-            relativeToChangelogFile: true
-            splitStatements: false

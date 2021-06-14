@@ -5,12 +5,13 @@ import ru.vsu.cs.textme.backend.db.mapper.ChatMapper;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
 import ru.vsu.cs.textme.backend.db.model.ChatStatus;
-import ru.vsu.cs.textme.backend.db.model.request.NewChatMessageRequest;
+import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.db.model.request.PostChatRoleRequest;
 import ru.vsu.cs.textme.backend.db.model.request.PostChatStatusRequest;
 import ru.vsu.cs.textme.backend.services.exception.ChatException;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 
 import static ru.vsu.cs.textme.backend.db.model.MessageError.*;
 import static ru.vsu.cs.textme.backend.db.model.MessageStatus.DELETED;
@@ -24,64 +25,61 @@ public class ChatService {
         this.chatMapper = chatMapper;
     }
 
-    public ChatMessage send(NewChatMessageRequest request, String user) {
-        var members = chatMapper.findChatMembers(request.getChatId());
-        if (members == null) throw new ChatException(ADDRESS_NOT_FOUND, request.getChatId());
-
-        var member = getMemberInfo(members, user);
+    public ChatMessage send(Integer userId, NewMessageRequest request) {
+        var member = getMemberInfo(userId, request.getRecipient());
         if (member == null || !member.canSend())
-            throw new ChatException(NOT_PERMS, request.getChatId());
+            throw new ChatException(NOT_PERMS);
 
-        return chatMapper.save(user, request.getChatId(), request.getMessage());
+        return chatMapper.save(userId, request.getRecipient(), request.getMessage());
     }
 
 
-    public ChatMessage update(MessageUpdate update, String user) {
-        var msg = chatMapper.findChatMessageByMessageId(update.getId());
-        if (msg == null)
-            throw new ChatException(MESSAGE_NOT_FOUND, update.getId());
-        if (!msg.getMessage().canUpdate())
-            throw new ChatException(TIMEOUT, update.getId());
+    public ChatMessage update(Integer userId, MessageUpdate update) {
+        var message = chatMapper.findChatMessageByMessageId(update.getId());
+        if (message == null)
+            throw new ChatException(MESSAGE_NOT_FOUND);
+        if (message.getInfo().getMessage().expiredUpdate())
+            throw new ChatException(TIMEOUT);
 
-        var member = getMemberInfo(msg.getChat().getMembers(), user);
+        var member = getMemberInfo(message.getMembers(), userId);
         if (member == null || !member.canSend())
-            throw new ChatException(NOT_PERMS, msg.getChat().getInfo().getId());
+            throw new ChatException(NOT_PERMS);
 
         return chatMapper.update(update.getContent(), update.getId());
     }
 
-    public ChatMessage deleteBy(String user, Integer msgId) {
-        var msg = chatMapper.findChatMessageByMessageId(msgId);
-        if (msg == null)
-            throw new ChatException(MESSAGE_NOT_FOUND, msgId);
-        var member = getMemberInfo(msg.getChat().getMembers(), user);
-        if (member != null && msg.getChat().canDeleteMessage(user)) {
-            if (chatMapper.setStatusById(msg.getMessage().getId(), DELETED.ordinal())) {
-                msg.getMessage().setStatus(DELETED);
-                return msg;
-            }
+    public ChatMessage deleteBy(Integer userId, Integer msgId) {
+        var message = chatMapper.findChatMessageByMessageId(msgId);
+        if (message == null)
+            throw new ChatException(MESSAGE_NOT_FOUND);
+
+        var member = getMemberInfo(message.getMembers(), userId);
+        if (    member != null &&
+                (member.getRole().canDeleteOtherMessages() || member.isSameId(userId)) &&
+                chatMapper.setStatusById(message.getInfo().getMessage().getId(), DELETED.ordinal())) {
+            message.getInfo().getMessage().setStatus(DELETED);
+            return message;
         }
 
-        throw new ChatException(NOT_PERMS, msg.getChat().getInfo().getId());
+        throw new ChatException(NOT_PERMS);
     }
 
-    public ChatMessage readBy(String user, Integer msgId) {
-        var msg = chatMapper.findChatMessageByMessageId(msgId);
-        if (msg == null)
-            throw new ChatException(MESSAGE_NOT_FOUND, msgId);
+    public ChatMessage readBy(Integer userId, Integer msgId) {
+        var message = chatMapper.findChatMessageByMessageId(msgId);
+        if (message == null)
+            throw new ChatException(MESSAGE_NOT_FOUND);
 
-        var member = getMemberInfo(msg.getChat().getMembers(), user);
-        if (member != null && member.canRead()) {
-            if (chatMapper.setStatusById(msg.getMessage().getId(), READ.ordinal())) {
-                msg.getMessage().setStatus(READ);
-                return msg;
-            }
+        var member = getMemberInfo(message.getMembers(), userId);
+        if (member != null && member.canRead() &&
+                chatMapper.setStatusById(message.getInfo().getMessage().getId(), READ.ordinal())) {
+            message.getInfo().getMessage().setStatus(READ);
+            return message;
         }
-        throw new ChatException(NOT_PERMS, msg.getChat().getInfo().getId());
+        throw new ChatException(NOT_PERMS);
     }
 
-    public Chat create(Integer userId, String name) {
-        return chatMapper.createChat(userId, name);
+    public Chat create(Integer userId, String chatName) {
+        return chatMapper.createChat(userId, chatName);
     }
 
     public void deleteChat(Integer userId, Integer chatId) {
@@ -100,11 +98,10 @@ public class ChatService {
             chatMapper.setTitle(chatId, name);
     }
 
-    public boolean canUpdateAvatar(Integer userId, Integer chatId) {
-        var members = chatMapper.findChatMembers(chatId);
-        if (members == null) return false;
-        var member = getMemberInfo(members, userId);
-        return member != null && member.getRole().canChangeChatInfo();
+    public void checkAvatarPermissions(Integer userId, Integer chatId) {
+        var member = checkAccess(userId, chatId);
+        if (!member.getRole().canChangeChatInfo())
+            throw new ChatException(NOT_PERMS);
     }
 
     public void saveAvatar(Integer chatId, String path) {
@@ -112,55 +109,72 @@ public class ChatService {
     }
 
     public void setUserRole(Integer userId, Integer chatId, PostChatRoleRequest request) {
-        if (canChangeRole(userId, chatId, request.getMember(), request.getRole())) {
+        if (checkInteract(userId, chatId, request.getMember(),
+                (u, m) -> u.getRole().canChangeRole(m.getRole(), request.getRole()))) {
             chatMapper.saveChatRole(chatId, request.getMember(), request.getRole().getId());
         }
     }
 
+    private final  BiPredicate<ChatMemberInfo, ChatMemberInfo> changeRolePredicate =
+            (a, b) -> a.getRole().canChangeStatus(b.getRole());
+
     public void setUserStatus(Integer userId, Integer chatId, PostChatStatusRequest request) {
-        if (canChangeStatus(userId,chatId, request.getMember())) {
+        if (checkInteract(userId, chatId, request.getMember(), changeRolePredicate)) {
             chatMapper.saveChatStatus(chatId, request.getMember(), request.getStatus().getId());
         }
     }
-    private boolean canChangeStatus(Integer userId, Integer chatId, Integer memberId) {
-        var members = chatMapper.findChatMembers(chatId);
-        if (members == null) return false;
-        var toChange = getMemberInfo(members, memberId);
-        if (toChange == null) return false;
-        var user = getMemberInfo(members, userId);
-        return user != null && user.getRole().canChangeStatus(toChange.getRole());
-    }
-
-    private boolean canChangeRole(Integer userId, Integer chatId, Integer memberId, ChatRole to) {
-        var members = chatMapper.findChatMembers(chatId);
-        if (members == null) return false;
-        ChatMemberInfo toChange = getMemberInfo(members, memberId);
-        if (toChange == null) return false;
-        var user = getMemberInfo(members, userId);
-        return user != null && user.getRole().canChangeRole(toChange.getRole(), to);
-    }
 
     public void joinChat(Integer userId, Integer chatId) {
-        Chat chat = chatMapper.findChatById(chatId);
-        if (chat == null) throw  new ChatException(ADDRESS_NOT_FOUND, chatId);
-        var member = getMemberInfo(chat.getMembers(), userId);
+        var member = getMemberInfo(userId, chatId);
         if (member == null || member.canJoinChat()) {
             chatMapper.saveChatStatus(chatId, userId,ChatStatus.STATUS_MEMBER.getId());
             return;
         }
-        throw new ChatException(NOT_PERMS, chatId);
+        throw new ChatException(NOT_PERMS);
 
     }
 
     public void leaveChat(Integer userId, Integer chatId) {
-        Chat chat = chatMapper.findChatById(chatId);
-        if (chat == null) throw  new ChatException(ADDRESS_NOT_FOUND, chatId);
-        var member = getMemberInfo(chat.getMembers(), userId);
+        var member = getMemberInfo(userId, chatId);
         if (member == null || member.canLeaveChat()) {
             chatMapper.saveChatStatus(chatId, userId,ChatStatus.STATUS_LEAVE.getId());
             return;
         }
-        throw new ChatException(NOT_PERMS, chatId);
+        throw new ChatException(NOT_PERMS);
+    }
+
+    public ChatMemberInfo checkAccess(Integer userId, Integer chatId) {
+       return checkInteract(userId, chatId);
+    }
+
+    private boolean checkInteract(Integer userId, Integer chatId, Integer memberId,
+                                  BiPredicate<ChatMemberInfo, ChatMemberInfo> predicate) {
+        var members = chatMapper.findChatMembers(chatId);
+        if (members == null)
+            throw new ChatException(ADDRESS_NOT_FOUND);
+        var user = getMemberInfo(members, memberId);
+        if (user == null)
+            throw new ChatException(NOT_PERMS);
+
+        var member = getMemberInfo(members, userId);
+        if (member == null) throw new ChatException(ADDRESS_NOT_FOUND);
+        return predicate.test(user, member);
+    }
+
+    private ChatMemberInfo checkInteract(Integer userId, Integer chatId) {
+        var members = chatMapper.findChatMembers(chatId);
+        if (members == null)
+            throw  new ChatException(ADDRESS_NOT_FOUND);
+        var user = getMemberInfo(members, userId);
+        if (user == null)
+            throw  new ChatException(NOT_PERMS);
+
+        var member = getMemberInfo(members, userId);
+        if (member == null) throw new ChatException(ADDRESS_NOT_FOUND);
+        if (member.getStatus() != ChatStatus.STATUS_MEMBER) {
+            throw new ChatException(NOT_PERMS);
+        }
+        return member;
     }
 
     private ChatMemberInfo getMemberInfo(List<ChatMemberInfo> list, Integer id) {
@@ -172,12 +186,10 @@ public class ChatService {
         return null;
     }
 
-    private ChatMemberInfo getMemberInfo(List<ChatMemberInfo> list, String nickname) {
-        for (var member : list) {
-            if (member.isSameNickname(nickname)) {
-                return member;
-            }
-        }
-        return null;
+    private ChatMemberInfo getMemberInfo(Integer userId, Integer chatId) {
+        var members = chatMapper.findChatMembers(chatId);
+        if (members == null) throw  new ChatException(ADDRESS_NOT_FOUND);
+        return getMemberInfo(members, userId);
     }
+
 }

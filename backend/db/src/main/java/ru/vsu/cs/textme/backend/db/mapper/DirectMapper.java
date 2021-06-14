@@ -14,9 +14,13 @@ public interface DirectMapper {
     String DIRECT_MESSAGE_RESULT = "directMsgResult";
     String AVATAR_SELECT = "findAvatarById";
     String MESSAGE_STATUS_SELECT = "findMessageStatusById";
+    String MESSAGE_FILES_SELECT = "findMessageFilesById";
 
     @Select("SELECT content FROM message_statuses WHERE id = #{id}")
     MessageStatus findMessageStatusById(Integer id);
+
+    @Select("SELECT f.url FROM message_file mf, files f WHERE mf.message_id = #{id} AND f.id = mf.file_id")
+    List<String> findMessageFilesById(Integer id);
 
     @Select("SELECT url FROM files WHERE id = #{id}")
     String findAvatarById(Integer id);
@@ -44,12 +48,13 @@ public interface DirectMapper {
             @Result(property = "from", column = "user_from_id", javaType = Info.class, one = @One(resultMap = USER_INFO_RESULT)),
             @Result(property = "to", column = "user_to_id", javaType = Info.class, one = @One(resultMap = USER_INFO_RESULT)),
             @Result(property = "message", column = "message_id",javaType = Message.class, one = @One(resultMap = MESSAGE_RESULT)),
+            @Result(property = "images", column = "message_id",javaType = List.class, many = @Many(select = MESSAGE_FILES_SELECT)),
     })
     MessageInfo findDirectMessageById(Integer id);
 
     @Select("SELECT * FROM new_direct_msg(#{from}, #{to}, #{message})")
     @ResultMap(DIRECT_MESSAGE_RESULT)
-    MessageInfo save(String from, String to, String message);
+    MessageInfo save(Integer from, Integer to, String message);
 
     @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};")
     @ResultMap(DIRECT_MESSAGE_RESULT)

@@ -7,12 +7,14 @@ import ru.vsu.cs.textme.backend.db.model.AppRole;
 import ru.vsu.cs.textme.backend.db.model.User;
 import ru.vsu.cs.textme.backend.services.exception.UserForbiddenException;
 
+import javax.security.auth.Subject;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, Principal {
     private Collection<? extends GrantedAuthority> grantedAuthorities;
     private User user;
 
@@ -66,5 +68,15 @@ public class CustomUserDetails implements UserDetails {
 
     public User getUser() {
         return user;
+    }
+
+    @Override
+    public String getName() {
+        return user == null ? "" : user.getNickname();
+    }
+
+    @Override
+    public boolean implies(Subject subject) {
+        return true;
     }
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class MessageUpdate {
-    private String content;
     private Integer id;
+    private String content;
+
 }
