@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpEvent} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../../environments/environment';
-import {ProfileModel} from '../models/profile.model';
+import {Profile} from '../models/profile.model';
 import {map} from 'rxjs/operators';
 import {AuthService} from '../../../core/auth/auth.service';
 import {Token} from '../../../core/auth/models';
@@ -19,8 +19,8 @@ export class UserApiService {
     private readonly authService: AuthService
   ) { }
 
-  getCurrentUser(): Observable<ProfileModel> {
-    return this.http.get<ProfileModel>(`${this.userURL}/`).pipe(
+  getCurrentUser(): Observable<Profile> {
+    return this.http.get<Profile>(`${this.userURL}/`).pipe(
       map(user => {
         if (!user.info.imageUrl) { user.info.imageUrl = this.defaultImage; }
         if (!user.card.tags) { user.card.tags = ['Теги пока не добавлены']; }

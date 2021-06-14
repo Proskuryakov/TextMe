@@ -1,4 +1,4 @@
-export class InfoModel{
+export class Info{
   id: number;
   name: string;
   imageUrl: string;

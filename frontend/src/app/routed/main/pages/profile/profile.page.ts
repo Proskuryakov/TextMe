@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ProfileModel} from '../../../../features/profile/models/profile.model';
+import {Profile} from '../../../../features/profile/models/profile.model';
 import {UserApiService} from '../../../../features/profile/services/user-api.service';
 import {AuthService} from '../../../../core/auth/auth.service';
 import {Router} from '@angular/router';
@@ -11,7 +11,7 @@ import {CardApiService} from '../../../../features/profile/services/card-api.ser
   styleUrls: ['./profile.page.sass']
 })
 export class ProfilePage implements OnInit {
-  user: ProfileModel;
+  user: Profile;
 
   newName = '';
   newStatus = '';

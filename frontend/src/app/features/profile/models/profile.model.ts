@@ -1,8 +1,9 @@
-import {CardModel} from './card.model';
-import {InfoModel} from './info.model';
+import {Card} from './card.model';
+import {Info} from './info.model';
 
-export class ProfileModel {
-  info: InfoModel;
-  card: CardModel;
+export class Profile {
+  info: Info;
+  card: Card;
 }
+
 
