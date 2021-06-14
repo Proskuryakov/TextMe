@@ -24,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable()
                 .csrf().disable()
+                .cors().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
@@ -35,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/file-message/**").hasRole(AppRole.USER.getContent())
                 .antMatchers("/api/tag/**").hasRole(AppRole.USER.getContent())
                 .antMatchers("/api/card/**").hasRole(AppRole.USER.getContent())
-                .antMatchers("/ws/**").hasRole(AppRole.USER.getContent())
+                .antMatchers("/ws/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

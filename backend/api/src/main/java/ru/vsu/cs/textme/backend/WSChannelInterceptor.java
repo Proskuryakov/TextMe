@@ -8,7 +8,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import ru.vsu.cs.textme.backend.security.CustomUserDetailsService;
 import ru.vsu.cs.textme.backend.security.JwtFilter;
@@ -34,9 +36,12 @@ public class WSChannelInterceptor implements ChannelInterceptor {
             if (token != null && jwtProvider.validateToken(token)) {
                 var nickname = jwtProvider.getNicknameFromToken(token);
                 var details = detailsService.loadUserByUsername(nickname);
+                var tok = new UsernamePasswordAuthenticationToken(details, details);
+                SecurityContextHolder.getContext().setAuthentication(tok);
                 accessor.setUser(details);
             }
         }
         return message;
     }
+
 }

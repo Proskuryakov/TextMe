@@ -23,16 +23,32 @@ import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
 
-//@Configuration
+@Configuration
 @RequiredArgsConstructor
-//@Order(Ordered.HIGHEST_PRECEDENCE + 99)
+@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WSConfiguration implements WebSocketMessageBrokerConfigurer {
-    private final JwtProvider jwtProvider;
+    private final JwtProvider provider;
     private final CustomUserDetailsService detailsService;
 
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new WSChannelInterceptor(jwtProvider, detailsService));
+        registration.interceptors(new WSChannelInterceptor(provider, detailsService));
+    }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/user");
+        registry.setUserDestinationPrefix("/user");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws")
+                .setHandshakeHandler(new WSDefaultHandshakeHandler(provider, detailsService))
+                .setAllowedOriginPatterns("*")
+                .withSockJS()
+                .setSupressCors(true);
     }
 }
