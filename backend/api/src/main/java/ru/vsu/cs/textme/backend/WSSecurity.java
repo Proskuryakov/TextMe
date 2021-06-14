@@ -6,20 +6,15 @@ import org.springframework.security.config.annotation.web.messaging.MessageSecur
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import ru.vsu.cs.textme.backend.db.model.AppRole;
-
-import static org.springframework.messaging.simp.SimpMessageType.*;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfiguration extends AbstractSecurityWebSocketMessageBrokerConfigurer {
+public class WSSecurity extends AbstractSecurityWebSocketMessageBrokerConfigurer {
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
-        messages.simpDestMatchers("/app/**").hasRole(AppRole.USER.getContent())
-                .simpSubscribeDestMatchers("user/**").hasRole(AppRole.USER.getContent())
-                .simpTypeMatchers(MESSAGE, SUBSCRIBE).denyAll()
-                .anyMessage().denyAll();
+        messages.anyMessage().authenticated();
     }
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
@@ -27,8 +22,17 @@ public class WebSocketConfiguration extends AbstractSecurityWebSocketMessageBrok
         registry.setUserDestinationPrefix("/user");
     }
 
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").withSockJS();
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("*")
+                .withSockJS()
+                .setSupressCors(true);
+    }
+
+    @Override
+    protected boolean sameOriginDisabled() {
+        return true;
     }
 }

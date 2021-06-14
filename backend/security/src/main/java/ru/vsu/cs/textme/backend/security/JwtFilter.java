@@ -13,6 +13,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -42,11 +43,15 @@ public class JwtFilter extends GenericFilterBean {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request) {
-        String bearer = request.getHeader(AUTHORIZATION);
-        if (hasText(bearer) && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
-        }
-        return null;
+    private static String getTokenFromRequest(HttpServletRequest request) {
+        return getTokenFromHeader(request.getHeader(AUTHORIZATION));
+    }
+
+    public static String getTokenFromHeader(String header) {
+        return hasText(header) && header.startsWith("Bearer ") ? header.substring(7) : null;
+    }
+
+    public static String getTokenFromHeaders(List<String> headers) {
+        return headers == null || headers.isEmpty() ? null : getTokenFromHeader(headers.get(0));
     }
 }

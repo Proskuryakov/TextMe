@@ -9,11 +9,13 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.*;
-import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
-import ru.vsu.cs.textme.backend.db.model.request.NewChatMessageRequest;
+import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
+import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.ChatException;
 import ru.vsu.cs.textme.backend.services.ChatService;
+
+import java.util.List;
 
 import static ru.vsu.cs.textme.backend.db.model.info.MessageInfo.DestinationType.CHAT;
 
@@ -29,49 +31,50 @@ public class ChatSocketController {
 
 
     @MessageMapping("/chat/send-message/")
-    public void sendMessage(@Payload NewChatMessageRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.send(request, principal.getUsername());
+    public void sendMessage(@Payload NewMessageRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
+        var msg = chatService.send(principal.getUser().getId(), request);
         if (msg == null) return;
-        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
-        for (var member : msg.getChat().getMembers()) {
-            if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/send", response);
 
-        }
+        var response = msg.getInfo();
+        response.setDestination(CHAT);
+        sendAll(msg.getMembers(), response, "send");
     }
 
     @MessageMapping("/chat/update-message/")
     public void updateMessage(@Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.update(message, principal.getUsername());
+        var msg = chatService.update(principal.getUser().getId(), message);
         if (msg == null) return;
-        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
-        for (var member : msg.getChat().getMembers()) {
-            if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/update", response);
 
-        }
+        var response = msg.getInfo();
+        response.setDestination(CHAT);
+        sendAll(msg.getMembers(), response, "update");
     }
 
     @MessageMapping("/chat/delete-message/{msgId}")
     public void deleteMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.deleteBy(principal.getUsername(), msgId);
-        if (msg == null) return;
-        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
-        for (var member : msg.getChat().getMembers()) {
-            if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/delete", response);
-        }
-
+        var msg = chatService.deleteBy(principal.getUser().getId(), msgId);
+        var response = msg.getInfo();
+        response.setDestination(CHAT);
+        sendAll(msg.getMembers(), response, "delete");
     }
 
     @MessageMapping("/chat/read-message/{msgId}")
     public void read(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.readBy(principal.getUsername(), msgId);
+        var msg = chatService.readBy(principal.getUser().getId(), msgId);
         if (msg == null) return;
-        var response = new MessageInfo(msg.getUser(), msg.getChat().getInfo(), msg.getMessage(), CHAT);
-        for (var member : msg.getChat().getMembers()) {
-            if (member.canRead())
-                template.convertAndSendToUser(member.getMember().getName(), "/queue/messenger/read", response);
+
+        var response = msg.getInfo();
+        response.setDestination(CHAT);
+        sendAll(msg.getMembers(), response, "read");
+    }
+
+    private void sendAll(List<ChatMemberInfo> list, Object obj, String path) {
+        for (var info : list) {
+            if (info.canRead()) {
+                template.convertAndSendToUser(
+                        info.getMember().getId().toString(),
+                        "/queue/messenger/" + path, obj);
+            }
         }
     }
 
