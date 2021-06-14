@@ -51,7 +51,7 @@ public class FilesMessageController {
             if (type == null) continue;
             var path = "";
             try {
-                path = storageService.uploadChatMessageImage(image.getInputStream(), type, id);
+                path = storageService.uploadMessageImage(image.getInputStream(), type, id);
             } catch (IOException e) { e.printStackTrace(); }
             if (path.isEmpty()) continue;
             list.add(path);

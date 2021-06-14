@@ -39,8 +39,8 @@ public class StorageService {
         return upload(imageStream, type, generateChatFileName(chatId));
     }
 
-    public String uploadChatMessageImage(InputStream imageStream, String type, int chatId) {
-        return upload(imageStream, type, generateChatMessageFileName(chatId));
+    public String uploadMessageImage(InputStream imageStream, String type, int fromId) {
+        return upload(imageStream, type, generateMessageFileName(fromId));
     }
 
     private String upload(InputStream imageStream, String type, String fileName) {
@@ -103,8 +103,8 @@ public class StorageService {
     private String generateChatFileName(int chatId) {
         return String.format("avatars/chat-%d.jpeg", chatId);
     }
-    private String generateChatMessageFileName(int chatId) {
-        return String.format("message-files/%d/%s.jpeg", chatId, UUID.randomUUID().toString());
+    private String generateMessageFileName(int chatId) {
+        return String.format("message-files/%d-%s.jpeg", chatId, UUID.randomUUID().toString());
     }
 }
 
