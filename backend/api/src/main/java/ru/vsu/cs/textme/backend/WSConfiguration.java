@@ -23,9 +23,9 @@ import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 99)
+//@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WSConfiguration implements WebSocketMessageBrokerConfigurer {
     private final JwtProvider jwtProvider;
     private final CustomUserDetailsService detailsService;
