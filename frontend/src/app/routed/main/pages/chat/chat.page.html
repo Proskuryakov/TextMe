@@ -36,41 +36,54 @@
   uk-height-viewport="expand: true"
 >
 
-  <div class="uk-flex uk-flex-right uk-margin-small-right">
-    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body">
-      Только что посмотрела Лигу Справедливости. Фильм - огонь!
-      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">21:12</div>
-    </div>
-  </div>
+<!--  <div class="uk-flex uk-flex-right uk-margin-small-right">-->
+<!--    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body">-->
+<!--      Только что посмотрела Лигу Справедливости. Фильм - огонь!-->
+<!--      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">21:12</div>-->
+<!--    </div>-->
+<!--  </div>-->
 
-  <div class="uk-flex uk-flex-right uk-margin-small-right">
-    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body">
-      Недавно видела рекламу. Надо бы посмотреть в ближайшее время.
-      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:25</div>
-    </div>
-  </div>
+<!--  <div class="uk-flex uk-flex-right uk-margin-small-right">-->
+<!--    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body">-->
+<!--      Недавно видела рекламу. Надо бы посмотреть в ближайшее время.-->
+<!--      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:25</div>-->
+<!--    </div>-->
+<!--  </div>-->
 
-  <div class="uk-flex uk-flex-left uk-margin-small-left">
-    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body uk-text-break">
-      Тогда ты просто обязана посмотреть новый фильм "Лига Справедливости Зака Снайдера"!
-      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:24</div>
-    </div>
-  </div>
+<!--  <div class="uk-flex uk-flex-left uk-margin-small-left">-->
+<!--    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body uk-text-break">-->
+<!--      Тогда ты просто обязана посмотреть новый фильм "Лига Справедливости Зака Снайдера"!-->
+<!--      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:24</div>-->
+<!--    </div>-->
+<!--  </div>-->
 
-  <div class="uk-flex uk-flex-right uk-margin-small-right">
-    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body">
-      Привет! Если честно, я как-то и не смотрела их фильмов...
-      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:24</div>
-    </div>
-  </div>
+<!--  <div class="uk-flex uk-flex-right uk-margin-small-right">-->
+<!--    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body">-->
+<!--      Привет! Если честно, я как-то и не смотрела их фильмов...-->
+<!--      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:24</div>-->
+<!--    </div>-->
+<!--  </div>-->
 
-  <div class="uk-flex uk-flex-left uk-margin-small-left">
-    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body uk-text-break">
-      Привет. Я увидел, что ты интересуешься
-      marvel. Мне стало интересно, каково твое отношение к DC?
-      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:22</div>
-    </div>
-  </div>
+<!--  <div class="uk-flex uk-flex-left uk-margin-small-left">-->
+<!--    <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body uk-text-break">-->
+<!--      Привет. Я увидел, что ты интересуешься-->
+<!--      marvel. Мне стало интересно, каково твое отношение к DC?-->
+<!--      <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">13:22</div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div *ngFor="let message of messages">-->
+<!--    <div class="uk-flex uk-flex-left uk-margin-small-left"-->
+<!--    [ngClass]="{'uk-margin-small-left': message.from.id !== user.info.id,-->
+<!--      'uk-margin-small-right': message.from.id === user.info.id}">-->
+<!--      <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body uk-text-break">-->
+<!--        {{message.message.content}}-->
+<!--        <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">{{message.message.dateCreate | date}}</div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+
 
 </div>
 
@@ -85,12 +98,18 @@
       <textarea
         class="uk-height-max-medium uk-textarea uk-text-break uk-resize-vertical"
         rows="2"
-      >Ты увидел там камео Зака Снайдера?
+        [(ngModel)]="newMessage"
+      >
+        Ты увидел там камео Зака Снайдера?
       </textarea>
   </div>
 
+  <span (click)="sendMessage()"
+  >
   <img class="uk-preserve-width uk-margin-small-right"
-       src="logo/send.svg" height="20" uk-svg>
+       src="logo/send.svg" height="20" uk-svg
+  >
+  </span>
 
 </div>
 
