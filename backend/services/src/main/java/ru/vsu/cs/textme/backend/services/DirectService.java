@@ -8,6 +8,8 @@ import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
 import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.services.exception.DirectException;
 
+import java.util.List;
+
 import static ru.vsu.cs.textme.backend.db.model.MessageError.*;
 import static ru.vsu.cs.textme.backend.db.model.info.MessageInfo.DestinationType.DIRECT;
 import static ru.vsu.cs.textme.backend.db.model.MessageStatus.*;
@@ -25,7 +27,11 @@ public class DirectService {
     public MessageInfo send(Integer from, NewMessageRequest request) {
         checkAccess(from, request.getRecipient());
         var message = directMapper.save(from, request.getRecipient(), request.getMessage());
+        for (var path : request.getImages()) {
+            directMapper.saveMessageFile(message.getMessage().getId(), path);
+        }
         message.setDestination(DIRECT);
+        message.setImages(request.getImages());
         return message;
     }
 

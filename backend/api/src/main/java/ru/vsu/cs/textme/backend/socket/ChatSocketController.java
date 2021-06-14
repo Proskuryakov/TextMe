@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.*;
 import ru.vsu.cs.textme.backend.db.model.info.ChatMemberInfo;
@@ -15,6 +15,7 @@ import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.ChatException;
 import ru.vsu.cs.textme.backend.services.ChatService;
 
+import java.security.Principal;
 import java.util.List;
 
 import static ru.vsu.cs.textme.backend.db.model.info.MessageInfo.DestinationType.CHAT;
@@ -31,8 +32,10 @@ public class ChatSocketController {
 
 
     @MessageMapping("/chat/send-message/")
-    public void sendMessage(@Payload NewMessageRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.send(principal.getUser().getId(), request);
+    public void sendMessage(@Payload NewMessageRequest request, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var msg = chatService.send(details.getUser().getId(), request);
         if (msg == null) return;
 
         var response = msg.getInfo();
@@ -41,8 +44,10 @@ public class ChatSocketController {
     }
 
     @MessageMapping("/chat/update-message/")
-    public void updateMessage(@Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.update(principal.getUser().getId(), message);
+    public void updateMessage(@Payload MessageUpdate message, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var msg = chatService.update(details.getUser().getId(), message);
         if (msg == null) return;
 
         var response = msg.getInfo();
@@ -51,16 +56,20 @@ public class ChatSocketController {
     }
 
     @MessageMapping("/chat/delete-message/{msgId}")
-    public void deleteMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.deleteBy(principal.getUser().getId(), msgId);
+    public void deleteMessage(@DestinationVariable Integer msgId, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var msg = chatService.deleteBy(details.getUser().getId(), msgId);
         var response = msg.getInfo();
         response.setDestination(CHAT);
         sendAll(msg.getMembers(), response, "delete");
     }
 
     @MessageMapping("/chat/read-message/{msgId}")
-    public void read(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
-        var msg = chatService.readBy(principal.getUser().getId(), msgId);
+    public void read(@DestinationVariable Integer msgId, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var msg = chatService.readBy(details.getUser().getId(), msgId);
         if (msg == null) return;
 
         var response = msg.getInfo();

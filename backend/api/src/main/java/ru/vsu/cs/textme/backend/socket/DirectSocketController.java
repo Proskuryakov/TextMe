@@ -4,15 +4,14 @@ import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.MessageUpdate;
-import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
 import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.DirectException;
 import ru.vsu.cs.textme.backend.services.DirectService;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @Controller
@@ -25,30 +24,37 @@ public class DirectSocketController {
     }
 
     @MessageMapping("/direct/send-message/")
-    public void sendMessage(@Payload NewMessageRequest request, @AuthenticationPrincipal
-            Authentication principal) {
-        // var id = principal.getId();
-        // var out = directService.send(2, request);
-        // send(2, out.getTo().getId(), out, "send");
+    public void sendMessage(@Payload @Valid NewMessageRequest request, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var id = details.getUser().getId();
+        var out = directService.send(id, request);
+        send(id, out.getTo().getId(), out, "send");
     }
 
     @MessageMapping("/direct/update-message/")
-    public void updateMessage(@Payload MessageUpdate message, @AuthenticationPrincipal CustomUserDetails principal) {
-        var id = principal.getUser().getId();
+    public void updateMessage(@Payload @Valid MessageUpdate message, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var id = details.getUser().getId();
         var out = directService.update(id, message);
         send(id, out.getTo().getId(), out, "update");
     }
 
     @MessageMapping("/direct/delete-message/{msgId}")
-    public void deleteMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
-        var id = principal.getUser().getId();
+    public void deleteMessage(@DestinationVariable Integer msgId, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var id = details.getUser().getId();
         var out=  directService.deleteBy(id, msgId);
         send(id, out.getTo().getId(), out, "delete");
     }
 
     @MessageMapping("/direct/read-message/{msgId}")
-    public void readMessage(@DestinationVariable Integer msgId, @AuthenticationPrincipal CustomUserDetails principal) {
-        var id = principal.getUser().getId();
+    public void readMessage(@DestinationVariable Integer msgId, Principal principal) {
+        var auth = (Authentication) principal;
+        var details = (CustomUserDetails) auth.getPrincipal();
+        var id = details.getUser().getId();
         var out=  directService.readBy(id, msgId);
         send(id, out.getTo().getId(), out, "read");
     }

@@ -11,7 +11,7 @@ import java.util.List;
 public interface DirectMapper {
     String USER_INFO_RESULT = "userInfoResult";
     String MESSAGE_RESULT = "messageResult";
-    String DIRECT_MESSAGE_RESULT = "directMsgResult";
+    String MESSAGE_INFO_RESULT = "messageInfoResult";
     String AVATAR_SELECT = "findAvatarById";
     String MESSAGE_STATUS_SELECT = "findMessageStatusById";
     String MESSAGE_FILES_SELECT = "findMessageFilesById";
@@ -44,7 +44,7 @@ public interface DirectMapper {
     Message findMessageById(Integer id);
 
     @Select("SELECT * FROM direct_messages WHERE message_id = #{id}")
-    @Results(id = DIRECT_MESSAGE_RESULT, value = {
+    @Results(id = MESSAGE_INFO_RESULT, value = {
             @Result(property = "from", column = "user_from_id", javaType = Info.class, one = @One(resultMap = USER_INFO_RESULT)),
             @Result(property = "to", column = "user_to_id", javaType = Info.class, one = @One(resultMap = USER_INFO_RESULT)),
             @Result(property = "message", column = "message_id",javaType = Message.class, one = @One(resultMap = MESSAGE_RESULT)),
@@ -52,16 +52,16 @@ public interface DirectMapper {
     })
     MessageInfo findDirectMessageById(Integer id);
 
-    @Select("SELECT * FROM new_direct_msg(#{from}, #{to}, #{message})")
-    @ResultMap(DIRECT_MESSAGE_RESULT)
+    @Select("SELECT * FROM new_direct_msg(#{from}, #{to}, #{message});")
+    @ResultMap(MESSAGE_INFO_RESULT)
     MessageInfo save(Integer from, Integer to, String message);
 
     @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};")
-    @ResultMap(DIRECT_MESSAGE_RESULT)
+    @ResultMap(MESSAGE_INFO_RESULT)
     void update(String msg, Integer id);
 
     @Update("UPDATE messages SET status_id = #{status} WHERE id = #{id};")
-    @ResultMap(DIRECT_MESSAGE_RESULT)
+    @ResultMap(MESSAGE_INFO_RESULT)
     boolean setStatusById(Integer id, Integer status);
 
     @Select("SELECT dm.* FROM direct_messages dm, messages m \n" +
@@ -69,7 +69,7 @@ public interface DirectMapper {
             "   OR dm.user_from_id = #{to} AND dm.user_to_id = #{from}) \n" +
             "   AND dm.message_id = m.id AND m.status_id != 2\n" +
             "LIMIT #{limit} OFFSET #{offset};")
-    @ResultMap(DIRECT_MESSAGE_RESULT)
+    @ResultMap(MESSAGE_INFO_RESULT)
     List<MessageInfo> getMessages(Integer from, Integer to, Integer limit, Integer offset);
 
     @Select("SELECT dm.* FROM direct_messages dm, messages m\n" +
@@ -77,6 +77,10 @@ public interface DirectMapper {
             "UNION\n" +
             "SELECT dm.* FROM direct_messages dm, messages m\n" +
             "WHERE user_to_id = #{id}  AND m.id = dm.message_id AND m.status_id != 2;")
-    @ResultMap(DIRECT_MESSAGE_RESULT)
+    @ResultMap(MESSAGE_INFO_RESULT)
     List<MessageInfo> getAllDirects(Integer id, Integer page);
+
+    @Insert("CALL save_message_file(#{id}, #{path})")
+    void saveMessageFile(Integer id, String path);
+
 }
