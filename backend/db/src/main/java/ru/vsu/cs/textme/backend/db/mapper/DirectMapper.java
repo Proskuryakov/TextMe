@@ -52,9 +52,9 @@ public interface DirectMapper {
     })
     MessageInfo findDirectMessageById(Integer id);
 
-    @Select("SELECT * FROM new_direct_msg(#{from}, #{to}, #{message})")
+    @Select("SELECT * FROM new_direct_msg(#{from}, #{to}, #{message}, #{images})")
     @ResultMap(DIRECT_MESSAGE_RESULT)
-    MessageInfo save(Integer from, Integer to, String message);
+    MessageInfo save(Integer from, Integer to, String message, String images);
 
     @Update("UPDATE messages SET content = #{msg}, date_update = now() WHERE id = #{id};")
     @ResultMap(DIRECT_MESSAGE_RESULT)

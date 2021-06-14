@@ -40,11 +40,11 @@ public class JwtFilter extends GenericFilterBean {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private static String getAuthHeader(HttpServletRequest request) {
+    public String getAuthHeader(HttpServletRequest request) {
         return request.getHeader(AUTHORIZATION);
     }
 
-    public static String getTokenFromHeader(String header) {
+    public String getTokenFromHeader(String header) {
         return hasText(header) && header.startsWith("Bearer ") ? header.substring(7) : null;
     }
 
