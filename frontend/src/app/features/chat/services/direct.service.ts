@@ -19,7 +19,7 @@ export class DirectService {
   }
 
   getSendMessage(func): void{
-    this.socketService.onMessage('user/egor/queue/messenger/send', () => console.log('сообщение отправлено'));
+    this.socketService.onMessage('user/1/queue/messenger/send', () => console.log('сообщение отправлено'));
   }
 
 }

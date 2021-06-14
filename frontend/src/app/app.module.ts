@@ -5,8 +5,8 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {MainModule} from './routed/main/main.module';
 import {CoreModule} from './core/core.module';
-import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import {AuthInterceptor} from './core/auth/auth.interceptor';
+import {InjectableRxStompConfig, RxStompService, rxStompServiceFactory} from '@stomp/ng2-stompjs';
+import {rxStompConfig} from './features/chat/config/rxstomp.config';
 
 @NgModule({
   declarations: [
@@ -18,10 +18,21 @@ import {AuthInterceptor} from './core/auth/auth.interceptor';
     MainModule,
     CoreModule
   ],
-  providers: [{
-    provide: LOCALE_ID,
-    useValue: 'ru-RU'
-  }],
+  providers: [
+    {
+      provide: LOCALE_ID,
+      useValue: 'ru-RU'
+    },
+    {
+      provide: InjectableRxStompConfig,
+      useValue: rxStompConfig,
+    },
+    {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
+      deps: [InjectableRxStompConfig],
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

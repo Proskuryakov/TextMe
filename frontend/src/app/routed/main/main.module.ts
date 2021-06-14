@@ -22,10 +22,10 @@ import {FormsModule} from '@angular/forms';
     ChatPage,
     ProfilePage
   ],
-    imports: [
-        CommonModule,
-        MainRoutingModule,
-        FormsModule
-    ]
+  imports: [
+      CommonModule,
+      MainRoutingModule,
+      FormsModule
+  ]
 })
 export class MainModule { }
