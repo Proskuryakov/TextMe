@@ -6,7 +6,7 @@ import {AppComponent} from './app.component';
 import {MainModule} from './routed/main/main.module';
 import {CoreModule} from './core/core.module';
 import {InjectableRxStompConfig, RxStompService, rxStompServiceFactory} from '@stomp/ng2-stompjs';
-import {rxStompConfig} from './features/chat/config/rxstomp.config';
+import {rxStompConfig} from './core/socket/rxstomp.config';
 
 @NgModule({
   declarations: [
