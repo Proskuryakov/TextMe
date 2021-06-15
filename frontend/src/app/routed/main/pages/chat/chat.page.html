@@ -72,16 +72,16 @@
 <!--    </div>-->
 <!--  </div>-->
 
-<!--  <div *ngFor="let message of messages">-->
-<!--    <div class="uk-flex uk-flex-left uk-margin-small-left"-->
-<!--    [ngClass]="{'uk-margin-small-left': message.from.id !== user.info.id,-->
-<!--      'uk-margin-small-right': message.from.id === user.info.id}">-->
-<!--      <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body uk-text-break">-->
-<!--        {{message.message.content}}-->
-<!--        <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">{{message.message.dateCreate | date}}</div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div *ngFor="let message of messages">
+    <div class="uk-flex uk-flex-left uk-margin-small-left"
+    [ngClass]="{'uk-margin-small-left': message.from.id !== user.info.id,
+      'uk-margin-small-right': message.from.id === user.info.id}">
+      <div style="max-width: 75%" class="uk-card uk-card-default uk-card-small uk-card-body uk-text-break">
+        {{message.message.content}}
+        <div class="uk-text-meta uk-position-bottom-right uk-margin-small-right">{{message.message.dateCreate}}</div>
+      </div>
+    </div>
+  </div>
 
 
 
