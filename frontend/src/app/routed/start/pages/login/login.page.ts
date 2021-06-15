@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../../../core/auth/auth.service';
 import {User} from '../../../../core/auth/models';
 import {Router} from '@angular/router';
+import {UserApiService} from '../../../../features/profile/services/user-api.service';
 
 
 interface LoginFormData {
@@ -20,6 +21,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly userApiService: UserApiService,
     private readonly router: Router
   ) {}
 
@@ -49,6 +51,7 @@ export class LoginPage implements OnInit {
       .subscribe(
         () => {
           this.isLoading = false;
+          this.userApiService.saveCurrentUserInfoToStorage();
           this.router.navigate(['/']);
         },
         () => {

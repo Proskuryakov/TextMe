@@ -53,6 +53,7 @@ export class ProfilePage implements OnInit {
 
   logout(): void {
     this.authService.deleteToken();
+    this.userApiService.deleteCurrentUserInfoFromStorage();
     this.router.navigate(['/start']);
   }
 
@@ -90,7 +91,7 @@ export class ProfilePage implements OnInit {
     this.message = '';
     this.isLoading = true;
     this.userApiService.updateName(this.newName).subscribe(
-      (token) => {
+      () => {
         this.initUser();
         this.isLoading = false;
         this.message = 'Имя пользователя успешно обновлено';
