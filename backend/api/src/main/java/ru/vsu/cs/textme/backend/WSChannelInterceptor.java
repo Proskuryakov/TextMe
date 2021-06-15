@@ -35,7 +35,9 @@ public class WSChannelInterceptor implements ChannelInterceptor {
 
         if (accessor.getMessageType() != null) switch (accessor.getMessageType()) {
             case CONNECT:
+            case DISCONNECT:
             case MESSAGE:
+            case UNSUBSCRIBE:
             case SUBSCRIBE: log.log(Level.WARN, "РАБОТАЕТ");
                 var auth = jwtFilter.getAuthToken(
                         accessor.getFirstNativeHeader(JwtFilter.AUTHORIZATION));
