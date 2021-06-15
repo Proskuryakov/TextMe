@@ -28,5 +28,22 @@ export class MessageInfo {
 export class NewMessageRequest {
   recipient: number;
   message: string;
+  images: string[];
 }
 
+export class MessageUpdate {
+  id: number;
+  content: string;
+}
+
+export enum MessageError {
+  ADDRESS_NOT_FOUND, MESSAGE_NOT_FOUND, FROM_BLOCKED, TO_BLOCKED, TIMEOUT, NOT_PERMS
+}
+
+export class DirectException {
+  error: MessageError;
+}
+
+export class ChatException{
+  error: MessageError;
+}
