@@ -11,7 +11,7 @@ const routes: Routes = [
     component: MainPage
   },
   {
-    path: 'chat',
+    path: 'messenger',
     component: AllChatPage
   },
   {
