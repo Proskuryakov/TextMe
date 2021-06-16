@@ -49,7 +49,10 @@ public class MessengerController {
     public List<MessageInfo> getDirectPage(@AuthenticationPrincipal CustomUserDetails details,
                                            @PathVariable Integer id,
                                            @PathVariable Integer page) {
-        return messengerService.getDirectPage(details.getUser().getId(), id, page);
+        var list =  messengerService.getDirectPage(details.getUser().getId(), id, page);
+        list.sort(Comparator.comparing(o -> o.getMessage().getDateCreate()));
+        Collections.reverse(list);
+        return list;
     }
 
     @GetMapping("/chat/{id}/{page}")
@@ -57,6 +60,9 @@ public class MessengerController {
     public List<MessageInfo> getChatPage(@AuthenticationPrincipal CustomUserDetails details,
                                              @PathVariable Integer id,
                                              @PathVariable Integer page) {
-        return messengerService.getChatPage(details.getUser().getId(), id, page);
+        var list =  messengerService.getChatPage(details.getUser().getId(), id, page);
+        list.sort(Comparator.comparing(o -> o.getMessage().getDateCreate()));
+        Collections.reverse(list);
+        return list;
     }
 }
