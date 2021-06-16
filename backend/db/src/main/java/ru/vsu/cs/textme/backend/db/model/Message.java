@@ -11,8 +11,8 @@ import java.time.ZonedDateTime;
 public class Message {
     private Integer id;
     private String content;
-    private Date dateCreate;
-    private Date dateUpdate;
+    private Timestamp dateCreate;
+    private Timestamp dateUpdate;
     private MessageStatus status;
 
     public boolean expiredUpdate() {
