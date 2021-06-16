@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {formatDate} from '@angular/common';
 import {MessengerApiService} from '../../../../features/chat/services/messenger-api.service';
 import {Info} from '../../../../features/profile/models/info.model';
 import {UserApiService} from '../../../../features/profile/services/user-api.service';
@@ -68,13 +67,11 @@ export class AllChatPage implements OnInit {
   }
 
   getImageUrl(chat: MessageInfo): string {
-    let url;
     if (chat.destination === DestinationType.CHAT) {
-      url = chat.to.imageUrl;
+      return this.userApiService.getImageUrl(chat.to);
     } else {
-      url = this.getCompanion(chat).imageUrl;
+      return this.userApiService.getImageUrl(this.getCompanion(chat));
     }
-    return url === null ? this.userApiService.defaultImage : url;
   }
 
   isMyMessage(from: Info): boolean {
@@ -89,15 +86,7 @@ export class AllChatPage implements OnInit {
   }
 
   getFormatDate(message: Message): string {
-    const date = message.dateUpdate > message.dateCreate ? message.dateUpdate : message.dateCreate;
-    if (
-      formatDate(date, 'dd.MM.yy', 'en') <
-      formatDate(new Date(), 'dd.MM.yy', 'en')
-    ) {
-      return formatDate(date, 'dd.MM.yy', 'en');
-    } else {
-      return formatDate(date, 'HH:mm', 'en');
-    }
+    return this.msgApiService.formatDate(message);
   }
 
   open(chat: MessageInfo): void {
