@@ -9,7 +9,9 @@ import ru.vsu.cs.textme.backend.services.MessengerService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController()
@@ -26,17 +28,19 @@ public class MessengerController {
     public List<MessageInfo> getList(@AuthenticationPrincipal CustomUserDetails details,
                                      @PathVariable @Valid @Size int page,
                                      @PathVariable String type) {
+        var list = Collections.<MessageInfo>emptyList();
         switch (type) {
-            case "chat": return messengerService.getChats(details.getUser().getId(), page);
-            case "direct": return messengerService.getDirects(details.getUser().getId(), page);
+            case "chat": list =  messengerService.getChats(details.getUser().getId(), page); break;
+            case "direct": list = messengerService.getDirects(details.getUser().getId(), page); break;
             case "all": {
                 var chats = messengerService.getChats(details.getUser().getId(), page);
                 var directs =  messengerService.getDirects(details.getUser().getId(), page);
                 chats.addAll(directs);
-                return chats;
+                list = chats;
             }
         }
-        return Collections.emptyList();
+        list.sort(Comparator.comparing(o -> o.getMessage().getDateCreate()));
+        return list;
     }
 
     @GetMapping("/direct/{id}/{page}")
