@@ -78,7 +78,7 @@ public interface DirectMapper {
     List<MessageInfo> getMessages(Integer from, Integer to, Integer limit, Integer offset);
 
     @Select("WITH lm AS (SELECT dm.*, MAX(m.date_create) as date_create FROM direct_messages dm, messages m\n" +
-            "    WHERE dm.user_from_id = #{id} OR dm.user_to_id = #{id} AND m.id = dm.message_id  AND m.status_id != 2\n" +
+            "    WHERE (dm.user_from_id = #{id} OR dm.user_to_id = #{id}) AND m.id = dm.message_id  AND m.status_id != 2\n" +
             "    GROUP BY dm.user_from_id, dm.user_to_id, dm.message_id)\n" +
             "SELECT lm1.user_from_id, lm1.user_to_id, lm1.message_id FROM lm AS lm1\n" +
             "JOIN lm AS lm2 ON lm1.user_to_id = lm2.user_from_id AND\n" +
