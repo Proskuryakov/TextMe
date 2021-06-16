@@ -23,32 +23,26 @@ public class MessengerService {
     }
 
     public List<MessageInfo> getDirects(Integer id, Integer page) {
-        var list =  directMapper.getAllDirects(id, page);
-        if (list == null) return Collections.emptyList();
-        for (var info : list) {
+        var messages =  directMapper.getLastMessageAllDirects(id, 128, page * 128);
+        if (messages == null) return Collections.emptyList();
+        for (var info : messages) {
             info.setDestination(DIRECT);
         }
-        return list;
+        return messages;
     }
 
     public List<MessageInfo> getDirectPage(Integer from, Integer to, Integer page) {
         return directMapper.getMessages(from, to, 128, page * 128);
     }
 
-    public List<MessageInfo> getChatList(Integer userId, Integer page) {
-        var chatList = chatMapper.getAllChats(userId);
-        var list = new ArrayList<MessageInfo>();
-        if (chatList != null) {
-            for (var chatInfo : chatList) {
-                var chatMessages = getChatPage(chatInfo.getId(), page);
-                if (chatMessages == null || chatMessages.isEmpty()) continue;
-                var chatMessage = chatMessages.get(0);
-                var info = chatMessage.getInfo();
-                info.setDestination(CHAT);
-                list.add(info);
-            }
+    public List<MessageInfo> getChats(Integer userId, Integer page) {
+        var messages = chatMapper.getLastMessageAllChats(userId, 128, page * 128);
+        if (messages == null)  return Collections.emptyList();
+
+        for (var chatMessage : messages) {
+            chatMessage.setDestination(CHAT);
         }
-        return list;
+        return messages;
     }
 
     public List<MessageInfo> getChatPage(Integer userId, Integer chatId, Integer page) {
@@ -59,11 +53,7 @@ public class MessengerService {
                     if (member.canRead()) {
                         var list = getChatPage(chatId, page);
                         return (list == null) ? Collections.emptyList() : list.stream()
-                                .map(chatMessage -> {
-                                    var info = chatMessage.getInfo();
-                                    info.setDestination(CHAT);
-                                    return info;
-                                })
+                                .peek(chatMessage -> chatMessage.setDestination(CHAT))
                                 .collect(Collectors.toList());
                     }
                     break;
@@ -73,7 +63,7 @@ public class MessengerService {
         return Collections.emptyList();
     }
 
-    private List<ChatMessage> getChatPage(Integer chat, Integer page) {
+    private List<MessageInfo> getChatPage(Integer chat, Integer page) {
         return chatMapper.getMessages(chat, 128, page * 128);
     }
 }

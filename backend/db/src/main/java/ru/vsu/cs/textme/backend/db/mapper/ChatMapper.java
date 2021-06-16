@@ -121,16 +121,26 @@ public interface ChatMapper {
     @ResultMap(CHAT_MESSAGE_SELECT)
     ChatMessage update(String msg, Integer id);
 
-    @Select("SELECT c.id FROM chats c, user_chat_role uc\n" +
-            "WHERE uc.user_id = #{userId} AND uc.chat_id = c.id AND uc.role_id != 4 AND uc.role_id != 5")
-    @ResultMap(CHAT_INFO_SELECT)
-    List<Info> getAllChats(Integer userId);
+    @Select("SELECT cm.*, MAX(m.date_create) as date_create FROM chats c, user_chat_role uc, chat_messages cm, messages m\n" +
+            "WHERE uc.user_id = #{userId} AND\n" +
+            "      uc.chat_id = c.id AND\n" +
+            "      uc.role_id != 4 AND\n" +
+            "      uc.role_id != 5 AND\n" +
+            "      cm.chat_id = c.id AND\n" +
+            "      cm.message_id = m.id AND\n" +
+            "      m.status_id != 2\n" +
+            "GROUP BY cm.user_id, cm.chat_id, cm.message_id\n" +
+            "LIMIT #{limit}\n" +
+            "OFFSET #{offset}"
+    )
+    @ResultMap(MESSAGE_INFO_SELECT)
+    List<MessageInfo> getLastMessageAllChats(Integer userId, Integer limit, Integer offset);
 
     @Select("SELECT cm.* FROM chat_messages cm, messages m \n" +
             "WHERE cm.chat_id = #{chat} AND cm.message_id = m.id AND m.status_id != 2\n" +
             "LIMIT #{limit} OFFSET #{offset}\n")
-    @ResultMap(CHAT_MESSAGE_SELECT)
-    List<ChatMessage> getMessages(Integer chat, Integer limit, Integer offset);
+    @ResultMap(MESSAGE_INFO_SELECT)
+    List<MessageInfo> getMessages(Integer chat, Integer limit, Integer offset);
 
     @Select("SELECT * FROM chats ORDER BY random() LIMIT #{limit}")
     @ResultMap(CHAT_PROFILE_SELECT)

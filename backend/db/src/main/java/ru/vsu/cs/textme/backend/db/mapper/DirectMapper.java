@@ -77,13 +77,18 @@ public interface DirectMapper {
     @ResultMap(MESSAGE_INFO_SELECT)
     List<MessageInfo> getMessages(Integer from, Integer to, Integer limit, Integer offset);
 
-    @Select("SELECT dm.* FROM direct_messages dm, messages m\n" +
-            "WHERE user_from_id = #{id} AND m.id = dm.message_id AND m.status_id != 2\n" +
-            "UNION\n" +
-            "SELECT dm.* FROM direct_messages dm, messages m\n" +
-            "WHERE user_to_id = #{id}  AND m.id = dm.message_id AND m.status_id != 2;")
+    @Select("WITH lm AS (SELECT dm.*, MAX(m.date_create) as date_create FROM direct_messages dm, messages m\n" +
+            "    WHERE dm.user_from_id = #{id} OR dm.user_to_id = #{id} AND m.id = dm.message_id  AND m.status_id != 2\n" +
+            "    GROUP BY dm.user_from_id, dm.user_to_id, dm.message_id)\n" +
+            "SELECT lm1.user_from_id, lm1.user_to_id, lm1.message_id FROM lm AS lm1\n" +
+            "JOIN lm AS lm2 ON lm1.user_to_id = lm2.user_from_id AND\n" +
+            "                  lm2.user_to_id = lm1.user_from_id AND\n" +
+            "                  lm1.date_create > lm2.date_create\n" +
+            "GROUP BY lm1.user_from_id, lm1.user_to_id, lm1.message_id\n" +
+            "LIMIT #{limit}\n" +
+            "OFFSET #{offset}")
     @ResultMap(MESSAGE_INFO_SELECT)
-    List<MessageInfo> getAllDirects(Integer id, Integer page);
+    List<MessageInfo> getLastMessageAllDirects(Integer id, Integer limit, Integer offset);
 
     @Insert("CALL save_message_file(#{id}, #{path})")
     void saveMessageFile(Integer id, String path);

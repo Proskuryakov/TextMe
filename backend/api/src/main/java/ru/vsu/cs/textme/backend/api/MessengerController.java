@@ -23,14 +23,14 @@ public class MessengerController {
 
     @GetMapping("/list/{page}/{type}")
     @ResponseStatus(HttpStatus.OK)
-    public List<MessageInfo> getDirectList(@AuthenticationPrincipal CustomUserDetails details,
-                                           @PathVariable @Valid @Size int page,
-                                           @PathVariable String type) {
+    public List<MessageInfo> getList(@AuthenticationPrincipal CustomUserDetails details,
+                                     @PathVariable @Valid @Size int page,
+                                     @PathVariable String type) {
         switch (type) {
-            case "chat": return messengerService.getChatList(details.getUser().getId(), page);
+            case "chat": return messengerService.getChats(details.getUser().getId(), page);
             case "direct": return messengerService.getDirects(details.getUser().getId(), page);
             case "all": {
-                var chats = messengerService.getChatList(details.getUser().getId(), page);
+                var chats = messengerService.getChats(details.getUser().getId(), page);
                 var directs =  messengerService.getDirects(details.getUser().getId(), page);
                 chats.addAll(directs);
                 return chats;
