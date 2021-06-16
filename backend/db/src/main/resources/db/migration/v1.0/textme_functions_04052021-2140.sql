@@ -95,3 +95,24 @@ BEGIN
     INSERT INTO message_file (message_id, file_id) VALUES (msg_id, im_id);
 END;
 $$;
+
+create or replace procedure ban_card(user_by integer, card integer, date_to timestamp with time zone)
+    language plpgsql
+as
+$$
+DECLARE
+    banned_id INTEGER;
+    report_count INTEGER;
+BEGIN
+    SELECT count(*) INTO report_count FROM reports WHERE card_id = card AND review_date IS NOT NULL;
+    IF report_count = 0
+    THEN RETURN;
+    END IF;
+    SELECT u.id INTO banned_id FROM users u WHERE u.card_id = card LIMIT 1;
+    IF banned_id IS NOT NULL
+    THEN
+        UPDATE reports SET review_date = now(), reviewer_id = 1 WHERE card_id = 2 AND review_date IS NULL;
+        INSERT INTO banned_users(user_who_id, user_banned_id, time_to) VALUES (user_by,banned_id, date_to);
+    END IF;
+END;
+$$;

@@ -69,6 +69,6 @@ public interface ReportMapper {
     })
     List<Report> findReportProfilePage(Integer cardId, Integer limit, Integer offset);
 
-    @Insert("")
+    @Insert("CALL ban_card(#{by}, #{cardId}, #{expired}")
     void saveBan(Integer by, Integer cardId, Timestamp expired);
 }
