@@ -1,0 +1,104 @@
+<nav class="uk-navbar-container uk-margin uk-box-shadow-medium uk-margin-right " uk-navbar>
+
+  <div class="uk-hidden@m nav-overlay uk-navbar-left">
+    <a class="uk-navbar-toggle"
+       routerLink="/messenger"
+       uk-icon="icon: arrow-left; ratio: 2"
+    ></a>
+
+    <img class="uk-preserve-width uk-border-rounded uk-margin-right"
+         width="50" height="50"
+         src="{{companionInfo?.imageUrl}}"
+    >
+
+    <div class="uk-logo">
+      {{companionInfo?.name}}
+    </div>
+  </div>
+
+  <app-left-navbar-logo class="uk-visible@m"></app-left-navbar-logo>
+
+  <div class="uk-visible@m nav-overlay uk-navbar-right">
+    <div class="uk-logo uk-margin-right">
+      {{companionInfo?.name}}
+    </div>
+
+    <img class="uk-preserve-width uk-border-rounded"
+         width="50" height="50"
+         src="{{companionInfo?.imageUrl}}"
+    >
+
+  </div>
+
+</nav>
+
+<div
+  class="uk-panel-scrollable uk-flex uk-flex-column-reverse uk-grid-small uk-width-2-3@m uk-width-3-4@l uk-align-center"
+  id="scroll-panel"
+  uk-height-viewport="expand: true"
+>
+  <div
+    *ngFor="let message of messages"
+    class="uk-flex"
+    [ngClass]="{
+    'uk-margin-small-left': !isMyMessage(message),
+    'uk-flex-left': !isMyMessage(message),
+    'uk-margin-small-right': isMyMessage(message),
+    'uk-flex-right': isMyMessage(message)
+    }"
+  >
+    <div style="max-width: 75%"
+         class="uk-card uk-card-default uk-card-small uk-card-body uk-card-hover uk-text-break"
+    >
+      <div class="uk-margin-remove">
+          {{message.message.content}}
+      </div>
+      <div class="uk-text-meta uk-margin-remove uk-align-right">
+        <span *ngIf="isUpdateMessage(message)">ред. </span>{{formatDate(message.message)}}
+      </div>
+    </div>
+
+
+  </div>
+
+</div>
+
+
+<!--текстовое поле-->
+<div id="text-field"  class="uk-flex uk-flex-middle uk-margin uk-width-2-3@m uk-width-3-4@l uk-align-center">
+
+  <div (click)="addFiles()">
+    <img class="uk-preserve-width uk-margin-small-left"
+         src="logo/paper-clip.svg" height="20" uk-svg>
+  </div>
+
+
+  <div class="uk-margin-small-left uk-margin-small-right uk-width-expand" >
+
+<!--    <textarea
+      class="uk-height-max-medium uk-textarea uk-text-break"
+      autofocus
+      [(ngModel)]="newMessage"
+      (keyup.enter)="sendMessage()"
+    >
+      </textarea>-->
+
+    <input
+      class="uk-height-max-medium uk-input uk-text-break"
+      [autofocus]="true"
+      [(ngModel)]="newMessage"
+      (keyup.enter)="sendMessage()"
+    >
+  </div>
+
+  <div (click)="sendMessage()">
+    <img
+      class="uk-preserve-width uk-margin-small-right"
+      src="logo/send.svg" height="20" uk-svg>
+  </div>
+
+
+</div>
+
+<!--нижняя навигационная панель-->
+<app-navigation-panel class="uk-hidden@m"></app-navigation-panel>
