@@ -83,10 +83,12 @@ public interface DirectMapper {
             "    GROUP BY dm.user_from_id, dm.user_to_id)\n" +
             "SELECT lm1.user_from_id, lm1.user_to_id, lm1.message_id FROM lm AS lm1\n" +
             "JOIN lm lm2 ON\n" +
-            "    lm1.user_to_id = lm1.user_from_id OR\n" +
-            "    lm2.user_to_id = lm1.user_from_id AND\n" +
+            "    (lm1.user_to_id = lm2.user_to_id AND\n" +
+            "    lm1.user_from_id = lm2.user_from_id AND\n" +
+            "    lm1.message_id = lm2.message_id) OR\n" +
+            "    (lm2.user_to_id = lm1.user_from_id AND\n" +
             "    lm1.user_to_id = lm2.user_from_id AND\n" +
-            "    lm1.date_create >= lm2.date_create\n" +
+            "    lm1.date_create >= lm2.date_create)\n" +
             "GROUP BY lm1.user_from_id, lm1.user_to_id, lm1.message_id\n" +
             "LIMIT #{limit}\n" +
             "OFFSET #{offset};")
