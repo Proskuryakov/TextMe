@@ -31,6 +31,16 @@ export class UserApiService {
     );
   }
 
+  getUser(id: number): Observable<Profile> {
+    return this.http.get<Profile>(`${this.userURL}/${id}`).pipe(
+      map(user => {
+        if (!user.info.imageUrl) { user.info.imageUrl = this.defaultImage; }
+        if (!user.card.tags) { user.card.tags = ['Теги пока не добавлены']; }
+        return user;
+      })
+    );
+  }
+
   uploadImage(image: File): Observable<HttpEvent<void>>{
     const fd = new FormData();
     fd.append('image', image, image.name);
@@ -65,6 +75,13 @@ export class UserApiService {
 
   getCurrentUserInfoFromStorage(): Info {
     return JSON.parse(localStorage.getItem(this.userInfoKey));
+  }
+
+  getImageUrl(profile: Info): string {
+    if (!profile.imageUrl){
+      return this.defaultImage;
+    }
+    return profile.imageUrl;
   }
 
 }
