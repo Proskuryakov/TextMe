@@ -19,6 +19,10 @@ const routes: Routes = [
     component: ChatPage
   },
   {
+    path: 'direct/:id',
+    component: ChatPage
+  },
+  {
     path: 'profile',
     component: ProfilePage
   }
