@@ -50,7 +50,6 @@ public interface UserMapper {
             @Result(property = "id", column = "id"),
             @Result(property = "name", column = "nickname"),
             @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
-
     })
     Info findInfoById(Integer id);
 
