@@ -192,4 +192,7 @@ public class ChatService {
         return getMemberInfo(members, userId);
     }
 
+    public Chat getChat(Integer user, Integer chat) {
+        return chatMapper.findChatById(chat);
+    }
 }

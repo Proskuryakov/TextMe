@@ -29,6 +29,12 @@ public class ChatController {
          return chatService.create(details.getUser().getId(), request.getName());
     }
 
+    @PostMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Chat getChat(@AuthenticationPrincipal CustomUserDetails details,@PathVariable Integer id) {
+        return chatService.getChat(details.getUser().getId(), id);
+    }
+
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteChat(@AuthenticationPrincipal CustomUserDetails details, @PathVariable Integer id) {
