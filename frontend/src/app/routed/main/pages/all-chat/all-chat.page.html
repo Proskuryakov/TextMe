@@ -24,11 +24,20 @@
 
     <div class="uk-navbar-item uk-width-expand">
       <form class="uk-search uk-search-navbar uk-width-1-1">
-        <input class="uk-search-input" type="search" placeholder="Поиск..." autofocus>
+        <input
+          [(ngModel)]="searchName"
+          (ngModelChange)="search()"
+          name="search"
+          class="uk-search-input"
+          type="search"
+          placeholder="Поиск..."
+          autofocus
+        >
       </form>
     </div>
 
     <a class="uk-navbar-toggle"
+       (click)="endSearch()"
        uk-close
        uk-toggle="target: .nav-overlay; animation: uk-animation-fade"
        href="#"></a>
@@ -49,11 +58,11 @@
         Тип:
       </div>
 
-      <div>
-        <select class="uk-select">
-          <option>все чаты</option>
-          <option>беседы</option>
-          <option>личные сообщения</option>
+      <div class="uk-width-expand">
+        <select class="uk-select" [(ngModel)]="chatFilter">
+          <option [ngValue]="'ALL'" >все чаты</option>
+          <option [ngValue]="'CHAT'">беседы</option>
+          <option [ngValue]="'DIRECT'">личные сообщения</option>
         </select>
       </div>
 
@@ -65,11 +74,11 @@
         Сообщения:
       </div>
 
-      <div>
-        <select class="uk-select">
-          <option>все</option>
-          <option>прочитанные</option>
-          <option>непрочитанные</option>
+      <div class="uk-width-expand">
+        <select class="uk-select" [(ngModel)]="messageFilter">
+          <option [ngValue]="'ALL'">все</option>
+          <option [ngValue]="'OLD'">прочитанные</option>
+          <option [ngValue]="'NEW'">непрочитанные</option>
         </select>
       </div>
 
@@ -78,7 +87,8 @@
     <div class="uk-margin-small">
       <button
         uk-toggle="target: #filter-panel"
-        class="uk-button uk-button-default uk-width-expand"
+        class="uk-button uk-button-default uk-modal-close uk-width-expand"
+        (click)="reloadChats()"
       >Применить
       </button>
     </div>
@@ -92,64 +102,45 @@
 
   <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
     <tbody>
-    <tr routerLink="/chat/0">
+    <tr
+      *ngFor="let chat of chats" (click)="open(chat)"
+      [ngClass]="{'uk-background-muted' : !isRead(chat.message)}"
+    >
       <td class="uk-table-shrink">
+<!--        <img
+          class="uk-preserve-width uk-border-rounded"
+          uk-img
+          data-src="{{getImageUrl(chat)}}"
+          width="40"
+          height="40"
+          alt=""
+        >-->
         <img class="uk-preserve-width uk-border-rounded"
-             src="logo/avatar.jpg"
+             src="{{getImageUrl(chat)}}"
              width="40" height="40" alt=""
         >
       </td>
 
       <td class="uk-text-truncate">
         <div class="uk-margin-remove-bottom uk-text-bold">
-          DCLover
+          {{getChatName(chat)}}
         </div>
         <div class="uk-margin-remove-top uk-text-meta">
-          Вы: Только что посмотрела Лигу Справедливости. Фильм - огонь!
+          {{getMessageAuthor(chat)}}{{chat.message.content}}
         </div>
       </td>
 
       <td class="uk-table-shrink">
         <div class="uk-flex uk-flex-column uk-text-right">
           <div class="uk-margin-remove-bottom uk-text-meta">
-            21:12
+            {{getFormatDate(chat.message)}}
           </div>
-          <div class="uk-margin-remove-top">
-            <!--                            <span class="uk-badge uk-background-secondary"></span>-->
-          </div>
+<!--          <div class="uk-margin-remove-top">
+            <span class="uk-badge uk-background-secondary"></span>
+          </div>-->
         </div>
       </td>
     </tr>
-
-    <tr class="uk-background-muted">
-      <td class="uk-table-shrink">
-        <img class="uk-preserve-width uk-border-rounded"
-             src="logo/avatar.jpg"
-             width="40" height="40" alt=""
-        >
-      </td>
-
-      <td class="uk-text-truncate">
-        <div class="uk-margin-remove-bottom uk-text-bold">
-          Сурок
-        </div>
-        <div class="uk-margin-remove-top uk-text-meta">
-          Почему ты мне не отвечаешь?
-        </div>
-      </td>
-
-      <td class="uk-table-shrink">
-        <div class="uk-flex uk-flex-column uk-text-right">
-          <div class="uk-margin-remove-bottom uk-text-meta">
-            11.03.21
-          </div>
-          <div class="uk-margin-remove-top">
-            <span class="uk-badge uk-background-secondary">15</span>
-          </div>
-        </div>
-      </td>
-    </tr>
-
     </tbody>
   </table>
 
