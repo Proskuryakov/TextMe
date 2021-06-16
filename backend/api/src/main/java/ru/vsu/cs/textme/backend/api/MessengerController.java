@@ -40,6 +40,7 @@ public class MessengerController {
             }
         }
         list.sort(Comparator.comparing(o -> o.getMessage().getDateCreate()));
+        Collections.reverse(list);
         return list;
     }
 
