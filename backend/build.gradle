@@ -18,6 +18,10 @@ allprojects {
             extendsFrom annotationProcessor
         }
     }
+    bootJar {
+        enabled(false)
+        mainClass = 'ru.vsu.cs.textme.backend.BackendApplication'
+    }
 
     jar {
         enabled(true)
@@ -28,6 +32,9 @@ allprojects {
     }
 
     dependencies {
+        testImplementation 'junit:junit:4.12'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -46,6 +53,9 @@ dependencies {
     compile project(':services')
     compile project(':api')
     compile project(':security')
+
+    implementation 'io.swagger.core.v3:swagger-annotations:2.1.6'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.5.2'
 
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
