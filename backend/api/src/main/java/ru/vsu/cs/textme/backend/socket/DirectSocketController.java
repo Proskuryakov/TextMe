@@ -66,7 +66,7 @@ public class DirectSocketController {
 
 
     @MessageExceptionHandler
-    @SendToUser(destinations="/queue/direct/errors", broadcast=false)
+    @SendToUser(destinations="/queue/direct/errors")
     public DirectException handleException(DirectException error) {
         return error;
     }
