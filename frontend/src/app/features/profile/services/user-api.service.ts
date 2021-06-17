@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpEvent} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 import {Profile} from '../models/profile.model';
@@ -25,7 +25,7 @@ export class UserApiService {
     return this.http.get<Profile>(`${this.userURL}/`).pipe(
       map(user => {
         if (!user.info.imageUrl) { user.info.imageUrl = this.defaultImage; }
-        if (!user.card.tags) { user.card.tags = ['Теги пока не добавлены']; }
+        if (user.card.tags.length === 0) { user.card.tags = ['Теги', 'пока', 'не', 'добавлены']; }
         return user;
       })
     );
@@ -35,7 +35,7 @@ export class UserApiService {
     return this.http.get<Profile>(`${this.userURL}/${id}`).pipe(
       map(user => {
         if (!user.info.imageUrl) { user.info.imageUrl = this.defaultImage; }
-        if (!user.card.tags) { user.card.tags = ['Теги пока не добавлены']; }
+        if (user.card.tags.length === 0) { user.card.tags = ['Теги', 'пока', 'не', 'добавлены']; }
         return user;
       })
     );
