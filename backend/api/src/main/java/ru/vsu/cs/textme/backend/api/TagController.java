@@ -1,8 +1,10 @@
 package ru.vsu.cs.textme.backend.api;
 
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.textme.backend.services.TagService;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -19,6 +21,6 @@ public class TagController {
     @GetMapping("/like/{begin}")
     @ResponseStatus(OK)
     public List<String> getTags(@PathVariable String begin) {
-        return tagService.getTags(begin);
+        return StringUtils.hasText(begin) ? tagService.getTags(begin) : Collections.emptyList();
     }
 }
