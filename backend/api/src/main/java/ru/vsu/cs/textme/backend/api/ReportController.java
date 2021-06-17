@@ -1,4 +1,4 @@
-package ru.vsu.cs.textme.backend;
+package ru.vsu.cs.textme.backend.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

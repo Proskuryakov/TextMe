@@ -15,7 +15,7 @@ import java.util.function.BiPredicate;
 
 import static ru.vsu.cs.textme.backend.db.model.MessageError.*;
 import static ru.vsu.cs.textme.backend.db.model.MessageStatus.DELETED;
-import static ru.vsu.cs.textme.backend.db.model.MessageStatus.READ;
+import static ru.vsu.cs.textme.backend.db.model.MessageStatus.RECIEVED;
 
 @Service
 public class ChatService {
@@ -71,8 +71,8 @@ public class ChatService {
 
         var member = getMemberInfo(message.getMembers(), userId);
         if (member != null && member.canRead() &&
-                chatMapper.setStatusById(message.getInfo().getMessage().getId(), READ.ordinal())) {
-            message.getInfo().getMessage().setStatus(READ);
+                chatMapper.setStatusById(message.getInfo().getMessage().getId(), RECIEVED.ordinal())) {
+            message.getInfo().getMessage().setStatus(RECIEVED);
             return message;
         }
         throw new ChatException(NOT_PERMS);

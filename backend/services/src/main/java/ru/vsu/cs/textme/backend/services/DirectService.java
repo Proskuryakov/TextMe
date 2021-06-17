@@ -73,8 +73,8 @@ public class DirectService {
         if (!message.getFrom().getId().equals(fromId)) {
             throw new DirectException(NOT_PERMS);
         }
-        if (directMapper.setStatusById(msgId, READ.ordinal())) {
-            message.getMessage().setStatus(READ);
+        if (directMapper.setStatusById(msgId, RECIEVED.ordinal())) {
+            message.getMessage().setStatus(RECIEVED);
         }
         message.setDestination(DIRECT);
         return message;
