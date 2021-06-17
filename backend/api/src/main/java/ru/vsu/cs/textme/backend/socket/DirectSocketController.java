@@ -56,7 +56,7 @@ public class DirectSocketController {
         var details = (CustomUserDetails) auth.getPrincipal();
         var id = details.getUser().getId();
         var out=  directService.readBy(id, msgId);
-        send(id, out.getTo().getId(), out, "read");
+        send(id, out.getFrom().getId(), out, "read");
     }
 
     private void send(Integer from, Integer to, Object obj, String path) {
