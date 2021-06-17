@@ -89,7 +89,6 @@ public class CardController {
     public List<Profile> getNearbyUsersCards(@AuthenticationPrincipal CustomUserDetails details,
                                              @PathVariable @Valid @Size Integer page,
                                              @RequestParam("tag") @Nullable String tag) {
-        if (tag != null) tag = URLEncoder.encode(tag, StandardCharsets.UTF_8);
         return cardService.findNearbyUserProfilesById(details.getUser().getId(), page, tag);
     }
 

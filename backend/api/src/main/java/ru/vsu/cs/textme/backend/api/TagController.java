@@ -23,7 +23,6 @@ public class TagController {
     @GetMapping("/like")
     @ResponseStatus(OK)
     public List<String> getTags(@RequestParam("begin") String begin) {
-        if (begin != null) begin = URLEncoder.encode(begin, StandardCharsets.UTF_8);
         return StringUtils.hasText(begin) ? tagService.getTags(begin) : Collections.emptyList();
     }
 }
