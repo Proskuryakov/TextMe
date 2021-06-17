@@ -8,6 +8,10 @@ import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
 import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.services.exception.DirectException;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static ru.vsu.cs.textme.backend.db.model.MessageError.*;
@@ -48,6 +52,8 @@ public class DirectService {
         }
         directMapper.update(update.getContent(), update.getId());
         message.setDestination(DIRECT);
+        message.getMessage()
+                .setDateUpdate(Timestamp.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant()));
         message.getMessage().setContent(update.getContent());
         return message;
     }
