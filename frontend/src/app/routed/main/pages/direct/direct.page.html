@@ -39,16 +39,19 @@
 >
   <div
     *ngFor="let message of messages"
-    class="uk-flex"
+    class="uk-flex uk-margin-small-bottom"
     [ngClass]="{
     'uk-margin-small-left': !isMyMessage(message),
     'uk-flex-left': !isMyMessage(message),
     'uk-margin-small-right': isMyMessage(message),
     'uk-flex-right': isMyMessage(message)
     }"
+    (click)="messageClick(message)"
   >
+<!--    <div class="uk-invisible">{{readMessageOnLoad(message)}}</div>-->
     <div style="max-width: 75%"
          class="uk-card uk-card-default uk-card-small uk-card-body uk-card-hover uk-text-break"
+         [ngClass]="{'uk-card-primary': !isMessageRead(message)}"
     >
       <div class="uk-margin-remove">
           {{message.message.content}}
@@ -102,3 +105,10 @@
 
 <!--нижняя навигационная панель-->
 <app-navigation-panel class="uk-hidden@m"></app-navigation-panel>
+
+<app-update-delete-message
+  [modalId]="'update-delete-panel'"
+  (onDeleteMessage)="deleteSelectedMessage()"
+  (onUpdateMessage)="updateSelectedMessage($event)"
+  [text]="selectedMessage?.message.content"
+></app-update-delete-message>
