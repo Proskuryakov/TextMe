@@ -65,6 +65,7 @@ public interface UserMapper {
             @Result(property = "id", column = "id"),
             @Result(property = "nickname", column = "nickname"),
             @Result(property = "password", column = "password"),
+            @Result(property = "email", column = "email"),
             @Result(property = "roles", column = "id", javaType = List.class, many = @Many(select = FIND_USER_ROLES)),
             @Result(property = "blocked", column = "id", javaType = Blocked.class, one = @One(select = FIND_CURRENT_BLOCKED)),
     })
