@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import ru.vsu.cs.textme.backend.db.model.MessageUpdate;
+import ru.vsu.cs.textme.backend.db.model.info.MessageInfo;
 import ru.vsu.cs.textme.backend.db.model.request.NewMessageRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.exception.DirectException;
@@ -59,8 +60,9 @@ public class DirectSocketController {
         send(id, out.getFrom().getId(), out, "read");
     }
 
-    private void send(Integer from, Integer to, Object obj, String path) {
+    private void send(Integer from, Integer to, MessageInfo obj, String path) {
         template.convertAndSendToUser(from.toString(), "/queue/messenger/" + path, obj);
+        if (obj.selfMessage()) return;
         template.convertAndSendToUser(to.toString(), "/queue/messenger/" + path, obj);
     }
 

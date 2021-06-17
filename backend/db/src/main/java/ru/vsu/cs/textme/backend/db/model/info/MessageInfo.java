@@ -14,6 +14,10 @@ public class MessageInfo {
     private DestinationType destination = DestinationType.DIRECT;
     private List<String> images = Collections.emptyList();
 
+    public boolean selfMessage() {
+        return from.getId().equals(to.getId());
+    }
+
     public enum DestinationType {
         CHAT, DIRECT
     }
