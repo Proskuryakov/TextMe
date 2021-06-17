@@ -37,7 +37,7 @@ export class AllChatPage implements OnInit {
       case 'ALL':
         return chats;
       case 'OLD':
-        return chats.filter(value => value.message.status === MessageStatus.READ);
+        return chats.filter(value => value.message.status === MessageStatus.RECIEVED);
       case 'NEW':
         return chats.filter(value => value.message.status === MessageStatus.SENT);
     }
@@ -96,7 +96,7 @@ export class AllChatPage implements OnInit {
   }
 
   isRead(message: Message): boolean {
-    return message.status === MessageStatus.READ;
+    return message.status === MessageStatus.RECIEVED;
   }
 
   getChatName(chat: MessageInfo): string {

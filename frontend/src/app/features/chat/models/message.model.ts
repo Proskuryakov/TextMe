@@ -1,7 +1,7 @@
 import {Info} from '../../profile/models/info.model';
 
 export enum MessageStatus {
-  SENT, READ, DELETED
+  SENT = 'SENT', RECIEVED = 'RECIEVED', DELETED = 'DELETED'
 }
 
 export class Message {
