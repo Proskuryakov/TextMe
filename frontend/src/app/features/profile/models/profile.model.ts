@@ -1,4 +1,4 @@
-import {Card} from './card.model';
+import {Card} from '../../card/models/card.model';
 import {Info} from './info.model';
 
 export class Profile {

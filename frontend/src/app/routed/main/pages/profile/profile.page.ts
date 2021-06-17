@@ -4,7 +4,7 @@ import {UserApiService} from '../../../../features/profile/services/user-api.ser
 import {AuthService} from '../../../../core/auth/auth.service';
 import {Router} from '@angular/router';
 import {HttpEventType} from '@angular/common/http';
-import {CardApiService} from '../../../../features/profile/services/card-api.service';
+import {CardApiService} from '../../../../features/card/services/card-api.service';
 
 @Component({
   templateUrl: './profile.page.html',
