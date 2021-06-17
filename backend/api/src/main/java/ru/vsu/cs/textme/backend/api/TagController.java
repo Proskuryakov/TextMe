@@ -4,6 +4,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.textme.backend.services.TagService;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,9 +20,10 @@ public class TagController {
         this.tagService = tagService;
     }
 
-    @GetMapping("/like/{begin}")
+    @GetMapping("/like")
     @ResponseStatus(OK)
-    public List<String> getTags(@PathVariable String begin) {
+    public List<String> getTags(@RequestParam String begin) {
+        if (begin != null) begin = URLEncoder.encode(begin, StandardCharsets.UTF_8);
         return StringUtils.hasText(begin) ? tagService.getTags(begin) : Collections.emptyList();
     }
 }
