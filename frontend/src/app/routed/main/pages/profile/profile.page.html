@@ -59,7 +59,11 @@
 
   <div>
 
-    <div class="uk-card uk-card-default uk-card-body">
+    <div class="uk-card uk-card-default uk-card-body uk-display-block">
+
+      <div class="uk-inline uk-position-top-right uk-padding-small">
+        <span uk-icon="pencil" uk-toggle="target: #update-tag-panel"></span>
+      </div>
 
       <div class="uk-card-title uk-margin">
         Теги:
@@ -68,10 +72,10 @@
       <div>
 
         <span
-          *ngFor="let teg of user?.card.tags"
+          *ngFor="let tag of user?.card.tags"
           class="uk-label uk-margin-small-right uk-margin-small-bottom"
         >
-          {{teg}}
+          {{tag}}
         </span>
 
       </div>
@@ -81,6 +85,72 @@
   </div>
 
 
+</div>
+
+<div id="update-tag-panel" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+
+    <div *ngIf="message" class="uk-text-center">
+    <span class="uk-width-expand  uk-text-success" [ngClass]="{'uk-text-danger' : isError}">
+      {{message}}
+    </span>
+    </div>
+
+    <ul uk-accordion>
+      <li>
+        <a class="uk-accordion-title">Добавление</a>
+        <div class="uk-accordion-content">
+
+          <div class="uk-flex uk-flex-between uk-margin">
+            <div class="uk-text-lead uk-margin-small-right">
+              Тег:
+            </div>
+            <div class="uk-form-controls uk-width-expand">
+              <input [(ngModel)]="newTag"
+                     (ngModelChange)="searchTags()"
+                     (keyup.enter)="addNewTag()"
+                     class="uk-input" type="text" autofocus>
+            </div>
+          </div>
+
+          <div class="uk-panel uk-panel-scrollable uk-height-medium">
+            <span
+              *ngFor="let tag of foundTags"
+              (click)="addTag(tag)"
+              class="uk-label uk-margin-small-right uk-margin-small-bottom"
+            >{{tag}}</span>
+          </div>
+
+          <button
+            class="uk-button uk-button-primary uk-width-expand uk-margin"
+            type="button"
+            (click)="addNewTag()"
+            [disabled]="!newTag"
+          >добавить</button>
+
+        </div>
+      </li>
+      <li>
+        <a class="uk-accordion-title">Удаление</a>
+        <div class="uk-accordion-content">
+          <span class="uk-text-meta">
+            Нажмите на те теги, которые хотите удалить
+          </span>
+          <div class="uk-panel uk-panel-scrollable uk-height-medium">
+            <span
+              *ngFor="let tag of user?.card.tags"
+              (click)="deleteTag(tag)"
+              class="uk-label uk-label-danger uk-margin-small-right uk-margin-small-bottom"
+            >{{tag}}</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+
+
+  </div>
 </div>
 
 

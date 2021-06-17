@@ -3,8 +3,8 @@ import {Profile} from '../../../../features/profile/models/profile.model';
 import {UserApiService} from '../../../../features/profile/services/user-api.service';
 import {AuthService} from '../../../../core/auth/auth.service';
 import {Router} from '@angular/router';
-import {HttpEventType} from '@angular/common/http';
 import {CardApiService} from '../../../../features/card/services/card-api.service';
+import {TagApiService} from '../../../../features/card/services/tag-api.service';
 
 @Component({
   templateUrl: './profile.page.html',
@@ -25,10 +25,13 @@ export class ProfilePage implements OnInit {
   isError = false;
   selectedImage: File = null;
   selectedImageURL: string;
+  newTag = '';
+  foundTags: string[] = [];
 
   constructor(
     private readonly userApiService: UserApiService,
     private readonly cardApiService: CardApiService,
+    private readonly tagApiService: TagApiService,
     private readonly authService: AuthService,
     private readonly router: Router
   ) {
@@ -42,6 +45,7 @@ export class ProfilePage implements OnInit {
     this.userApiService.getCurrentUser().subscribe(
       (user) => {
         this.user = user;
+        console.log(user);
       },
       (error) => {
         console.log(error.error.message);
@@ -156,6 +160,50 @@ export class ProfilePage implements OnInit {
     return this.passwordForm.old_password.length < minPasswordLen ||
       this.passwordForm.new_password.length < minPasswordLen ||
       this.passwordForm.new_password_again.length < minPasswordLen;
+  }
+
+  addNewTag(): void {
+    this.addTag(this.newTag);
+    this.newTag = '';
+  }
+
+  searchTags(): void {
+    this.message = '';
+    console.log(this.newTag);
+    if (this.newTag.trim() === '') {
+      this.foundTags = [];
+      return;
+    }
+    this.tagApiService.getTagsLike(this.newTag).subscribe(
+      (tags) => this.foundTags = tags,
+      (error) => console.log(error)
+    );
+  }
+
+  addTag(tag: string): void {
+    this.cardApiService.addTag(tag).subscribe(
+      () => {
+        this.initUser();
+        this.isError = false;
+        this.message = `Тег "${tag}" успешно добавлен`;
+      }, () => {
+        this.isError = true;
+        this.message = 'Ошибка при добавлении тега';
+      }
+    );
+  }
+
+  deleteTag(tag: string): void {
+    this.cardApiService.deleteTag(tag).subscribe(
+      () => {
+        this.initUser();
+        this.isError = false;
+        this.message = `Тег "${tag}" успешно удален`;
+      }, () => {
+        this.isError = true;
+        this.message = 'Ошибка при удалении тега';
+      }
+    );
   }
 
 }
