@@ -18,9 +18,9 @@ public class TagController {
         this.tagService = tagService;
     }
 
-    @GetMapping("/like/{begin}")
+    @GetMapping("/like")
     @ResponseStatus(OK)
-    public List<String> getTags(@PathVariable String begin) {
+    public List<String> getTags(@RequestParam String begin) {
         return StringUtils.hasText(begin) ? tagService.getTags(begin) : Collections.emptyList();
     }
 }
