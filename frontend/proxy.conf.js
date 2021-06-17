@@ -4,5 +4,11 @@ module.exports = [
     target: 'http://localhost:8080',
     secure: true,
     changeOrigin: true
+  },
+  {
+    context: '/ws',
+    target: 'http://localhost:8080',
+    secure: false,
+    changeOrigin: true
   }
 ];

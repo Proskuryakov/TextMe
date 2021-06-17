@@ -8,8 +8,11 @@ import { MainPageUserCardComponent } from './components/main-page-user-card/main
 import { LeftNavbarLogoComponent } from './components/left-navbar-logo/left-navbar-logo.component';
 import { AllChatPage } from './pages/all-chat/all-chat.page';
 import { ChatPage } from './pages/chat/chat.page';
+import { DirectPage } from './pages/direct/direct.page';
 import { ProfilePage } from './pages/profile/profile.page';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ContenteditableModule} from '@ng-stack/contenteditable';
+import { UpdateDeleteMessageComponent } from './components/update-delete-message/update-delete-message.component';
 
 
 @NgModule({
@@ -20,12 +23,16 @@ import {FormsModule} from '@angular/forms';
     LeftNavbarLogoComponent,
     AllChatPage,
     ChatPage,
-    ProfilePage
+    ProfilePage,
+    DirectPage,
+    UpdateDeleteMessageComponent
   ],
-    imports: [
-        CommonModule,
-        MainRoutingModule,
-        FormsModule
-    ]
+  imports: [
+    CommonModule,
+    MainRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ContenteditableModule
+  ]
 })
 export class MainModule { }

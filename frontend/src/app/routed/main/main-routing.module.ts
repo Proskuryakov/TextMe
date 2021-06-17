@@ -4,6 +4,7 @@ import {MainPage} from './pages/main/main.page';
 import {AllChatPage} from './pages/all-chat/all-chat.page';
 import {ChatPage} from './pages/chat/chat.page';
 import {ProfilePage} from './pages/profile/profile.page';
+import {DirectPage} from './pages/direct/direct.page';
 
 const routes: Routes = [
   {
@@ -11,12 +12,16 @@ const routes: Routes = [
     component: MainPage
   },
   {
-    path: 'chat',
+    path: 'messenger',
     component: AllChatPage
   },
   {
     path: 'chat/:id',
     component: ChatPage
+  },
+  {
+    path: 'direct/:id',
+    component: DirectPage
   },
   {
     path: 'profile',
