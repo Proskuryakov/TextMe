@@ -3,6 +3,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 import {Profile} from '../../profile/models/profile.model';
+import {TagRequest} from '../models/tag.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,17 @@ export class CardApiService {
       params = new HttpParams().set('tag', tag);
     }
     return this.http.get<Profile[]>(`${this.cardURL}/users/${page}`, {params});
+  }
+
+  addTag(tag: string): Observable<void> {
+    return this.http.post<void>(`${this.cardURL}/user/tag`, {tag});
+  }
+
+  deleteTag(tag: string): Observable<void> {
+    const tagRequest = new TagRequest();
+    tagRequest.tag = tag;
+    // @ts-ignore
+    return this.http.delete<void>(`${this.cardURL}/user/tag`, {body: tagRequest});
   }
 
 }
