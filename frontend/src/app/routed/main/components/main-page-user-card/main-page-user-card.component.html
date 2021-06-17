@@ -3,39 +3,31 @@
   <div class="uk-inline uk-position-top-right uk-padding-small">
     <span uk-icon="icon: more-vertical;"></span>
     <div class="uk-padding-small" uk-dropdown="mode: click; pos: bottom-left">
-      <button class="uk-button uk-button-text" (click)="report(0)">Пожаловаться</button>
-      <button class="uk-button uk-button-text" (click)="addToFavourites(0)">Добавить в избранное</button>
-      <button class="uk-button uk-button-text" (click)="notInterested(0)">Больше не показывать</button>
+      <button class="uk-button uk-button-text" (click)="report()">Пожаловаться</button>
+      <button class="uk-button uk-button-text" (click)="addToFavourites()">Добавить в избранное</button>
     </div>
   </div>
 
   <div class="uk-card-header">
     <div class="uk-grid-small uk-flex-middle" uk-grid>
       <div class="uk-width-auto">
-        <img class="uk-border-rounded" width="{{imageSize}}" height="{{imageSize}}" src="logo/avatar.jpg" >
+        <img class="uk-border-rounded" width="{{imageSize}}" height="{{imageSize}}" src="{{getImageUrl()}}" >
       </div>
 
       <div class="uk-width-expand">
-        <h3 class="uk-card-title uk-margin-remove-bottom">Райя</h3>
-        <p class="uk-text-meta uk-margin-remove-top">Однажды мир прогнется под нас</p>
+        <h3 class="uk-card-title uk-margin-remove-bottom">{{profile?.info.name}}</h3>
+        <p *ngIf="profile?.card.content" class="uk-text-meta uk-margin-remove-top">{{profile?.card.content}}</p>
       </div>
-
     </div>
+
   </div>
   <div class="uk-card-body">
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">Политика</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">Макраме</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">MARVEL</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">Доктор Хаус</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">Конный спорт</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">история</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">обществознание</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">социология</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">психология</span>
-    <span class="uk-label uk-margin-small-right uk-margin-small-bottom">теория большого взрыва</span>
+    <span class="uk-label uk-width-auto uk-margin-small-right uk-margin-small-bottom"
+          *ngFor="let teg of getTags()"
+    >{{teg}}</span>
   </div>
   <div class="uk-card-footer">
-    <button class="uk-button uk-button-text" (click)="startChat(0)">
+    <button class="uk-button uk-button-text" (click)="startChat()">
       Начать беседу
     </button>
   </div>
