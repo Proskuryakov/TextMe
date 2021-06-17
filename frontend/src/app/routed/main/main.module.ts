@@ -12,6 +12,7 @@ import { DirectPage } from './pages/direct/direct.page';
 import { ProfilePage } from './pages/profile/profile.page';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ContenteditableModule} from '@ng-stack/contenteditable';
+import { UpdateDeleteMessageComponent } from './components/update-delete-message/update-delete-message.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import {ContenteditableModule} from '@ng-stack/contenteditable';
     AllChatPage,
     ChatPage,
     ProfilePage,
-    DirectPage
+    DirectPage,
+    UpdateDeleteMessageComponent
   ],
   imports: [
     CommonModule,

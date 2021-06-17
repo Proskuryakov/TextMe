@@ -1,0 +1,30 @@
+<div [id]="modalId" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+    <button
+      class="uk-button uk-width-expand uk-button-default uk-margin-small"
+      (click)="deleteMessage()"
+    >удалить</button>
+
+    <button class="uk-button uk-button-default uk-width-expand uk-margin-bottom"
+            uk-toggle="target: #update-panel; animation: uk-animation-slide-top">
+      изменить
+    </button>
+
+    <div id="update-panel" class="uk-margin-remove" hidden>
+
+      <input
+        class="uk-input uk-width-expand uk-margin-top uk-margin-bottom-small"
+        [(ngModel)]="text"
+        (keyup.enter)="updateMessage()"
+      >
+
+      <button
+        class="uk-button uk-button-secondary uk-width-expand uk-margin-small"
+        (click)="updateMessage()">
+        применить изменение
+      </button>
+    </div>
+
+  </div>
+</div>
