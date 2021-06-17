@@ -43,15 +43,15 @@
       </div>
 
       <div class="uk-margin-remove-top uk-margin-bottom">
-        <img uk-toggle="target: #upload-new-image-panel" data-src="{{user.info.imageUrl}}" width="" height="" alt=""
+        <img uk-toggle="target: #upload-new-image-panel" data-src="{{user?.info.imageUrl}}" width="" height="" alt=""
              uk-img>
       </div>
 
       <div class="uk-text-left uk-text-lead uk-margin">
         <div class="uk-text-center uk-text-meta">Имя пользователя:</div>
-        <div class="uk-text-left">{{user.info.name}}</div>
-        <div class="uk-text-center uk-text-meta" *ngIf="user.card.content">Статус:</div>
-        <div class="uk-text-left">{{user.card.content}}</div>
+        <div class="uk-text-left">{{user?.info.name}}</div>
+        <div class="uk-text-center uk-text-meta" *ngIf="user?.card.content">Статус:</div>
+        <div class="uk-text-left">{{user?.card.content}}</div>
       </div>
 
     </div>
@@ -68,7 +68,7 @@
       <div>
 
         <span
-          *ngFor="let teg of user.card.tags"
+          *ngFor="let teg of user?.card.tags"
           class="uk-label uk-margin-small-right uk-margin-small-bottom"
         >
           {{teg}}
@@ -94,90 +94,102 @@
     </span>
     </div>
 
-
-    <div class="">
-      <label class="uk-form-label" for="name">Имя пользователя</label>
-
-      <div class="uk-flex uk-flex-between">
-        <div class="uk-form-controls uk-width-expand">
-          <input class="uk-input" id="name" type="text" [(ngModel)]="newName" ngModel required min="4">
+    <ul uk-accordion>
+      <li>
+        <a class="uk-accordion-title">Имя пользователя</a>
+        <div class="uk-accordion-content">
+          <div class="uk-flex uk-flex-between">
+            <div class="uk-form-controls uk-width-expand">
+              <input class="uk-input" id="name" type="text" [(ngModel)]="newName" ngModel required min="4">
+            </div>
+            <button
+              class="uk-button uk-button-primary"
+              type="button"
+              (click)="updateNickname()"
+              [disabled]="!newName"
+            >Изменить
+            </button>
+          </div>
         </div>
-        <button
-          class="uk-button uk-button-primary"
-          type="button"
-          (click)="updateNickname()"
-          [disabled]="!newName"
-        >Изменить
-        </button>
-      </div>
-    </div>
-
-    <div class="uk-margin-small">
-      <label class="uk-form-label" for="status">Статус</label>
-      <div class="uk-flex uk-flex-between">
-        <div class="uk-form-controls uk-width-expand">
-          <input class="uk-input" id="status" type="text" [(ngModel)]="newStatus" required min="4" max="256">
+      </li>
+      <li>
+        <a class="uk-accordion-title">Статус</a>
+        <div class="uk-accordion-content">
+          <div class="uk-flex uk-flex-between">
+            <div class="uk-form-controls uk-width-expand">
+              <input class="uk-input" id="status" type="text" [(ngModel)]="newStatus" required min="4" max="256">
+            </div>
+            <button
+              class="uk-button uk-button-primary"
+              type="button"
+              (click)="updateStatus()"
+              [disabled]="!newStatus"
+            >Изменить
+            </button>
+          </div>
         </div>
-        <button
-          class="uk-button uk-button-primary"
-          type="button"
-          (click)="updateStatus()"
-          [disabled]="!newStatus"
-        >Изменить
-        </button>
-      </div>
-    </div>
+      </li>
+      <li>
+        <a class="uk-accordion-title">Пароль</a>
+        <div class="uk-accordion-content">
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="old_password">Старый пароль</label>
+            <div class="uk-flex uk-flex-between">
+              <div class="uk-form-controls uk-width-expand">
+                <input
+                  class="uk-input"
+                  id="old_password"
+                  type="password"
+                  [(ngModel)]="passwordForm.old_password"
+                >
+              </div>
+            </div>
+          </div>
 
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="new_password">Новый пароль</label>
+            <div class="uk-flex uk-flex-between">
+              <div class="uk-form-controls uk-width-expand">
+                <input
+                  class="uk-input"
+                  id="new_password"
+                  type="password"
+                  [(ngModel)]="passwordForm.new_password"
+                >
+              </div>
+            </div>
+          </div>
 
-    <div class="uk-margin-small">
-      <label class="uk-form-label" for="old_password">Старый пароль</label>
-      <div class="uk-flex uk-flex-between">
-        <div class="uk-form-controls uk-width-expand">
-          <input
-            class="uk-input"
-            id="old_password"
-            type="password"
-            [(ngModel)]="passwordForm.old_password"
-          >
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="new_password_again">Повторите новый пароль</label>
+            <div class="uk-flex uk-flex-between">
+              <div class="uk-form-controls uk-width-expand">
+                <input
+                  class="uk-input"
+                  id="new_password_again"
+                  type="password"
+                  [(ngModel)]="passwordForm.new_password_again"
+                >
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="uk-button uk-button-primary uk-width-expand"
+            type="button"
+            (click)="updatePassword()"
+            [disabled]="isPasswordChangBtnDisable()"
+          >Обновить пароль
+          </button>
         </div>
-      </div>
-    </div>
-
-    <div class="uk-margin-small">
-      <label class="uk-form-label" for="new_password">Новый пароль</label>
-      <div class="uk-flex uk-flex-between">
-        <div class="uk-form-controls uk-width-expand">
-          <input
-            class="uk-input"
-            id="new_password"
-            type="password"
-            [(ngModel)]="passwordForm.new_password"
-          >
+      </li>
+      <li>
+        <a class="uk-accordion-title">Фото профиля</a>
+        <div class="uk-accordion-content">
+          <ng-container *ngTemplateOutlet="uploadNewImageTemplate"></ng-container>
         </div>
-      </div>
-    </div>
-
-    <div class="uk-margin-small">
-      <label class="uk-form-label" for="new_password_again">Повторите новый пароль</label>
-      <div class="uk-flex uk-flex-between">
-        <div class="uk-form-controls uk-width-expand">
-          <input
-            class="uk-input"
-            id="new_password_again"
-            type="password"
-            [(ngModel)]="passwordForm.new_password_again"
-          >
-        </div>
-      </div>
-    </div>
-
-    <button
-      class="uk-button uk-button-primary uk-width-expand"
-      type="button"
-      (click)="updatePassword()"
-      [disabled]="isPasswordChangBtnDisable()"
-    >Обновить пароль
-    </button>
+      </li>
+    </ul>
 
 
     <div *ngIf="isLoading" class="uk-overlay-default uk-position-cover">
@@ -192,52 +204,61 @@
 
 <div id="upload-new-image-panel" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-
-    <div class="uk-margin-small">
-      <label class="uk-form-label" for="image">Фото профиля</label>
-      <div
-        uk-form-custom="target: true"
-        class="uk-width-expand uk-form-controls uk-form-custom">
-        <input
-          type="file"
-          id="image"
-          name="image"
-          ngModel
-          required
-          (change)="onImageSelected($event)"
-        >
-        <input
-          class="uk-input"
-          type="text"
-          placeholder="Выберите файл"
-          disabled=""
-        >
-      </div>
+    <div class="uk-text-center uk-margin-small-bottom">
+      <span class="uk-text-lead uk-margin-remove">Фото профиля</span>
     </div>
 
-    <div *ngIf="selectedImage" class="uk-flex uk-flex-center">
-      <img class="uk-height-medium uk-width-medium" data-src="{{selectedImageURL}}" width="" height="" alt="" uk-img>
-    </div>
-
-    <div class="uk-flex uk-flex-between">
-      <button
-        class="uk-button uk-button-primary"
-        type="button"
-        (click)="uploadImage()"
-        [disabled]="!selectedImage"
-      >Загрузить
-      </button>
-
-      <button class="uk-button uk-button-default uk-modal-close" type="button">Закрыть</button>
-    </div>
-
-
-    <div *ngIf="isProgressBar" class="uk-overlay-default uk-position-cover">
-      <div class="uk-position-center">
-        <progress class="uk-progress" value="{{uploadProgress}}}" max="100"></progress>
-      </div>
-    </div>
-
+    <ng-container *ngTemplateOutlet="uploadNewImageTemplate"></ng-container>
   </div>
 </div>
 
+<ng-template #uploadNewImageTemplate>
+  <div class="uk-margin-small">
+    <div
+      uk-form-custom="target: true"
+      class="uk-width-expand uk-form-controls uk-form-custom">
+      <input
+        type="file"
+        id="image"
+        name="image"
+        ngModel
+        required
+        (change)="onImageSelected($event)"
+      >
+      <input
+        class="uk-input"
+        type="text"
+        placeholder="Выберите файл"
+        disabled=""
+      >
+    </div>
+  </div>
+
+  <div *ngIf="selectedImage" class="uk-flex uk-flex-center uk-margin-small">
+    <img class="uk-height-medium uk-width-medium" data-src="{{selectedImageURL}}" width="" height="" alt="" uk-img>
+  </div>
+
+  <div class="uk-flex uk-flex-between">
+    <button
+      class="uk-button uk-button-primary"
+      type="button"
+      (click)="uploadImage()"
+      [disabled]="!selectedImage"
+    >Загрузить
+    </button>
+
+    <button
+      class="uk-button uk-button-default uk-modal-close"
+      type="button"
+      (click)="deleteSelectedImage()"
+    >Закрыть</button>
+  </div>
+
+
+  <div *ngIf="isLoading" class="uk-overlay-default uk-position-cover">
+    <div class="uk-position-center">
+      <span uk-spinner="ratio: 5"></span>
+    </div>
+  </div>
+
+</ng-template>

@@ -41,13 +41,10 @@ export class UserApiService {
     );
   }
 
-  uploadImage(image: File): Observable<HttpEvent<void>>{
+  uploadImage(image: File): Observable<void>{
     const fd = new FormData();
     fd.append('image', image, image.name);
-    return this.http.post<void>(`${this.userURL}/image`, fd, {
-      reportProgress: true,
-      observe: 'events'
-    });
+    return this.http.post<void>(`${this.userURL}/image`, fd);
   }
 
   updateName(nickname: string): Observable<void>{

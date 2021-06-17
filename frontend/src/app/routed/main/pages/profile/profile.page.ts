@@ -21,10 +21,8 @@ export class ProfilePage implements OnInit {
     new_password_again: ''
   };
   isLoading = false;
-  isProgressBar = false;
   message = '';
   isError = false;
-  uploadProgress = 0;
   selectedImage: File = null;
   selectedImageURL: string;
 
@@ -61,7 +59,6 @@ export class ProfilePage implements OnInit {
     // @ts-ignore
     this.selectedImage = (event.target as HTMLInputElement).files[0];
     console.log('image selected');
-    console.log(this.selectedImage);
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -71,18 +68,22 @@ export class ProfilePage implements OnInit {
 
   }
 
+  deleteSelectedImage(): void {
+    this.selectedImage = null;
+    this.selectedImageURL = undefined;
+  }
+
   uploadImage(): void {
-    this.isProgressBar = true;
+    this.isError = false;
+    this.isLoading = true;
     this.userApiService.uploadImage(this.selectedImage).subscribe(
-      event => {
-        // tslint:disable-next-line:triple-equals
-        if (event.type == HttpEventType.UploadProgress) {
-          this.uploadProgress = Math.round(event.loaded / event.total * 100);
-          // tslint:disable-next-line:triple-equals
-        } else if (event.type == HttpEventType.Response) {
-          console.log(event);
-          this.isProgressBar = false;
-        }
+      () => {
+        this.isLoading = false;
+      },
+      () => {
+        this.isLoading = false;
+        this.isError = true;
+        this.message = 'Ошибка загрузки изображения';
       }
     );
   }
