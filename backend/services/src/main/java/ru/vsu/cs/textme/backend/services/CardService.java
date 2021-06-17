@@ -129,8 +129,8 @@ public class CardService {
         return chatMapper.findSpecialProfiles(toString(tags), CARD_LIMIT, page * CARD_LIMIT);
     }
 
-    public List<Profile> findRandomUserProfiles() {
-        return userMapper.findRandomProfiles(CARD_LIMIT);
+    public List<Profile> findRandomUserProfiles(Integer forUser) {
+        return userMapper.findRandomProfiles(forUser, CARD_LIMIT);
     }
 
     public List<Profile> findRandomChatProfiles() {

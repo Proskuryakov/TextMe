@@ -18,7 +18,7 @@ public class EmailSender {
         smm.setFrom(AUTH_MAIL);
         smm.setTo(email);
         smm.setSubject("Activation link");
-        smm.setText("http://localhost:4200/start/activate/" + code);
+        smm.setText("http://textme.host/start/activate/" + code);
         try {
             mailSender.send(smm);
         } catch (MailException ignored) {}

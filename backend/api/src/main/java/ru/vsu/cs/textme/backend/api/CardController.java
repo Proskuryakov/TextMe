@@ -95,8 +95,8 @@ public class CardController {
 
     @GetMapping("/users/random")
     @ResponseStatus(HttpStatus.OK)
-    public List<Profile> getRandomUsersCards() {
-        return cardService.findRandomUserProfiles();
+    public List<Profile> getRandomUsersCards(@AuthenticationPrincipal CustomUserDetails d) {
+        return cardService.findRandomUserProfiles(d.getUser().getId());
     }
 
     @GetMapping("/chats/{page}")
