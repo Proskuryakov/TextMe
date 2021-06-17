@@ -70,7 +70,7 @@ public class DirectService {
         var message = directMapper.findDirectMessageById(msgId);
         if (message == null)
             throw new DirectException(MESSAGE_NOT_FOUND);
-        if (!message.getFrom().getId().equals(fromId)) {
+        if (!message.getTo().getId().equals(fromId)) {
             throw new DirectException(NOT_PERMS);
         }
         if (directMapper.setStatusById(msgId, RECIEVED.ordinal())) {
