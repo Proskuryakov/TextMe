@@ -104,7 +104,7 @@ public interface UserMapper {
             "bu.user_who_id = #{one}")
     Integer findBlocked(Integer one, Integer two);
 
-    @Select("SELECT u.id, u.card_id FROM users WHERE id != #{forUser} ORDER BY random() LIMIT #{limit}")
+    @Select("SELECT u.id, u.card_id FROM users u WHERE id != #{forUser} ORDER BY random() LIMIT #{limit}")
     @ResultMap(FIND_PROFILE)
     List<Profile> findRandomProfiles(Integer forUser, Integer limit);
 
