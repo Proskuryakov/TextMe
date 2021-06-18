@@ -1,7 +1,6 @@
 package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
-import org.springframework.cglib.core.Block;
 import ru.vsu.cs.textme.backend.db.model.AppRole;
 import ru.vsu.cs.textme.backend.db.model.Blocked;
 import ru.vsu.cs.textme.backend.db.model.User;
@@ -17,8 +16,8 @@ import java.util.List;
 public interface UserMapper {
     String USER_RESULT = "userResult";
     String FIND_CARD = "findCardById";
-    String INFO_RESULT = "userInfoResult";
-    String PROFILE_RESULT = "profileResult";
+    String FIND_USER_INFO = "findInfoById";
+    String FIND_PROFILE = "findProfileById";
     String FIND_AVATAR = "findAvatarById";
     String FIND_USER_ROLES = "findRolesByUserId";
     String FIND_TAGS = "findTagsByCardId";
@@ -46,7 +45,7 @@ public interface UserMapper {
     String findAvatarById(Integer id);
 
     @Select("SELECT * FROM users WHERE id = #{id}")
-    @Results(id = INFO_RESULT, value = {
+    @Results(id = FIND_USER_INFO, value = {
             @Result(property = "id", column = "id"),
             @Result(property = "name", column = "nickname"),
             @Result(property = "imageUrl", column = "image_id", one = @One(select = FIND_AVATAR)),
@@ -54,9 +53,9 @@ public interface UserMapper {
     Info findInfoById(Integer id);
 
     @Select("SELECT * FROM users WHERE id = #{userId}")
-    @Results(id = PROFILE_RESULT, value = {
+    @Results(id = FIND_PROFILE, value = {
             @Result(property = "card", column = "card_id", javaType = Card.class, one = @One(select = FIND_CARD)),
-            @Result(property = "info", column = "id", javaType = Info.class, one = @One(resultMap = INFO_RESULT)),
+            @Result(property = "info", column = "id", javaType = Info.class, one = @One(select = FIND_USER_INFO)),
     })
     Profile findProfileById(Integer userId);
 
@@ -105,17 +104,17 @@ public interface UserMapper {
             "bu.user_who_id = #{one}")
     Integer findBlocked(Integer one, Integer two);
 
-    @Select("SELECT * FROM users WHERE id != #{forUser} ORDER BY random() LIMIT #{limit}")
-    @ResultMap(PROFILE_RESULT)
+    @Select("SELECT u.id, u.card_id FROM users WHERE id != #{forUser} ORDER BY random() LIMIT #{limit}")
+    @ResultMap(FIND_PROFILE)
     List<Profile> findRandomProfiles(Integer forUser, Integer limit);
 
-    @Select("SELECT u.id AS id FROM users u\n" +
+    @Select("SELECT u.id, u.card_id FROM users u\n" +
             "    JOIN card_tag ct ON u.card_id = ct.card_id AND u.id != #{id}\n" +
             "    JOIN tags t ON t.id = ct.tag_id AND t.content =ANY(#{tags}::varchar[])\n" +
-            "GROUP BY u.id\n" +
+            "GROUP BY u.id, u.card_id\n" +
             "ORDER BY count(*) DESC\n" +
             "LIMIT #{limit} OFFSET #{offset};")
-    @ResultMap(PROFILE_RESULT)
+    @ResultMap(FIND_PROFILE)
     List<Profile> findSpecialProfiles(Integer id, String tags, Integer limit, Integer offset);
 
     @Update("UPDATE users SET password = #{pass} WHERE users.id = #{id} RETURNING *")
