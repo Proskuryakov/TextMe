@@ -1,1 +1,103 @@
-<p>reports works!</p>
+<nav class="uk-navbar-container uk-margin uk-box-shadow-medium" uk-navbar="mode: click">
+  <app-left-navbar-logo></app-left-navbar-logo>
+</nav>
+
+
+<div class="uk-margin-left uk-margin-right uk-flex uk-flex-center" uk-grid>
+
+  <div class="uk-width-3-4@m uk-card uk-card-default uk-card-body">
+
+    <div class="uk-card-title uk-text-center uk-text-lead">Жалобы</div>
+
+    <div *ngIf="statusMessage"
+         [ngClass]="{'uk-text-danger': isError, 'uk-text-success': !isError}"
+         class="uk-text-center uk-margin-small-bottom"
+    >{{statusMessage}}
+    </div>
+    <hr>
+
+    <div class="">
+      <table class="uk-table uk-table-small uk-table-middle
+        uk-table-divider uk-table-responsive uk-table-hover uk-table-justify">
+
+        <thead>
+        <tr>
+          <th class="uk-text-center">
+            На кого
+          </th>
+          <th class="uk-text-center">
+            Текст жалобы
+          </th>
+          <th class="uk-text-center">
+            Действия
+          </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let report of reports">
+
+          <!--            аватар и имя пользователя-->
+          <td>
+
+            <div class="uk-flex uk-flex-column uk-text-center">
+              <img
+                class="uk-align-center uk-preserve-width uk-border-rounded uk-margin-small-bottom"
+                src="{{getImage(report?.to?.info)}}"
+                width="100" alt="">
+              <span class="">{{report?.to?.info?.name}}</span>
+            </div>
+          </td>
+
+          <!--            текст жолбы и дата жалобы-->
+          <td class="uk-table-expand">
+            <div class="uk-child-width-1-1" uk-grid>
+              <div>
+                <div class="uk-panel uk-panel-box uk-text-break">
+                  {{report.message}}
+                </div>
+              </div>
+              <div>
+                <div class="uk-panel uk-panel-box uk-text-meta uk-text-right">
+                  {{dateFormat(report.date)}}
+                </div>
+              </div>
+            </div>
+
+          </td>
+
+          <!--            отклонить забанить срок бана-->
+          <td class="uk-table-shrink">
+            <div class="uk-flex uk-flex-column">
+              <button
+                (click)="deny(report)"
+                class="uk-button uk-button-default uk-width-expand uk-margin-small-bottom"
+              >отклонить</button>
+
+              <div class="uk-width-expand uk-margin-small-bottom">
+                <select class="uk-select" [(ngModel)]="selectedBanTime[report?.to?.card?.id]">
+                  <option
+                    *ngFor="let key of keys(banTime)"
+                    [ngValue]="key"
+                  >{{banTime[key]}}</option>
+                </select>
+              </div>
+
+              <button
+                (click)="ban(report)"
+                class="uk-button uk-button-secondary uk-width-expand uk-margin-small-bottom"
+                [disabled]="!selectedBanTime[report?.to?.card?.id]"
+              >заблокировать</button>
+            </div>
+
+          </td>
+
+        </tr>
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+
+</div>
