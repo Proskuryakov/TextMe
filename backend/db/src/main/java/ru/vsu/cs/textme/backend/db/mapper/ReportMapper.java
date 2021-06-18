@@ -41,8 +41,9 @@ public interface ReportMapper {
             "SET message = #{message}, reviewer_id = NULL, review_date = NULL")
     void setReport(Integer user, Integer card, String message);
 
-    @Select("SELECT user_id, message FROM reports\n" +
+    @Select("SELECT user_id, message, date_create FROM reports\n" +
             "WHERE card_id = #{cardId} AND review_date IS NULL\n" +
+            "ORDER BY date_create DESC\n" +
             "LIMIT #{limit}\n" +
             "OFFSET #{offset}")
     @Results({
