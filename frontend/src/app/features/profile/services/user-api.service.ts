@@ -89,8 +89,15 @@ export class UserApiService {
   isModerOrAdmin(): Observable<boolean> {
     return this.getRoles().pipe(
       map((roles) => {
-        console.log(roles);
         return AppRole.ROLE_ADMIN in roles || AppRole.ROLE_MODER in roles;
+      })
+    );
+  }
+
+  isAdmin(): Observable<boolean> {
+    return this.getRoles().pipe(
+      map((roles) => {
+        return AppRole.ROLE_ADMIN in roles;
       })
     );
   }
