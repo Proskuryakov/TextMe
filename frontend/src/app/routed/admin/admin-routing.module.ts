@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import {ReportsPage} from './pages/reports/reports.page';
 import {ModeratorsPage} from './pages/moderators/moderators.page';
 import {OnlyAdminGuard} from '../../core/guards/only-admin.guard';
+import {ReportsSummaryPage} from './pages/reports-summary/reports-summary.page';
 
 const routes: Routes = [
   {
@@ -12,6 +13,10 @@ const routes: Routes = [
   {
     path: 'reports',
     component: ReportsPage
+  },
+  {
+    path: 'reports/summary/:id',
+    component: ReportsSummaryPage
   },
   {
     path: 'moderators',

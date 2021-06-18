@@ -6,12 +6,14 @@ import {ReportsPage} from './pages/reports/reports.page';
 import {ModeratorsPage} from './pages/moderators/moderators.page';
 import {FormsModule} from '@angular/forms';
 import {MainModule} from '../main/main.module';
+import {ReportsSummaryPage} from './pages/reports-summary/reports-summary.page';
 
 
 @NgModule({
   declarations: [
     ReportsPage,
-    ModeratorsPage
+    ModeratorsPage,
+    ReportsSummaryPage
   ],
   imports: [
     CommonModule,
