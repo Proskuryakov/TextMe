@@ -36,6 +36,12 @@ public class UserController {
         return userService.findUserInfoById(id);
     }
 
+    @GetMapping("/roles")
+    @ResponseStatus(HttpStatus.OK)
+    public List<AppRole> getUserRoles(@AuthenticationPrincipal CustomUserDetails details) {
+        return details.getUser().getRoles();
+    }
+
     @PostMapping("/block/{id}/{blocked}")
     @ResponseStatus(HttpStatus.OK)
     public void blockUser(@AuthenticationPrincipal CustomUserDetails details,
