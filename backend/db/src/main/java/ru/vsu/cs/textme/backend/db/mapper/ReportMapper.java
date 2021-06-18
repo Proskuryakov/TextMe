@@ -36,7 +36,7 @@ public interface ReportMapper {
     String findAvatarById(Integer id);
 
     @Insert("INSERT INTO reports (user_id, card_id, message) " +
-            "VALUES (#{user},#{card},#{message}) ON CONFLICT DO UPDATE \n" +
+            "VALUES (#{user},#{card},#{message}) ON CONFLICT (user_id, card_id) DO UPDATE \n" +
             "SET message = #{message}, reviewer_id = NULL, review_date = NULL")
     void setReport(Integer user, Integer card, String message);
 
