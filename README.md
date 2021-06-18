@@ -13,10 +13,16 @@
 
 Курсовой проект: [Курсовой проект.docx](/Documents/Курсовой%20проект.docx) и [Курсовой проект.pdf](/Documents/Курсовой%20проект.pdf)
 
-Отчет по ролям: [Отчет по ролям.docx](/Documents/Отчет%20по%20ролям.docx) [Отчет по ролям.pdf](/Documents/Отчет%20по%20ролям.pdf)
+Отчет по ролям: [Отчет по ролям.docx](/Documents/Отчет%20по%20ролям.docx) и [Отчет по ролям.pdf](/Documents/Отчет%20по%20ролям.pdf)
 
 [Диаграммы](/Documents/Diagrams)
 
-[Демо видео на GitHub](/Documents/demo.mkv)
+[Демо видео](https://drive.google.com/file/d/1h7PCqwaMXUAjxqgJFjQ7SOpZEEAHpRrk/view?usp=sharing)
 
-[Демо видео на GoogleDrive для просмотра](https://drive.google.com/file/d/1h7PCqwaMXUAjxqgJFjQ7SOpZEEAHpRrk/view?usp=sharing)
+[Второе демо видео](https://drive.google.com/file/d/1sjf5W0Lc35aQt0jG-n6c_nqA3w43OmV8/view?usp=sharing)
+
+[Ветка кода с frontend](https://github.com/Proskuryakov/TextMe/tree/frontend)
+
+[Ветка кода с backend](https://github.com/Proskuryakov/TextMe/tree/backend)
+
+Приложение развернуто на хостинге по адрессу [textme.host](http://textme.host)
