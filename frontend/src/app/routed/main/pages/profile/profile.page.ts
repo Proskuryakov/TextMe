@@ -104,6 +104,8 @@ export class ProfilePage implements OnInit {
     this.userApiService.uploadImage(this.selectedImage).subscribe(
       () => {
         this.isLoading = false;
+        this.message = 'Изображение загружено';
+        this.initUser();
       },
       () => {
         this.isLoading = false;
