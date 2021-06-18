@@ -22,6 +22,11 @@ const routes: Routes = [
     canActivate: [AdminGuard],
     loadChildren: () =>
       import('./routed/admin/admin.module').then(m => m.AdminModule)
+  },
+  {
+    path: 'error',
+    loadChildren: () =>
+      import('./routed/error/error.module').then(m => m.ErrorModule)
   }
 ];
 

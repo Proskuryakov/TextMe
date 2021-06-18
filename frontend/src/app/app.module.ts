@@ -7,6 +7,8 @@ import {MainModule} from './routed/main/main.module';
 import {CoreModule} from './core/core.module';
 import {InjectableRxStompConfig, RxStompService, rxStompServiceFactory} from '@stomp/ng2-stompjs';
 import {rxStompConfig} from './core/socket/rxstomp.config';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {ErrorInterceptor} from './core/interceptor/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,11 @@ import {rxStompConfig} from './core/socket/rxstomp.config';
       useFactory: rxStompServiceFactory,
       deps: [InjectableRxStompConfig],
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
