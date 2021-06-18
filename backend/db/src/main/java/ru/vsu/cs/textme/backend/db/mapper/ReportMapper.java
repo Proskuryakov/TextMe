@@ -42,7 +42,7 @@ public interface ReportMapper {
     void setReport(Integer user, Integer card, String message);
 
     @Select("SELECT user_id, message FROM reports\n" +
-            "WHERE card_id = {cardId} AND review_date IS NULL\n" +
+            "WHERE card_id = #{cardId} AND review_date IS NULL\n" +
             "LIMIT #{limit}\n" +
             "OFFSET #{offset}")
     @Results({
