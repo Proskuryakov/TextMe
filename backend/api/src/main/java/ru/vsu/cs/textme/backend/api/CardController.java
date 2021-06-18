@@ -16,8 +16,6 @@ import ru.vsu.cs.textme.backend.services.ReportService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -116,7 +114,7 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     public void reportCard(@AuthenticationPrincipal CustomUserDetails details,
                            @RequestBody @Valid ReportRequest reportRequest) {
-        reportService.addReport(details.getUser().getId(), reportRequest);
+        reportService.setReport(details.getUser().getId(), reportRequest);
     }
 
 }

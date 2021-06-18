@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.textme.backend.db.model.ReportSummary;
-import ru.vsu.cs.textme.backend.db.model.ReportsData;
-import ru.vsu.cs.textme.backend.db.model.request.BanRequest;
+import ru.vsu.cs.textme.backend.db.model.ReportData;
+import ru.vsu.cs.textme.backend.db.model.request.DenyReportRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.ReportService;
 
@@ -21,22 +21,21 @@ public class ReportController {
     @GetMapping
     @RequestMapping("/{page}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ReportsData> getReportsPage(@PathVariable Integer page) {
+    public List<ReportData> getReportsPage(@PathVariable Integer page) {
         return reportService.getReportsListPage(page);
     }
 
     @GetMapping
-    @RequestMapping("/{id}/{page}")
+    @RequestMapping("/{cardId}/{page}")
     @ResponseStatus(HttpStatus.OK)
-    public ReportSummary getReportSummary(@PathVariable Integer id, @PathVariable Integer page) {
-        return reportService.getReportsSummary(id, page);
+    public ReportSummary getReportSummary(@PathVariable Integer cardId, @PathVariable Integer page) {
+        return reportService.getReportsSummary(cardId, page);
     }
 
     @PostMapping
-    @RequestMapping("/ban")
+    @RequestMapping("/deny")
     @ResponseStatus(HttpStatus.OK)
-    public void getReportSummary(@RequestBody BanRequest request,
-                                          @AuthenticationPrincipal CustomUserDetails details) {
-        reportService.ban(details.getUser().getId(), request);
+    public void getReportSummary(@RequestBody DenyReportRequest request, @AuthenticationPrincipal CustomUserDetails details) {
+        reportService.deny(details.getUser().getId(), request);
     }
 }

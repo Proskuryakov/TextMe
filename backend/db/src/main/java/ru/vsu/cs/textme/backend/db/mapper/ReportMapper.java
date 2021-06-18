@@ -2,7 +2,7 @@ package ru.vsu.cs.textme.backend.db.mapper;
 
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.Report;
-import ru.vsu.cs.textme.backend.db.model.ReportsData;
+import ru.vsu.cs.textme.backend.db.model.ReportData;
 import ru.vsu.cs.textme.backend.db.model.TypedInfo;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
 
@@ -36,30 +36,24 @@ public interface ReportMapper {
     String findAvatarById(Integer id);
 
     @Insert("INSERT INTO reports (user_id, card_id, message) " +
-            "VALUES (#{user},#{card},#{message}) ON CONFLICT DO UPDATE")
-    void addReport(Integer user, Integer card, String message);
+            "VALUES (#{user},#{card},#{message}) ON CONFLICT DO UPDATE \n" +
+            "SET message = #{message}, reviewer_id = NULL, review_date = NULL")
+    void setReport(Integer user, Integer card, String message);
 
-    @Select("SELECT u.id, u.nickname as name, u.image_id,  r.card_id, 'user' as card_type,count(*) FROM reports r, users u\n" +
+    @Select("SELECT r.user_id AS from, u.id AS to, r.message, r.date_create FROM reports r, users u\n" +
             "WHERE r.review_date IS NULL AND u.card_id = r.card_id\n" +
-            "GROUP BY r.card_id, u.id, u.nickname, u.image_id\n" +
-            "UNION\n" +
-            "SELECT  c.id, c.title as name, c.image_id,r.card_id, 'chat' as card_type, count(*) FROM reports r, chats c\n" +
-            "WHERE r.review_date IS NULL AND c.card_id = r.card_id\n" +
-            "GROUP BY r.card_id, c.id, c.title, c.image_id\n" +
-            "ORDER BY card_id DESC\n" +
+            "ORDER BY r.date_create DESC\n" +
             "LIMIT #{limit} OFFSET #{offset}")
     @Results( value = {
-            @Result(property = "id", column = "id"),
-            @Result(property = "name", column = "name"),
-            @Result(property = "image", column = "image_id", one = @One(select = AVATAR_SELECT)),
-            @Result(property = "card", column = "card_id"),
-            @Result(property = "type", column = "card_type"),
-            @Result(property = "count", column = "count")
+            @Result(property = "from", column = "from", one = @One(select = USER_INFO_SELECT)),
+            @Result(property = "to", column = "to", one = @One(select = USER_INFO_SELECT)),
+            @Result(property = "message", column = "message"),
+            @Result(property = "date", column = "date_create")
     })
-    List<ReportsData> findReportsDataPage(Integer limit, Integer offset);
+    List<ReportData> findReportsDataPage(Integer limit, Integer offset);
 
     @Select("SELECT user_id, message FROM reports\n" +
-            "WHERE card_id = 2 AND review_date IS NULL\n" +
+            "WHERE card_id = {cardId} AND review_date IS NULL\n" +
             "LIMIT #{limit}\n" +
             "OFFSET #{offset}")
     @Results({
@@ -71,4 +65,8 @@ public interface ReportMapper {
 
     @Insert("CALL ban_card(#{by}, #{cardId}, #{expired}")
     void saveBan(Integer by, Integer cardId, Timestamp expired);
+
+    @Update("UPDATE reports SET reviewer_id = #{moderId}, review_date = now() \n" +
+            "WHERE user_id = #{reporterId} AND card_id = #{cardId};")
+    void denyReport(Integer moderId, Integer reporterId, Integer cardId);
 }
