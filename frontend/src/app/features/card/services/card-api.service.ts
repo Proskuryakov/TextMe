@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 import {Profile} from '../../profile/models/profile.model';
 import {TagRequest} from '../models/tag.model';
+import {ReportRequest} from '../models/report.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,11 @@ export class CardApiService {
     tagRequest.tag = tag;
     // @ts-ignore
     return this.http.delete<void>(`${this.cardURL}/user/tag`, {body: tagRequest});
+  }
+
+  report(cardId: number, message: string): Observable<void> {
+    const reportRequest = new ReportRequest(cardId, message);
+    return  this.http.post<void>(`${this.cardURL}/report`, reportRequest);
   }
 
 }
