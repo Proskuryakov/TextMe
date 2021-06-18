@@ -29,6 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/report/**").hasAnyRole(AppRole.MODER.getContent(), AppRole.ADMIN.getContent())
+                .antMatchers("/api/admin/**").hasAnyRole(AppRole.ADMIN.getContent())
                 .antMatchers("/api/user/**").hasRole(AppRole.USER.getContent())
                 .antMatchers("/api/chat/**").hasRole(AppRole.USER.getContent())
                 .antMatchers("/api/messenger/**").hasRole(AppRole.USER.getContent())

@@ -59,6 +59,10 @@ public interface UserMapper {
     })
     Profile findProfileById(Integer userId);
 
+    @Select("SELECT * FROM users WHERE nickname = #{name}")
+    @ResultMap(FIND_PROFILE)
+    Profile findProfileByName(String name);
+
     @Select("SELECT * FROM users WHERE id = #{userId}")
     @Results(id = USER_RESULT, value = {
             @Result(property = "id", column = "id"),
@@ -69,6 +73,8 @@ public interface UserMapper {
             @Result(property = "blocked", column = "id", javaType = Blocked.class, one = @One(select = FIND_CURRENT_BLOCKED)),
     })
     User findUserById(Integer userId);
+
+
 
     @Select("SELECT * FROM users WHERE email = #{email}")
     @ResultMap(USER_RESULT)
@@ -133,9 +139,16 @@ public interface UserMapper {
     @Update("CALL save_avatar(#{userId}, #{path})")
     boolean saveAvatarById(int userId, String path);
 
-    @Insert("INSERT INTO blocked_users (user_who_id, user_blocked_id) VALUES(#{object}, #{subject}) ON CONFLICT DO NOTHING RETURNING")
+    @Insert("INSERT INTO blocked_users (user_who_id, user_blocked_id) VALUES(#{object}, #{subject}) ON CONFLICT DO NOTHING")
     void saveBlocked(int object, int subject);
 
     @Delete("DELETE FROM blocked_users WHERE user_who_id = #{object} AND user_blocked_id = #{subject}")
     boolean removeBlocked(int object, int subject);
+
+    @Insert("INSERT INTO user_app_role(user_id, role_id) VALUES (#{user}, #{role}) ON CONFLICT DO NOTHING ")
+    void saveRole(Integer user, Integer role);
+
+    @Delete("DELETE FROM user_app_role WHERE user_id = #{user} AND role_id = #{role}")
+    void removeRole(Integer user, Integer role);
+
 }
