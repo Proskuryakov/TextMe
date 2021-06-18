@@ -4,8 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.AppRole;
+import ru.vsu.cs.textme.backend.db.model.info.Info;
 import ru.vsu.cs.textme.backend.db.model.info.Profile;
 import ru.vsu.cs.textme.backend.db.model.request.PermissionRequest;
+
+import java.util.List;
+
+import static ru.vsu.cs.textme.backend.db.model.ChatRole.ROLE_MODER;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +26,9 @@ public class AdminService {
 
     public Profile getUserProfile(String name) {
         return userMapper.findProfileByName(name);
+    }
+
+    public List<Info> getModerators(Integer page) {
+        return userMapper.findUsersByRole(ROLE_MODER.getId(),128, page * 128);
     }
 }
