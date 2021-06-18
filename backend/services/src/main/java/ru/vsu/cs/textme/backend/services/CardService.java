@@ -103,7 +103,7 @@ public class CardService {
         cardMapper.saveContentById(card.getId(), content);
     }
 
-    private static final Integer CARD_LIMIT = 10;
+    static final Integer CARD_LIMIT = 10;
 
     public List<Profile> findNearbyUserProfilesById(Integer id, Integer page, @NotNull String tag) {
         List<String> list = StringUtils.hasText(tag) ?

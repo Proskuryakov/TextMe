@@ -151,4 +151,14 @@ public interface UserMapper {
     @Delete("DELETE FROM user_app_role WHERE user_id = #{user} AND role_id = #{role}")
     void removeRole(Integer user, Integer role);
 
+    @Select("SELECT u.id, u.card_id FROM favorites f, user u WHERE f.user_id = #{id} AND u.id = f.favorite_id \n" +
+            "LIMIT #{limit} OFFSET #{offset};")
+    @ResultMap(FIND_PROFILE)
+    List<Profile> getFavorites(Integer id, Integer limit, Integer offset);
+
+    @Delete("DELETE FROM favorites WHERE user_id = #{user} AND favorite_id = #{favorite}")
+    void deleteFavorite(Integer user, Integer favorite);
+
+    @Insert("INSERT INTO favorites(user_id, favorite_id) VALUES (#{user}, #{favorite}) ON CONFLICT DO NOTHING")
+    void addFavorite(Integer user, Integer favorite);
 }

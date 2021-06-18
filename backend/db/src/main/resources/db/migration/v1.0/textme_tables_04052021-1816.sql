@@ -176,6 +176,14 @@ CREATE TABLE IF NOT EXISTS user_chat_status (
     CONSTRAINT ucs_role_id_fkey FOREIGN KEY (status_id) REFERENCES chat_statuses (id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS favorites (
+   user_id     INTEGER         NOT NULL,
+   favorite_id INTEGER         NOT NULL,
+   CONSTRAINT reports_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+   CONSTRAINT reports_favorite_id_fkey FOREIGN KEY (favorite_id) REFERENCES users (id) ON DELETE CASCADE,
+   CONSTRAINT favorites_pkey PRIMARY KEY (user_id, favorite_id)
+);
+
 CREATE TABLE IF NOT EXISTS reports (
     user_id     INTEGER         NOT NULL,
     card_id     INTEGER         NOT NULL,
