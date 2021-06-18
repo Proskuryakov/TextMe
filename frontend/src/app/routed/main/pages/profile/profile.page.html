@@ -1,15 +1,6 @@
-<nav class="uk-navbar-container uk-margin uk-box-shadow-medium" uk-navbar="mode: click">
+<nav class="uk-navbar-container uk-margin uk-box-shadow-medium" uk-navbar="mode: click;">
 
-  <div class="nav-overlay uk-navbar-left">
-    <div class="uk-navbar-item uk-logo" routerLink="/">
-      <img
-        class="uk-preserve-width uk-margin-small-right"
-        src="logo/logo_fill.svg" height="40" uk-svg>
-      <img
-        class="uk-preserve-width uk-animation-stroke"
-        src="logo/logo_text.svg" height="25" uk-svg>
-    </div>
-  </div>
+  <app-left-navbar-logo></app-left-navbar-logo>
 
   <div class="nav-overlay uk-navbar-right">
 
@@ -25,7 +16,7 @@
         <a class="uk-navbar-toggle" href="#">
           <span class="uk-margin-small-right uk-visible@m">Меню</span> <span uk-navbar-toggle-icon></span>
         </a>
-        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-right">
+        <div class="uk-navbar-dropdown" uk-dropdown="pos: bottom-right">
           <ul class="uk-nav uk-navbar-dropdown-nav">
             <li><a (click)="adminNavigate('reports')"><span>Жалобы</span></a></li>
             <li *ngIf="isAdmin" ><a (click)="adminNavigate('moderators')"><span>Модераторы</span></a></li>
