@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {StartGuard} from './core/guards/start.guard';
 import {MainGuard} from './core/guards/main.guard';
+import {AdminGuard} from './core/guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -15,6 +16,12 @@ const routes: Routes = [
     canActivate: [StartGuard],
     loadChildren: () =>
       import('./routed/start/start.module').then(m => m.StartModule)
+  },
+  {
+    path: 'admin',
+    canActivate: [AdminGuard],
+    loadChildren: () =>
+      import('./routed/admin/admin.module').then(m => m.AdminModule)
   }
 ];
 

@@ -81,4 +81,8 @@ export class UserApiService {
     return profile.imageUrl;
   }
 
+  isModerOrAdmin(): boolean {
+    return false;
+  }
+
 }
