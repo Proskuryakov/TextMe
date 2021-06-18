@@ -45,7 +45,6 @@ export class ProfilePage implements OnInit {
     this.userApiService.getCurrentUser().subscribe(
       (user) => {
         this.user = user;
-        console.log(user);
       },
       (error) => {
         console.log(error.error.message);
@@ -169,7 +168,6 @@ export class ProfilePage implements OnInit {
 
   searchTags(): void {
     this.message = '';
-    console.log(this.newTag);
     if (this.newTag.trim() === '') {
       this.foundTags = [];
       return;

@@ -17,7 +17,6 @@ export class MessengerApiService {
   ) {}
 
   getChats(filter: ChatFilterModel = ChatFilterModel.All, page: number = 0): Observable<MessageInfo[]> {
-    console.log(`${this.messengerURL}/list/${page}/${filter}`);
     return this.http.get<MessageInfo[]>(`${this.messengerURL}/list/${page}/${filter}`);
   }
 
