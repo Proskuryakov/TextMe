@@ -9,6 +9,17 @@ export class ReportData{
   date: Date;
 }
 
+export class Report {
+  reporter: Info;
+  message: string;
+  date: Date;
+}
+
+export class ReportSummary {
+  toCheck: Profile;
+  reports: Report[];
+}
+
 export class BanRequest {
   cardId: number;
   expired: Data;
