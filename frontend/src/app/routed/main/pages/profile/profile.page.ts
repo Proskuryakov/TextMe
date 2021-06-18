@@ -5,6 +5,7 @@ import {AuthService} from '../../../../core/auth/auth.service';
 import {Router} from '@angular/router';
 import {CardApiService} from '../../../../features/card/services/card-api.service';
 import {TagApiService} from '../../../../features/card/services/tag-api.service';
+import {AppRole} from '../../../../features/profile/models/role.model';
 
 @Component({
   templateUrl: './profile.page.html',
@@ -27,6 +28,8 @@ export class ProfilePage implements OnInit {
   selectedImageURL: string;
   newTag = '';
   foundTags: string[] = [];
+  isJustUser = true;
+  isAdmin = false;
 
   constructor(
     private readonly userApiService: UserApiService,
@@ -39,6 +42,7 @@ export class ProfilePage implements OnInit {
 
   ngOnInit(): void {
     this.initUser();
+    this.initRoles();
   }
 
   initUser(): void {
@@ -49,6 +53,24 @@ export class ProfilePage implements OnInit {
       (error) => {
         console.log(error.error.message);
       }
+    );
+  }
+
+  initRoles(): void {
+    this.userApiService.getRoles().subscribe(
+      (roles) => {
+        if (AppRole.ROLE_ADMIN in roles) {
+          this.isAdmin = true;
+          this.isJustUser = false;
+        } else if (AppRole.ROLE_MODER in roles) {
+          this.isAdmin = false;
+          this.isJustUser = false;
+        } else {
+          this.isAdmin = false;
+          this.isJustUser = true;
+        }
+      },
+      () => this.isJustUser = true
     );
   }
 
@@ -202,6 +224,10 @@ export class ProfilePage implements OnInit {
         this.message = 'Ошибка при удалении тега';
       }
     );
+  }
+
+  adminNavigate(path: string): void {
+    this.router.navigate(['admin', path]);
   }
 
 }

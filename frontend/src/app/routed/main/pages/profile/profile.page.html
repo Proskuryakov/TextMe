@@ -14,12 +14,26 @@
   <div class="nav-overlay uk-navbar-right">
 
     <ul class="uk-navbar-nav">
-      <li class="uk-active">
+      <li *ngIf="isJustUser" class="uk-active">
         <a (click)="logout()">
-          <span class="uk-visible@m">Выйти</span>
+          <span class="uk-visible@m uk-margin-small-right ">Выйти</span>
           <span uk-icon="sign-out"></span>
         </a>
       </li>
+
+      <li *ngIf="!isJustUser">
+        <a class="uk-navbar-toggle" href="#">
+          <span class="uk-margin-small-right uk-visible@m">Меню</span> <span uk-navbar-toggle-icon></span>
+        </a>
+        <div class="uk-navbar-dropdown uk-navbar-dropdown-bottom-right">
+          <ul class="uk-nav uk-navbar-dropdown-nav">
+            <li><a (click)="adminNavigate('reports')"><span>Жалобы</span></a></li>
+            <li *ngIf="isAdmin" ><a (click)="adminNavigate('moderators')"><span>Модераторы</span></a></li>
+            <li><a (click)="logout()"><span>Выйти</span></a></li>
+          </ul>
+        </div>
+      </li>
+
     </ul>
 
 
