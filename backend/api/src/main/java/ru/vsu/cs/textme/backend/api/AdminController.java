@@ -16,7 +16,7 @@ public class AdminController {
     @RequestMapping("/permission")
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void changePermission(PermissionRequest request) {
+    public void changePermission(@RequestBody PermissionRequest request) {
         adminService.changePermission(request);
     }
 
