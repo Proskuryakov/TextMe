@@ -34,9 +34,7 @@ public class CardService {
 
     public void addUserTag(User user, String tag) {
         Card c = cardMapper.findCardByUserId(user.getId());
-        if (c.getTags() != null && c.getTags().contains(tag.toLowerCase())) return;
-        cardMapper.deleteCardTag(c.getId(), tag);
-        addTag(cardMapper.findCardByUserId(user.getId()), tag);
+        addTag(c, tag);
     }
 
     public void addChatTag(Integer userId, Integer chatId, String tag) {
@@ -76,7 +74,9 @@ public class CardService {
 
     public static final int MAX_TAGS = 16;
     private void addTag(Card c, String tag) {
-        if (c.getTags() != null && c.getTags().size() >= MAX_TAGS) return;
+        if (c.getTags() == null) return;
+        if (c.getTags().contains(tag.toLowerCase())) return;
+        if (c.getTags().size() >= MAX_TAGS) return;
         cardMapper.saveCardTag(c.getId(), tag);
     }
 

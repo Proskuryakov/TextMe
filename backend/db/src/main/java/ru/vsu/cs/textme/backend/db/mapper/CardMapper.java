@@ -30,7 +30,7 @@ public interface CardMapper {
     List<String> findTagsByCardId(int id);
 
     @Insert("INSERT INTO tags (content) SELECT lower(#{tag}) ON CONFLICT DO NOTHING;" +
-            "INSERT INTO card_tag (card_id, tag_id) SELECT #{cardId}, id FROM tags WHERE content = #{tag}")
+            "INSERT INTO card_tag (card_id, tag_id) SELECT #{cardId}, id FROM tags WHERE content = lower(#{tag})")
     void saveCardTag(Integer cardId, String tag);
 
     @Update("UPDATE cards SET content = #{content} WHERE id = #{cardId}")
