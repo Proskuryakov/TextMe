@@ -4,7 +4,16 @@
     <span uk-icon="icon: more-vertical;"></span>
     <div class="uk-padding-small" uk-dropdown="mode: click; pos: bottom-left">
       <button class="uk-button uk-button-text" (click)="report()">Пожаловаться</button>
-      <button class="uk-button uk-button-text" (click)="addToFavourites()">Добавить в избранное</button>
+      <button
+        *ngIf="!isFavorites"
+        (click)="addToFavorites()"
+        class="uk-button uk-button-text"
+      >Добавить в избранное</button>
+      <button
+        *ngIf="isFavorites"
+        (click)="deleteFromFavorites()"
+        class="uk-button uk-button-text uk-width-auto uk-text-nowrap"
+      >Удалить из избранного</button>
     </div>
   </div>
 

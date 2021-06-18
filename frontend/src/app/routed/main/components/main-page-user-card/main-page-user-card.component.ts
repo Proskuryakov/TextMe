@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Profile} from '../../../../features/profile/models/profile.model';
 import {UserApiService} from '../../../../features/profile/services/user-api.service';
 import {Router} from '@angular/router';
 import * as UIkit from 'uikit';
 import {CardApiService} from '../../../../features/card/services/card-api.service';
+import {FavoriteApiService} from '../../../../features/card/services/favorite-api.service';
 
 @Component({
   selector: 'app-main-page-user-card',
@@ -13,6 +14,8 @@ import {CardApiService} from '../../../../features/card/services/card-api.servic
 export class MainPageUserCardComponent implements OnInit {
 
   @Input() profile: Profile;
+  @Input() isFavorites = false;
+  @Output() favoriteDelete = new EventEmitter<void>();
   reportMessage = '';
   isSend = false;
   isError = false;
@@ -23,6 +26,7 @@ export class MainPageUserCardComponent implements OnInit {
   constructor(
     private readonly userApiService: UserApiService,
     private readonly cardApiService: CardApiService,
+    private readonly favoriteApiService: FavoriteApiService,
     private readonly router: Router
   ) {}
 
@@ -36,7 +40,16 @@ export class MainPageUserCardComponent implements OnInit {
     UIkit.modal('#report-dialog').show();
   }
 
-  addToFavourites(): void {}
+  addToFavorites(): void {
+    this.favoriteApiService.addFavorite(this.profile.info.id).subscribe(() => this.isFavorites = true);
+  }
+
+  deleteFromFavorites(): void {
+    this.favoriteApiService.deleteFavorite(this.profile.info.id).subscribe(() => {
+      this.isFavorites = false;
+      this.favoriteDelete.emit();
+    });
+  }
 
   getImageUrl(): string {
     return this.userApiService.getImageUrl(this.profile.info);
