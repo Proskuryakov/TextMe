@@ -32,3 +32,39 @@
     </button>
   </div>
 </div>
+
+<div id="report-dialog" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+
+    <div *ngIf="isSend" class="uk-text-center uk-margin-remove">
+      <span class="uk-text-lead">{{sendResultMessage}}</span>
+    </div>
+
+    <div *ngIf="isError" class="uk-text-center uk-text-danger uk-margin-remove">
+      <span>{{sendResultMessage}}</span>
+    </div>
+
+    <div *ngIf="!isSend" class="uk-h4 uk-text-bold">
+      Жалоба на пользователя {{profile?.info.name}}:
+    </div>
+
+    <div *ngIf="!isSend">
+      <form>
+        <textarea
+          [(ngModel)]="reportMessage"
+          name="report-text-area"
+          class="uk-textarea uk-margin uk-width-xlarge"
+          maxlength="2048"
+          autofocus
+        ></textarea>
+        <button
+          class="uk-width-expand uk-button uk-button-default"
+          (click)="sendReport()"
+          [disabled]="!reportMessage"
+        >Отправить</button>
+      </form>
+    </div>
+
+  </div>
+</div>

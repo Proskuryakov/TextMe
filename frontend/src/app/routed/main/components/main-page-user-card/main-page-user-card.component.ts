@@ -2,6 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Profile} from '../../../../features/profile/models/profile.model';
 import {UserApiService} from '../../../../features/profile/services/user-api.service';
 import {Router} from '@angular/router';
+import * as UIkit from 'uikit';
+import {CardApiService} from '../../../../features/card/services/card-api.service';
 
 @Component({
   selector: 'app-main-page-user-card',
@@ -11,11 +13,16 @@ import {Router} from '@angular/router';
 export class MainPageUserCardComponent implements OnInit {
 
   @Input() profile: Profile;
+  reportMessage = '';
+  isSend = false;
+  isError = false;
+  sendResultMessage = '';
 
   imageSize = 100;
 
   constructor(
     private readonly userApiService: UserApiService,
+    private readonly cardApiService: CardApiService,
     private readonly router: Router
   ) {}
 
@@ -25,7 +32,9 @@ export class MainPageUserCardComponent implements OnInit {
     this.router.navigate(['direct', this.profile.info.id]);
   }
 
-  report(): void {}
+  report(): void {
+    UIkit.modal('#report-dialog').show();
+  }
 
   addToFavourites(): void {}
 
@@ -39,6 +48,21 @@ export class MainPageUserCardComponent implements OnInit {
     } else {
       return ['Теги', 'пока', 'не', 'добавлены'];
     }
+  }
+
+  sendReport(): void {
+    this.isSend = false;
+    this.isError = false;
+    this.cardApiService.report(this.profile.card.id, this.reportMessage).subscribe(
+      () => {
+        this.isSend = true;
+        this.sendResultMessage = `Жалоба на пользователя ${this.profile.info.name} успешно отправлена`;
+      },
+      () => {
+        this.isError = true;
+        this.sendResultMessage = `Ошибка при отправке жалобы`;
+      }
+    );
   }
 
 }
