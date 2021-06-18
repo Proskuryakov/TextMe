@@ -7,6 +7,7 @@ import {map} from 'rxjs/operators';
 import {AuthService} from '../../../core/auth/auth.service';
 import {Token} from '../../../core/auth/models';
 import {Info} from '../models/info.model';
+import {AppRole} from '../models/role.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +61,10 @@ export class UserApiService {
     return this.http.post<void>(`${this.userURL}/pass`, {old: oldPass, change: newPass});
   }
 
+  getRoles(): Observable<AppRole[]> {
+    return this.http.get<AppRole[]>(`${this.userURL}/roles`);
+  }
+
   saveCurrentUserInfoToStorage(): void{
     this.getCurrentUser().subscribe(
       (profile) => localStorage.setItem(this.userInfoKey, JSON.stringify(profile.info))
@@ -81,8 +86,13 @@ export class UserApiService {
     return profile.imageUrl;
   }
 
-  isModerOrAdmin(): boolean {
-    return false;
+  isModerOrAdmin(): Observable<boolean> {
+    return this.getRoles().pipe(
+      map((roles) => {
+        console.log(roles);
+        return AppRole.ROLE_ADMIN in roles || AppRole.ROLE_MODER in roles;
+      })
+    );
   }
 
 }
