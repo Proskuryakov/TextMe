@@ -3,6 +3,7 @@ package ru.vsu.cs.textme.backend.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.cs.textme.backend.db.mapper.ReportMapper;
+import ru.vsu.cs.textme.backend.db.mapper.UserMapper;
 import ru.vsu.cs.textme.backend.db.model.ReportSummary;
 import ru.vsu.cs.textme.backend.db.model.ReportData;
 import ru.vsu.cs.textme.backend.db.model.request.BanRequest;
@@ -15,17 +16,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReportService {
     private final ReportMapper mapper;
+    private final UserMapper userMapper;
+
     public void setReport(Integer user, ReportRequest report) {
         mapper.setReport(user, report.getCard(), report.getMessage());
     }
 
     public List<ReportData> getReportsListPage(Integer page) {
-        return mapper.findReportsDataPage(128, page * 128);
+        return userMapper.findReportsDataPage(128, page * 128);
     }
 
     public ReportSummary getReportsSummary(Integer cardId, Integer page) {
         var reports =  mapper.findReportProfilePage(cardId, 128, page * 128);
-        var user = mapper.findUserInfoById(cardId);
+        var user = userMapper.findProfileByCardId(cardId);
         return new ReportSummary(user, reports);
     }
 

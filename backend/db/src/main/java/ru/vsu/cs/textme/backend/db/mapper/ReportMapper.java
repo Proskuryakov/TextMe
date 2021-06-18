@@ -13,6 +13,7 @@ import java.util.List;
 public interface ReportMapper {
     String AVATAR_SELECT = "findAvatarById";
     String USER_INFO_SELECT = "findUserInfoById";
+
     @Select("SELECT * FROM users WHERE id = #{id}")
     @Results(id = USER_INFO_SELECT, value = {
             @Result(property = "id", column = "id"),
@@ -39,18 +40,6 @@ public interface ReportMapper {
             "VALUES (#{user},#{card},#{message}) ON CONFLICT (user_id, card_id) DO UPDATE \n" +
             "SET message = #{message}, reviewer_id = NULL, review_date = NULL")
     void setReport(Integer user, Integer card, String message);
-
-    @Select("SELECT r.user_id AS from, u.id AS to, r.message, r.date_create FROM reports r, users u\n" +
-            "WHERE r.review_date IS NULL AND u.card_id = r.card_id\n" +
-            "ORDER BY r.date_create DESC\n" +
-            "LIMIT #{limit} OFFSET #{offset}")
-    @Results( value = {
-            @Result(property = "from", column = "from", one = @One(select = USER_INFO_SELECT)),
-            @Result(property = "to", column = "to", one = @One(select = USER_INFO_SELECT)),
-            @Result(property = "message", column = "message"),
-            @Result(property = "date", column = "date_create")
-    })
-    List<ReportData> findReportsDataPage(Integer limit, Integer offset);
 
     @Select("SELECT user_id, message FROM reports\n" +
             "WHERE card_id = {cardId} AND review_date IS NULL\n" +

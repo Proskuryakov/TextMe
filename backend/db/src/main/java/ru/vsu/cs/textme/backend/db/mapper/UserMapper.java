@@ -3,6 +3,7 @@ package ru.vsu.cs.textme.backend.db.mapper;
 import org.apache.ibatis.annotations.*;
 import ru.vsu.cs.textme.backend.db.model.AppRole;
 import ru.vsu.cs.textme.backend.db.model.Blocked;
+import ru.vsu.cs.textme.backend.db.model.ReportData;
 import ru.vsu.cs.textme.backend.db.model.User;
 import ru.vsu.cs.textme.backend.db.model.info.Card;
 import ru.vsu.cs.textme.backend.db.model.info.Info;
@@ -58,6 +59,10 @@ public interface UserMapper {
             @Result(property = "info", column = "id", javaType = Info.class, one = @One(select = FIND_USER_INFO)),
     })
     Profile findProfileById(Integer userId);
+
+    @Select("SELECT card_id, id FROM users WHERE card_id = #{cardId}")
+    @ResultMap(FIND_PROFILE)
+    Profile findProfileByCardId(Integer cardId);
 
     @Select("SELECT * FROM users WHERE nickname = #{name}")
     @ResultMap(FIND_PROFILE)
@@ -166,4 +171,16 @@ public interface UserMapper {
             "LIMIT #{limit} OFFSET #{offset};")
     @ResultMap(FIND_USER_INFO)
     List<Info> findUsersByRole(int role, int limit, int offset);
+
+    @Select("SELECT r.user_id AS from, u.id AS to, r.message, r.date_create FROM reports r, users u\n" +
+            "WHERE r.review_date IS NULL AND u.card_id = r.card_id\n" +
+            "ORDER BY r.date_create DESC\n" +
+            "LIMIT #{limit} OFFSET #{offset}")
+    @Results( value = {
+            @Result(property = "from", column = "from", one = @One(select = FIND_USER_INFO)),
+            @Result(property = "to", column = "to", one = @One(select = FIND_PROFILE)),
+            @Result(property = "message", column = "message"),
+            @Result(property = "date", column = "date_create")
+    })
+    List<ReportData> findReportsDataPage(Integer limit, Integer offset);
 }
