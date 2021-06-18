@@ -35,7 +35,7 @@
         </thead>
 
         <tbody>
-        <tr *ngFor="let report of reports">
+        <tr *ngFor="let report of reports" (click)="openSummary(report)">
 
           <!--            аватар и имя пользователя-->
           <td>
