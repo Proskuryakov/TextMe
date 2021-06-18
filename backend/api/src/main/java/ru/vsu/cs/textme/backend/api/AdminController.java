@@ -26,14 +26,14 @@ public class AdminController {
     @RequestMapping("/user")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Profile changePermission(@RequestParam("name") String name) {
+    public Profile getUser(@RequestParam("name") String name) {
         return adminService.getUserProfile(name);
     }
 
     @RequestMapping("/moders/{page}")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Info> changePermission(@PathVariable Integer page) {
+    public List<Info> getModerators(@PathVariable Integer page) {
         return adminService.getModerators(page);
     }
 }

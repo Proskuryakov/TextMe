@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.textme.backend.db.model.ReportSummary;
 import ru.vsu.cs.textme.backend.db.model.ReportData;
+import ru.vsu.cs.textme.backend.db.model.request.BanRequest;
 import ru.vsu.cs.textme.backend.db.model.request.DenyReportRequest;
 import ru.vsu.cs.textme.backend.security.CustomUserDetails;
 import ru.vsu.cs.textme.backend.services.ReportService;
@@ -33,9 +34,17 @@ public class ReportController {
     }
 
     @PostMapping
+    @RequestMapping("/ban")
+    @ResponseStatus(HttpStatus.OK)
+    public void banUser(@RequestBody BanRequest request,
+                                 @AuthenticationPrincipal CustomUserDetails details) {
+        reportService.ban(details.getUser().getId(), request);
+    }
+
+    @PostMapping
     @RequestMapping("/deny")
     @ResponseStatus(HttpStatus.OK)
-    public void getReportSummary(@RequestBody DenyReportRequest request, @AuthenticationPrincipal CustomUserDetails details) {
+    public void denyReport(@RequestBody DenyReportRequest request, @AuthenticationPrincipal CustomUserDetails details) {
         reportService.deny(details.getUser().getId(), request);
     }
 }
