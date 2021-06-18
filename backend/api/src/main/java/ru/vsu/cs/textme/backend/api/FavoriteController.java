@@ -24,13 +24,13 @@ public class FavoriteController {
         return service.getFavorites(details.getUser().getId(), page);
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping()
     public void  deleteFavorite(@AuthenticationPrincipal CustomUserDetails details,
                                 @RequestBody FavoriteRequest favorite) {
         service.deleteFavorite(details.getUser().getId(), favorite.getId());
     }
 
-    @PostMapping("/")
+    @PostMapping()
     public void  addFavorite(@AuthenticationPrincipal CustomUserDetails details,
                                 @RequestBody FavoriteRequest favorite) {
         service.addFavorite(details.getUser().getId(), favorite.getId());
