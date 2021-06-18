@@ -27,6 +27,9 @@ import { UpdateDeleteMessageComponent } from './components/update-delete-message
     DirectPage,
     UpdateDeleteMessageComponent
   ],
+  exports: [
+    LeftNavbarLogoComponent
+  ],
   imports: [
     CommonModule,
     MainRoutingModule,

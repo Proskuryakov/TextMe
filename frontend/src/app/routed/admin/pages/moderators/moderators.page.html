@@ -1,1 +1,65 @@
-<p>moderators works!</p>
+<nav class="uk-navbar-container uk-margin uk-box-shadow-medium" uk-navbar="mode: click">
+  <!--    основная часть навигационной панели слева-->
+  <app-left-navbar-logo></app-left-navbar-logo>
+</nav>
+
+<div class="uk-padding-small">
+  <div uk-grid>
+
+    <div class="uk-align-center uk-width-3-4@m uk-card uk-card-default uk-card-body">
+
+      <div class="uk-card-title uk-text-center uk-text-lead">Модераторы</div>
+
+      <div *ngIf="statusMessage"
+           [ngClass]="{'uk-text-danger': isError, 'uk-text-success': !isError}"
+           class="uk-text-center uk-margin-small-bottom"
+      >{{statusMessage}}
+      </div>
+      <hr>
+
+      <div class="">
+        <table class="uk-table uk-table-small uk-table-middle uk-table-divider uk-table-striped uk-table-responsive">
+
+          <tbody>
+
+          <tr>
+            <td class="uk-table-shrink uk-text-nowrap">
+              Nickname нового модератора:
+            </td>
+            <td class="uk-table-expand">
+              <input
+                [(ngModel)]="newModerName"
+                (keyup.enter)="addModer()"
+                class="uk-input uk-width-expand" name="newModerName" autofocus>
+            </td>
+            <td class="uk-table-shrink">
+              <button
+                (click)="addModer()"
+                [disabled]="!newModerName"
+                class="uk-button uk-button-secondary uk-width-expand"
+              >добавить</button>
+            </td>
+
+          </tr>
+
+          <tr *ngFor="let moder of moderators">
+
+            <td><img class="uk-align-center uk-preserve-width uk-border-rounded" src="{{getImage(moder)}}" width="100" alt=""></td>
+            <td class="uk-table-expand uk-text-lead">{{moder?.name}}</td>
+            <td class="uk-table-shrink">
+              <button
+                (click)="deleteModer(moder)"
+                class="uk-button uk-button-secondary uk-width-expand"
+              >разжаловать</button>
+            </td>
+
+          </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+</div>

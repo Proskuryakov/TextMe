@@ -1,9 +1,11 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { AdminRoutingModule } from './admin-routing.module';
-import { ReportsPage } from './pages/reports/reports.page';
-import { ModeratorsPage } from './pages/moderators/moderators.page';
+import {AdminRoutingModule} from './admin-routing.module';
+import {ReportsPage} from './pages/reports/reports.page';
+import {ModeratorsPage} from './pages/moderators/moderators.page';
+import {FormsModule} from '@angular/forms';
+import {MainModule} from '../main/main.module';
 
 
 @NgModule({
@@ -13,7 +15,9 @@ import { ModeratorsPage } from './pages/moderators/moderators.page';
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    FormsModule,
+    MainModule
   ]
 })
-export class AdminModule { }
+export class AdminModule {}
