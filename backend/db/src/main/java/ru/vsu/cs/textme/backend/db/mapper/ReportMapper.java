@@ -52,7 +52,7 @@ public interface ReportMapper {
     })
     List<Report> findReportProfilePage(Integer cardId, Integer limit, Integer offset);
 
-    @Insert("CALL ban_card(#{by}, #{cardId}, #{expired}")
+    @Insert("CALL ban_card(#{by}, #{cardId}, #{expired})")
     void saveBan(Integer by, Integer cardId, Timestamp expired);
 
     @Update("UPDATE reports SET reviewer_id = #{moderId}, review_date = now() \n" +
