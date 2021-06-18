@@ -162,7 +162,7 @@ public interface UserMapper {
     @Insert("INSERT INTO favorites(user_id, favorite_id) VALUES (#{user}, #{favorite}) ON CONFLICT DO NOTHING")
     void addFavorite(Integer user, Integer favorite);
 
-    @Select("SELECT u.* FROM users u, user_app_role r WHERE r.id = #{role} AND r.user_id = u.id \n" +
+    @Select("SELECT u.* FROM users u, user_app_role r WHERE r.role_id = #{role} AND r.user_id = u.id \n" +
             "LIMIT #{limit} OFFSET #{offset};")
     @ResultMap(FIND_USER_INFO)
     List<Info> findUsersByRole(int role, int limit, int offset);
