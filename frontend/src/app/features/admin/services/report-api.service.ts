@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {environment} from '../../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {BanRequest, DenyReportRequest, ReportData} from '../models/report.model';
+import {BanRequest, DenyReportRequest, ReportData, ReportSummary} from '../models/report.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +16,8 @@ export class ReportApiService {
     return this.http.get<ReportData[]>(`${this.reportURL}/${page}`);
   }
 
-  getReportsByCard(cardId: number, page: number = 0): Observable<ReportData[]> {
-    return this.http.get<ReportData[]>(`${this.reportURL}/${cardId}/${page}`);
+  getReportSummary(cardId: number, page: number = 0): Observable<ReportSummary> {
+    return this.http.get<ReportSummary>(`${this.reportURL}/${cardId}/${page}`);
   }
 
   denyReport(reporterId: number, cardId: number): Observable<void> {
