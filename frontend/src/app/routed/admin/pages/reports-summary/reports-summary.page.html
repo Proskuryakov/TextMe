@@ -1,1 +1,157 @@
-<p>reports-summary works!</p>
+<nav class="uk-navbar-container uk-margin uk-box-shadow-medium" uk-navbar="mode: click">
+  <app-left-navbar-logo></app-left-navbar-logo>
+
+  <div class="nav-overlay uk-navbar-right">
+
+    <ul class="uk-navbar-nav">
+      <li>
+        <a (click)="navigateToReports()">
+          <span>Жалобы</span>
+        </a>
+      </li>
+    </ul>
+
+  </div>
+
+
+</nav>
+
+
+<div class="uk-margin-left uk-margin-right uk-flex uk-flex-center uk-grid-medium" uk-grid>
+
+  <div class="uk-width-1-4@m  uk-width-1-2@s">
+    <div class="uk-card uk-card-default uk-card-body">
+
+      <div class="uk-child-width-1-1" uk-grid>
+
+        <div>
+          <div class="uk-panel uk-panel-box uk-text-lead">
+            Жалобы на {{reportSummary?.toCheck?.info?.name}}
+          </div>
+        </div>
+
+        <div>
+          <img
+            class="uk-align-center uk-border-rounded uk-margin-small-bottom"
+            src="{{getImage(reportSummary?.toCheck?.info)}}">
+        </div>
+
+        <div>
+
+        <span
+          *ngFor="let tag of reportSummary?.toCheck?.card?.tags"
+          class="uk-label uk-margin-small-right uk-margin-small-bottom"
+        >
+          {{tag}}
+        </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="uk-width-2-3@m ">
+
+    <div class="uk-card uk-card-default uk-card-body">
+
+      <div class="uk-card-title uk-text-center uk-text-lead">Жалобы</div>
+
+      <div *ngIf="statusMessage"
+           [ngClass]="{'uk-text-danger': isError, 'uk-text-success': !isError}"
+           class="uk-text-center uk-margin-small-bottom"
+      >{{statusMessage}}
+      </div>
+      <hr>
+
+      <div class="">
+        <table class="uk-table uk-table-small uk-table-middle
+        uk-table-divider uk-table-responsive uk-table-hover uk-table-justify">
+
+          <thead>
+          <tr>
+            <th class="uk-text-center">
+              От кого
+            </th>
+            <th class="uk-text-center">
+              Текст жалобы
+            </th>
+            <th class="uk-text-center">
+              Действия
+            </th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let report of reportSummary.reports">
+
+            <!--            аватар и имя пользователя-->
+            <td>
+
+              <div class="uk-flex uk-flex-column uk-text-center">
+                <img
+                  class="uk-align-center uk-preserve-width uk-border-rounded uk-margin-small-bottom"
+                  src="{{getImage(report?.reporter)}}"
+                  width="100" alt="">
+                <span class="">{{report?.reporter?.name}}</span>
+              </div>
+            </td>
+
+            <!--            текст жолбы и дата жалобы-->
+            <td class="uk-table-expand">
+              <div class="uk-child-width-1-1" uk-grid>
+                <div>
+                  <div class="uk-panel uk-panel-box uk-text-break">
+                    {{report.message}}
+                  </div>
+                </div>
+                <div>
+                  <div class="uk-panel uk-panel-box uk-text-meta uk-text-right">
+                    {{dateFormat(report.date)}}
+                  </div>
+                </div>
+              </div>
+
+            </td>
+
+            <!--            отклонить забанить срок бана-->
+            <td class="uk-table-shrink">
+              <div class="uk-flex uk-flex-column">
+                <button
+                  (click)="deny(report)"
+                  class="uk-button uk-button-default uk-width-expand uk-margin-small-bottom"
+                >отклонить
+                </button>
+
+                <div class="uk-width-expand uk-margin-small-bottom">
+                  <select class="uk-select" [(ngModel)]="selectedBanTime[report.reporter.id]">
+                    <option
+                      *ngFor="let key of keys(banTime)"
+                      [ngValue]="key"
+                    >{{banTime[key]}}</option>
+                  </select>
+                </div>
+
+                <button
+                  (click)="ban(report)"
+                  class="uk-button uk-button-secondary uk-width-expand uk-margin-small-bottom"
+                  [disabled]="!selectedBanTime[report.reporter.id]"
+                >заблокировать
+                </button>
+              </div>
+
+            </td>
+
+          </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
