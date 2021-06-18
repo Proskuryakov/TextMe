@@ -1,5 +1,6 @@
 package ru.vsu.cs.textme.backend.security;
 
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ public class CustomUserDetails implements UserDetails, Principal {
 
     public static CustomUserDetails toCustomUserDetails(User user) {
         CustomUserDetails c = new CustomUserDetails();
+
         if (user != null) {
             c.user = user;
             c.grantedAuthorities = user
@@ -27,7 +29,11 @@ public class CustomUserDetails implements UserDetails, Principal {
                     .stream()
                     .map((Function<AppRole, GrantedAuthority>) appRole -> new SimpleGrantedAuthority(appRole.getContent()))
                     .collect(Collectors.toList());
+            if (!c.isAccountNonLocked()) {
+                throw new LockedException("BANNED TO "+ user.getBlocked().getTo());
+            }
         }
+
         return c;
     }
 
