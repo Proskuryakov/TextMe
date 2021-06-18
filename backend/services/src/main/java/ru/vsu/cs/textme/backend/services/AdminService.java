@@ -10,6 +10,7 @@ import ru.vsu.cs.textme.backend.db.model.request.PermissionRequest;
 
 import java.util.List;
 
+import static ru.vsu.cs.textme.backend.db.model.AppRole.MODER;
 import static ru.vsu.cs.textme.backend.db.model.ChatRole.ROLE_MODER;
 
 @Service
@@ -18,7 +19,7 @@ public class AdminService {
     private final UserMapper userMapper;
 
     public void changePermission(PermissionRequest request) {
-        if (AppRole.MODER.getId().equals(request.getRole())) {
+        if (MODER.getId().equals(request.getRole())) {
             if (request.isPermitted()) userMapper.saveRole(request.getUser(), request.getRole());
             else userMapper.removeRole(request.getUser(), request.getRole());
         }
@@ -29,6 +30,6 @@ public class AdminService {
     }
 
     public List<Info> getModerators(Integer page) {
-        return userMapper.findUsersByRole(ROLE_MODER.getId(),128, page * 128);
+        return userMapper.findUsersByRole(MODER.getId(),128, page * 128);
     }
 }
