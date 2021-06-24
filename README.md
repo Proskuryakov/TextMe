@@ -29,4 +29,6 @@
 
 [Ветка кода с backend](https://github.com/Proskuryakov/TextMe/tree/backend)
 
+Swagger документация на [SwaggerHub](https://app.swaggerhub.com/apis/team1-group4.2/textme-api/v0) или [api.json](/Documents/api.json)
+
 Приложение развернуто на хостинге по адрессу [textme.host](http://textme.host)
